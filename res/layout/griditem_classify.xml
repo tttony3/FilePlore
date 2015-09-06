@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="@dimen/griditem_item"
+    android:layout_height="@dimen/griditem_item" >
+
+    <ImageView
+        android:id="@+id/griditem_img"
+        android:layout_width="@dimen/griditem_img"
+        android:layout_height="@dimen/griditem_img"
+        android:contentDescription="@string/img_description" />
+
+    <TextView
+        android:id="@+id/griditem_text"
+        android:layout_width="@dimen/griditem_img"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:background="#40B8B8B8"
+        android:ellipsize="end"
+        android:maxEms="10"
+        android:maxLines="1"
+        android:text=""
+        android:textColor="@color/griditem_text_color"
+        android:textSize="@dimen/griditem_item_textsize" />
+
+</FrameLayout>

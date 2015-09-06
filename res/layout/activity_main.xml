@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <TableLayout
+        android:id="@+id/tableLayout1"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" >
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="5dp"
+             android:paddingBottom="3dp" >
+
+            <TextView
+                android:id="@+id/text1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="@string/titlename_1"
+                android:textColor="@color/black"
+                android:textSize="18.0dip" />
+
+            <TextView
+                android:id="@+id/text2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="@string/titlename_2"
+                android:textColor="@color/black"
+                android:textSize="18.0dip" />
+        </TableRow>
+
+        <TableRow>
+
+            <ImageView
+                android:id="@+id/cursor_1"
+                android:layout_width="wrap_content"
+                android:layout_height="2dp"
+                android:layout_weight="1"
+                android:contentDescription="@string/img_description"
+                android:scaleType="fitXY"
+                android:src="@drawable/roller_1"
+                android:visibility="visible" />
+
+            <ImageView
+                android:id="@+id/cursor_2"
+                android:layout_width="wrap_content"
+                android:layout_height="2dp"
+                android:layout_weight="1"
+                android:contentDescription="@string/img_description"
+                android:scaleType="fitXY"
+                android:src="@drawable/roller_2"
+                android:visibility="invisible" />
+        </TableRow>
+    </TableLayout>
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/viewpage"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/tableLayout1" />
+
+</RelativeLayout>

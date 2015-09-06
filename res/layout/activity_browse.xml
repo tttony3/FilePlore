@@ -1,0 +1,350 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/main_background" >
+
+    <TableLayout
+        android:id="@+id/browse_tab_1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:background="@drawable/corners_bg"
+        android:paddingBottom="10dp"
+        android:paddingTop="10dp" >
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" >
+
+                <ImageView
+                    android:id="@+id/img_movie"
+                    android:layout_width="@dimen/browse_pic_width"
+                    android:layout_height="@dimen/browse_pic_width"
+                    android:layout_centerHorizontal="true"
+                    android:clickable="true"
+                    android:contentDescription="@string/movie"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/icon_movie_selector" >
+                </ImageView>
+
+                <TextView
+                    android:id="@+id/tv_movie"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/img_movie"
+                    android:layout_centerHorizontal="true"
+                    android:text="@string/movie" >
+                </TextView>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" >
+
+                <ImageView
+                    android:id="@+id/img_photo"
+                    android:layout_width="@dimen/browse_pic_width"
+                    android:layout_height="@dimen/browse_pic_width"
+                    android:layout_centerHorizontal="true"
+                    android:clickable="true"
+                    android:contentDescription="@string/photo"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/icon_photo_selector" >
+                </ImageView>
+
+                <TextView
+                    android:id="@+id/tv_photo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/img_photo"
+                    android:layout_centerHorizontal="true"
+                    android:text="@string/photo" >
+                </TextView>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" >
+
+                <ImageView
+                    android:id="@+id/img_txt"
+                    android:layout_width="@dimen/browse_pic_width"
+                    android:layout_height="@dimen/browse_pic_width"
+                    android:layout_centerHorizontal="true"
+                    android:clickable="true"
+                    android:contentDescription="@string/txt"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/icon_txt_selector" >
+                </ImageView>
+
+                <TextView
+                    android:id="@+id/tv_doc"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/img_txt"
+                    android:layout_centerHorizontal="true"
+                    android:text="@string/txt" >
+                </TextView>
+            </RelativeLayout>
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp" >
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" >
+
+                <ImageView
+                    android:id="@+id/img_music"
+                    android:layout_width="@dimen/browse_pic_width"
+                    android:layout_height="@dimen/browse_pic_width"
+                    android:layout_centerHorizontal="true"
+                    android:clickable="true"
+                    android:contentDescription="@string/music"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/icon_music_selector" >
+                </ImageView>
+
+                <TextView
+                    android:id="@+id/tv_music"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/img_music"
+                    android:layout_centerHorizontal="true"
+                    android:text="@string/music" >
+                </TextView>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" >
+
+                <ImageView
+                    android:id="@+id/img_zip"
+                    android:layout_width="@dimen/browse_pic_width"
+                    android:layout_height="@dimen/browse_pic_width"
+                    android:layout_centerHorizontal="true"
+                    android:clickable="true"
+                    android:contentDescription="@string/zip"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/icon_zip_selector" >
+                </ImageView>
+
+                <TextView
+                    android:id="@+id/tv_zip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/img_zip"
+                    android:layout_centerHorizontal="true"
+                    android:text="@string/zip" >
+                </TextView>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" >
+
+                <ImageView
+                    android:id="@+id/img_apk"
+                    android:layout_width="@dimen/browse_pic_width"
+                    android:layout_height="@dimen/browse_pic_width"
+                    android:layout_centerHorizontal="true"
+                    android:clickable="true"
+                    android:contentDescription="@string/apk"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/icon_apk_selector" >
+                </ImageView>
+
+                <TextView
+                    android:id="@+id/tv_apk"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/img_apk"
+                    android:layout_centerHorizontal="true"
+                    android:text="@string/apk" >
+                </TextView>
+            </RelativeLayout>
+        </TableRow>
+    </TableLayout>
+
+    <TableLayout
+        android:id="@+id/browse_tab_2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/browse_tab_1"
+        android:layout_margin="5dp"
+        android:background="@drawable/corners_bg"
+        android:paddingBottom="10dp"
+        android:paddingTop="10dp" >
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical|end"
+                android:text="@string/PhoneCapacity"
+                android:textSize="16sp" >
+            </TextView>
+
+            <ProgressBar
+                android:id="@+id/browse_phone"
+                style="@style/tallerBarStyle"
+                android:layout_width="170dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:max="100"
+                android:progress="50" />
+
+            <TableLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp" >
+
+                <TableRow
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" >
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/capacity"
+                        android:textSize="@dimen/browse_txtcapacity_size" />
+
+                    <TextView
+                        android:id="@+id/tv_phonetotal"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/browse_txtcapacity_size" />
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" >
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/notuse_capacity"
+                        android:textSize="@dimen/browse_txtcapacity_size" />
+
+                    <TextView
+                        android:id="@+id/tv_phonenotuse"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/browse_txtcapacity_size" />
+                </TableRow>
+            </TableLayout>
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical|end"
+                android:text="@string/SdCapacity"
+                android:textSize="16sp" >
+            </TextView>
+
+            <ProgressBar
+                android:id="@+id/browse_sd"
+                style="@style/tallerBarStyle"
+                android:layout_width="170dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:max="100"
+                android:progress="50" />
+
+            <TableLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp" >
+
+                <TableRow
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" >
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/capacity"
+                        android:textSize="@dimen/browse_txtcapacity_size" />
+
+                    <TextView
+                        android:id="@+id/tv_sdtotal"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/browse_txtcapacity_size" />
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" >
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/notuse_capacity"
+                        android:textSize="@dimen/browse_txtcapacity_size" />
+
+                    <TextView
+                        android:id="@+id/tv_sdnotuse"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/browse_txtcapacity_size" />
+                </TableRow>
+            </TableLayout>
+        </TableRow>
+    </TableLayout>
+
+    <RelativeLayout
+        android:id="@+id/browse_rl_net"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/browse_tab_2"
+        android:layout_margin="5dp"
+        android:background="@drawable/corners_bg"
+        android:paddingBottom="10dp"
+        android:paddingTop="10dp" >
+
+        <TextView
+            android:id="@+id/tv_browsenet"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:text="@string/netshare"
+            android:textSize="16sp" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/tv_browsenet"
+            android:layout_alignParentEnd="true"
+            android:layout_alignTop="@+id/tv_browsenet"
+            android:layout_marginEnd="5dp"
+            android:contentDescription="@string/img_description"
+            android:src="@drawable/jiantou" />
+    </RelativeLayout>
+
+</RelativeLayout>

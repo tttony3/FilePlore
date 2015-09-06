@@ -1,0 +1,20 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.example.fileplore.MainActivity" >
+
+    <item
+        android:id="@+id/action_local"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        android:title="@string/localfile"/>
+<item
+        android:id="@+id/action_net"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        android:title="@string/netfile"/>
+<item
+        android:id="@+id/action_samba"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        android:title="@string/sambafile"/>
+</menu>

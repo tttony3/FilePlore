@@ -1,0 +1,12 @@
+<resources>
+
+    <dimen name="browse_pic_width">60dp</dimen>
+    <dimen name="browse_pic_hight">60dp</dimen>
+    <dimen name="griditem_item">110dp</dimen>
+    <dimen name="griditem_item_textsize">10sp</dimen>
+    <dimen name="griditem_img">110dp</dimen>
+    <dimen name="browse_txtcapacity_size">10sp</dimen>
+    <dimen name="top_textsize">20sp</dimen>
+
+
+</resources>

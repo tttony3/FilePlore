@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">FilePlore</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="titlename_1">分类浏览</string>
+    <string name="titlename_2">目录浏览</string>
+    <string name="movie">视频</string>
+    <string name="music">音乐</string>
+    <string name="txt">文档</string>
+    <string name="zip">压缩包</string>
+    <string name="photo">照片</string>
+    <string name="unknown">未知文件</string>
+    <string name="apk">安装包</string>
+    <string name="SdCapacity">SD卡容量 : </string>
+    <string name="PhoneCapacity">手机容量 : </string>
+    <string name="default_path">/</string>
+    <string name="default_count"> 项</string>
+    <string name="img_description"> 图片加载中</string>
+    <string name="capacity">容量 : </string>
+    <string name="notuse_capacity">可用 : </string>
+    <string name="netshare">网络共享 : </string>
+    <string name="reseach">刷新</string>
+     <string name="localfile">本地文件</string>
+      <string name="netfile">网络文件</string>
+       <string name="sambafile">Samba文件</string>
+
+</resources>
