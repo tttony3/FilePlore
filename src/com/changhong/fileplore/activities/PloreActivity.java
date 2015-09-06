@@ -8,10 +8,13 @@ import com.example.fileplore.R;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -22,12 +25,14 @@ import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 public class PloreActivity extends Activity {
+	ArrayList<File> waitCopy = new ArrayList<File>();
 	ListView mListView;
 	TextView mPathView;
 	ImageView iv_back;
@@ -63,19 +68,70 @@ public class PloreActivity extends Activity {
 
 			@Override
 			public void onClick(View v) {
+				if (v.getId() == R.id.plore_btn_1) {
+					waitCopy.clear();
+					final EditText ed = new EditText(PloreActivity.this);
+					AlertDialog.Builder builder = new AlertDialog.Builder(PloreActivity.this);
+					builder.setTitle("输入文件夹名称");
+					builder.setView(ed).setNegativeButton("确定", new DialogInterface.OnClickListener() {
 
-				if (!mFileAdpter.isShow_cb()) {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							File file = new File(mPathView.getText().toString() + "/" + ed.getText());
+							if (file.exists())
+								Toast.makeText(PloreActivity.this, "文件夹已存在", Toast.LENGTH_SHORT).show();
+							else {
+								if (file.mkdir())
+									Toast.makeText(PloreActivity.this, "文件夹创建成功", Toast.LENGTH_SHORT).show();
+								File folder = new File(mPathView.getText().toString());
+								initData(folder);
+							}
+						}
+					}).setPositiveButton("取消", null).create().show();
+
+				} else if (v.getId() == R.id.plore_btn_3) {
+					if (waitCopy.isEmpty())
+						Toast.makeText(PloreActivity.this, "没有选择文件", Toast.LENGTH_SHORT).show();
+					else {
+						String path = mPathView.getText().toString();
+						for (int i = 0; i < waitCopy.size(); i++) {
+							File file = waitCopy.get(i);
+							file.renameTo(new File(path + "/" + file.getName()));
+						}
+						waitCopy.clear();
+						File folder = new File(mPathView.getText().toString());
+						initData(folder);
+					}
+				} else if (!mFileAdpter.isShow_cb()) {
 					mFileAdpter.setShow_cb(true);
 					mFileAdpter.notifyDataSetChanged();
 				} else {
 					Boolean[] mlist = mFileAdpter.getCb_list();
 					switch (v.getId()) {
+
+					case R.id.plore_btn_2:
+						waitCopy.clear();
+						if (mFileAdpter.isShow_cb()) {
+							for (int i = 0; i < mlist.length; i++) {
+								if (mlist[i]) {
+									File file = (File) mFileAdpter.getItem(i);
+									waitCopy.add(file);
+								}
+							}
+						}
+						mFileAdpter.setShow_cb(false);
+						mFileAdpter.notifyDataSetChanged();
+						Toast.makeText(PloreActivity.this, "剪切成功", Toast.LENGTH_SHORT).show();
+						break;
+
 					case R.id.plore_btn_4:
 						for (int i = 0; i < mlist.length; i++) {
 							if (mlist[i]) {
 								File file = (File) mFileAdpter.getItem(i);
 								if (file.delete()) {
 									Toast.makeText(PloreActivity.this, "删除成功", Toast.LENGTH_SHORT).show();
+								} else {
+									Toast.makeText(PloreActivity.this, "删除失败", Toast.LENGTH_SHORT).show();
 								}
 							}
 						}
