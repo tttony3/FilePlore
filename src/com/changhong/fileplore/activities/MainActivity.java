@@ -3,8 +3,13 @@ package com.changhong.fileplore.activities;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.chobit.corestorage.ConnectedService;
+import com.chobit.corestorage.CoreApp;
+import com.chobit.corestorage.CoreHttpServerCB;
+import com.chobit.corestorage.CoreService.CoreServiceBinder;
 import com.example.fileplore.R;
 
+import android.os.Binder;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.app.ActionBar;
@@ -20,6 +25,7 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -63,17 +69,17 @@ public class MainActivity extends Activity {
 		manager = new LocalActivityManager(this, true);
 		manager.dispatchCreate(savedInstanceState);
 
-		// CoreApp app = (CoreApp) this.getApplicationContext();
-		// app.setConnectedService(new ConnectedService() {
-		//
-		// @Override
-		// public void onConnected(Binder b) {
-		// CoreServiceBinder binder = (CoreServiceBinder) b;
-		// binder.init();
-		// binder.setCoreHttpServerCBFunction(httpServerCB);
-		// binder.StartHttpServer("/", context);
-		// }
-		// });
+		CoreApp app = (CoreApp) this.getApplicationContext();
+		app.setConnectedService(new ConnectedService() {
+
+			@Override
+			public void onConnected(Binder b) {
+				CoreServiceBinder binder = (CoreServiceBinder) b;
+				binder.init();
+				binder.setCoreHttpServerCBFunction(httpServerCB);	
+				binder.StartHttpServer("/", context);
+			}
+		});
 
 		InitImageView();
 		initTextView();
@@ -334,5 +340,38 @@ public class MainActivity extends Activity {
 		}
 		return super.onKeyDown(keyCode, event);
 	}
+	private CoreHttpServerCB httpServerCB = new CoreHttpServerCB() {
 
+		
+
+		@Override
+		public void onTransportUpdata(String arg0, String arg1, long arg2, long arg3, long arg4) {
+			// TODO Auto-generated method stub
+
+		}
+
+		@Override
+		public void onHttpServerStop() {
+			// TODO Auto-generated method stub
+
+		}
+
+		@Override
+		public void onHttpServerStart(String ip, int port) {
+			
+			Log.i("tl", ip + "port" + port);
+
+		}
+
+		@Override
+		public String onGetRealFullPath(String arg0) {
+			return null;
+		}
+
+		@Override
+		public void recivePushResources(List<String> resourceslist) {
+			// TODO Auto-generated method stub
+			
+		}
+	};
 }
