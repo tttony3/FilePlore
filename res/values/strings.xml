@@ -25,5 +25,5 @@
      <string name="localfile">本地文件</string>
       <string name="netfile">网络文件</string>
        <string name="sambafile">Samba文件</string>
-
+ <string name="current_net">当前网络中的设备：</string>
 </resources>

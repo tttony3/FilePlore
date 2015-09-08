@@ -69,17 +69,17 @@ public class MainActivity extends Activity {
 		manager = new LocalActivityManager(this, true);
 		manager.dispatchCreate(savedInstanceState);
 
-		CoreApp app = (CoreApp) this.getApplicationContext();
-		app.setConnectedService(new ConnectedService() {
-
-			@Override
-			public void onConnected(Binder b) {
-				CoreServiceBinder binder = (CoreServiceBinder) b;
-				binder.init();
-				binder.setCoreHttpServerCBFunction(httpServerCB);	
-				binder.StartHttpServer("/", context);
-			}
-		});
+//		CoreApp app = (CoreApp) this.getApplicationContext();
+//		app.setConnectedService(new ConnectedService() {
+//
+//			@Override
+//			public void onConnected(Binder b) {
+//				CoreServiceBinder binder = (CoreServiceBinder) b;
+//			//	binder.init();
+//				binder.setCoreHttpServerCBFunction(httpServerCB);	
+//				binder.StartHttpServer("/", context);
+//			}
+//		});
 
 		InitImageView();
 		initTextView();

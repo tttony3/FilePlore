@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import com.changhong.fileplore.adapter.ListAdapter;
 import com.changhong.fileplore.utils.Content;
 import com.changhong.fileplore.utils.Utils;
+import com.chobit.corestorage.CoreApp;
 import com.example.fileplore.R;
 
 import android.app.Activity;
@@ -26,7 +27,7 @@ import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
 
 public class ClassifyListActivity extends Activity {
-	
+
 	static ListView lv_classify;
 	TextView tv_dir;
 	static TextView tv_count;
@@ -73,7 +74,6 @@ public class ClassifyListActivity extends Activity {
 		}
 	};
 
-
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -82,7 +82,6 @@ public class ClassifyListActivity extends Activity {
 		handler = new MyHandler(this);
 		findView();
 		initView(flg);
-
 	}
 
 	private void initView(int flg) {
@@ -96,17 +95,17 @@ public class ClassifyListActivity extends Activity {
 			break;
 		case R.id.img_txt:
 			showDialog();
-			new Thread(new GetRunnable("doc",false)).start();
+			new Thread(new GetRunnable("doc", false)).start();
 
 			break;
 		case R.id.img_zip:
 			showDialog();
-			new Thread(new GetRunnable("zip",false)).start();
+			new Thread(new GetRunnable("zip", false)).start();
 
 			break;
 		case R.id.img_apk:
 			showDialog();
-			new Thread(new GetRunnable("apk",false)).start();
+			new Thread(new GetRunnable("apk", false)).start();
 
 			break;
 		default:
@@ -164,9 +163,10 @@ public class ClassifyListActivity extends Activity {
 	class GetRunnable implements Runnable {
 		String type;
 		boolean reseach;
-		GetRunnable(String type,boolean reseach) {
+
+		GetRunnable(String type, boolean reseach) {
 			this.type = type;
-			this.reseach=reseach;
+			this.reseach = reseach;
 		}
 
 		@Override
@@ -175,13 +175,13 @@ public class ClassifyListActivity extends Activity {
 			Message msg = new Message();
 			Bundle data = new Bundle();
 			if (type.equals("apk")) {
-				results = Utils.getApk(ClassifyListActivity.this,reseach);
+				results = Utils.getApk(ClassifyListActivity.this, reseach);
 				data.putSerializable("apks", results);
 			} else if (type.equals("doc")) {
-				results = Utils.getDoc(ClassifyListActivity.this,reseach);
+				results = Utils.getDoc(ClassifyListActivity.this, reseach);
 				data.putSerializable("docs", results);
 			} else if (type.equals("zip")) {
-				results = Utils.getZip(ClassifyListActivity.this,reseach);
+				results = Utils.getZip(ClassifyListActivity.this, reseach);
 				data.putSerializable("zips", results);
 			}
 
@@ -191,18 +191,17 @@ public class ClassifyListActivity extends Activity {
 		}
 
 	}
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.reseach, menu);
 		return true;
 	}
-	
-	
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		int id = item.getItemId();
 		if (id == R.id.item_reseach) {
-
 
 			switch (flg) {
 			case R.id.img_music:
@@ -213,18 +212,17 @@ public class ClassifyListActivity extends Activity {
 				break;
 			case R.id.img_txt:
 				showDialog();
-				Log.e("11", "11");
-				new Thread(new GetRunnable("doc",true)).start();
+				new Thread(new GetRunnable("doc", true)).start();
 
 				break;
 			case R.id.img_zip:
 				showDialog();
-				new Thread(new GetRunnable("zip",true)).start();
+				new Thread(new GetRunnable("zip", true)).start();
 
 				break;
 			case R.id.img_apk:
 				showDialog();
-				new Thread(new GetRunnable("apk",true)).start();
+				new Thread(new GetRunnable("apk", true)).start();
 
 				break;
 			default:
@@ -243,9 +241,9 @@ public class ClassifyListActivity extends Activity {
 				}
 
 			});
-		
+
 		}
 		return super.onOptionsItemSelected(item);
-		
+
 	}
 }

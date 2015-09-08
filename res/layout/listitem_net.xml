@@ -7,37 +7,27 @@
     android:paddingBottom="0dp"
     android:paddingTop="0dp" >
 
-    <CheckBox
-        android:id="@+id/cb"
-        android:layout_marginStart="5dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:checked="false"   
-        android:visibility="gone" >
-    </CheckBox>
-
     <ImageView
-        android:layout_toEndOf="@+id/cb"
-        android:id="@+id/fileimg"
+        android:id="@+id/im_dev"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_marginStart="5dp"
-        android:contentDescription="@string/img_description" />
+        android:contentDescription="@string/img_description"
+        android:src="@drawable/net" />
 
     <TextView
-        android:id="@+id/filename"
+        android:id="@+id/tv_net_devname"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="5dp"
-        android:layout_toEndOf="@+id/fileimg"
+        android:layout_toEndOf="@+id/im_dev"
         android:ellipsize="end"
-        android:ems="9"
-        android:maxLines="2"
+        android:maxLines="1"
         android:paddingTop="3dp"
         android:textSize="16sp" />
 
     <TextView
-        android:id="@+id/lasttime"
+        android:id="@+id/tv_net_devurl"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"

@@ -94,7 +94,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="复制" />
+            android:text="剪切" />
 
         <Button
             android:id="@+id/plore_btn_3"
@@ -105,12 +105,12 @@
             android:text="粘贴" />
 
         <Button
-            android:id="@+id/plore_btn_4"
+            android:id="@+id/plore_btn_more"
             style="?android:attr/buttonBarButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="删除" />
+            android:text="更多" />
     </LinearLayout>
 
 </RelativeLayout>
