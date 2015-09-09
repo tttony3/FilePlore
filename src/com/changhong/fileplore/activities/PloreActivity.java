@@ -4,16 +4,19 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
+import com.chobit.corestorage.CoreApp;
 import com.example.fileplore.R;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.ContentProviderOperation;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -36,12 +39,13 @@ public class PloreActivity extends Activity {
 	TextView mPathView;
 	ImageView iv_back;
 	TextView mItemCount;
+	Button btn_4;
 	Button btn_1;
 	Button btn_2;
 	Button btn_3;
 	Button btn_more;
 	FileListAdapter mFileAdpter;
-	AlertDialog.Builder builder;
+	public AlertDialog.Builder builder;
 	myItemListener mylistener = new myItemListener();
 
 	@Override
@@ -49,6 +53,7 @@ public class PloreActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_plore);
 		findView();
+		
 		initView();
 	}
 
@@ -57,8 +62,9 @@ public class PloreActivity extends Activity {
 		mPathView = (TextView) findViewById(R.id.path);
 		mItemCount = (TextView) findViewById(R.id.item_count);
 		iv_back = (ImageView) findViewById(R.id.iv_back);
-		btn_1 = (Button) findViewById(R.id.plore_btn_1);
+		
 		btn_2 = (Button) findViewById(R.id.plore_btn_2);
+		btn_1 = (Button) findViewById(R.id.plore_btn_1);
 		btn_3 = (Button) findViewById(R.id.plore_btn_3);
 		btn_more = (Button) findViewById(R.id.plore_btn_more);
 	}
@@ -79,6 +85,7 @@ public class PloreActivity extends Activity {
 				return true;
 			}
 		});
+
 		btn_1.setOnClickListener(btn_listener);
 		btn_2.setOnClickListener(btn_listener);
 		btn_3.setOnClickListener(btn_listener);
@@ -115,7 +122,7 @@ public class PloreActivity extends Activity {
 			iv_back.setOnClickListener(myOnClickListener);
 			mPathView.setOnClickListener(myOnClickListener);
 			mItemCount.setText(names.length + "项");
-
+			
 			ArrayList<File> files = new ArrayList<File>();
 			for (int i = 0; i < names.length; i++) {
 				files.add(new File("/" + path + "/" + names[i]));
@@ -311,10 +318,11 @@ public class PloreActivity extends Activity {
 		}
 	}
 
-	OnClickListener btn_listener = new OnClickListener() {
+	private OnClickListener btn_listener = new View.OnClickListener() {
 
 		@Override
 		public void onClick(View v) {
+
 			switch (v.getId()) {
 			case R.id.plore_btn_1:
 				fileList.clear();
@@ -331,6 +339,9 @@ public class PloreActivity extends Activity {
 						else {
 							if (file.mkdir())
 								Toast.makeText(PloreActivity.this, "文件夹创建成功", Toast.LENGTH_SHORT).show();
+							else{
+								
+							}
 							File folder = new File(mPathView.getText().toString());
 							initData(folder);
 						}
@@ -388,7 +399,7 @@ public class PloreActivity extends Activity {
 						// dialog.dismiss();
 						switch (which) {
 						case 0:
-							
+
 							break;
 						case 1:
 							if (!mFileAdpter.isShow_cb()) {
@@ -399,7 +410,9 @@ public class PloreActivity extends Activity {
 								for (int i = 0; i < mlist.length; i++) {
 									if (mlist[i]) {
 										File file = (File) mFileAdpter.getItem(i);
+										Log.e("file", file.getName());
 										if (file.delete()) {
+											
 											Toast.makeText(PloreActivity.this, "删除成功", Toast.LENGTH_SHORT).show();
 										} else {
 											Toast.makeText(PloreActivity.this, "删除失败", Toast.LENGTH_SHORT).show();
@@ -411,19 +424,22 @@ public class PloreActivity extends Activity {
 							}
 							break;
 						case 2:
-							if (!mFileAdpter.isShow_cb()) {
-								mFileAdpter.setShow_cb(true);
-								mFileAdpter.notifyDataSetChanged();
-							} else {
-								Boolean[] mlist = mFileAdpter.getCheckBox_List();
-								for (int i = 0; i < mlist.length; i++) {
-									if (mlist[i]) {
-										File file = (File) mFileAdpter.getItem(i);
-										
+							if (CoreApp.mBinder != null) {
+								if (!mFileAdpter.isShow_cb()) {
+									mFileAdpter.setShow_cb(true);
+									mFileAdpter.notifyDataSetChanged();
+								} else {
+									Boolean[] mlist = mFileAdpter.getCheckBox_List();
+									for (int i = 0; i < mlist.length; i++) {
+										if (mlist[i]) {
+											File file = (File) mFileAdpter.getItem(i);
+											String s =CoreApp.mBinder.AddShareFile(file.getPath());
+											Toast.makeText(PloreActivity.this, "AddShareFile  "+s, Toast.LENGTH_SHORT).show();
+										}
 									}
+									File folder = new File(mPathView.getText().toString());
+									initData(folder);
 								}
-								File folder = new File(mPathView.getText().toString());
-								initData(folder);
 							}
 							break;
 						default:
@@ -433,7 +449,6 @@ public class PloreActivity extends Activity {
 					}
 				}).show();
 
-				
 				break;
 			default:
 				break;
@@ -441,4 +456,5 @@ public class PloreActivity extends Activity {
 
 		}
 	};
+
 }

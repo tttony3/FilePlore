@@ -1,5 +1,6 @@
 package com.changhong.fileplore.activities;
 
+import java.util.Iterator;
 import java.util.List;
 
 import com.changhong.alljoyn.simpleclient.DeviceInfo;
@@ -38,20 +39,22 @@ public class NetActivity extends Activity {
 	
 		dialog = new MyProgressDialog(NetActivity.this).getDialog();
 		CoreApp app = (CoreApp) this.getApplicationContext();
+		if(CoreApp.mBinder==null)
 		app.setConnectedService(new ConnectedService() {
 
 			@Override
 			public void onConnected(Binder b) {
 				CoreServiceBinder binder = (CoreServiceBinder) b;
+				
 				binder.setDeviceListener(deviceListener);
 				binder.init();
 				binder.setCoreHttpServerCBFunction(httpServerCB);	
-				binder.StartHttpServer("/", context);
-				binder.AddShareFile("/storage/sdcard1");
+		//		binder.StartHttpServer("/", context);
+		//		binder.AddShareFile("/storage/sdcard1");
 				
 			}
 		});			
-	
+	//	deviceListener.startWaiting();
 
 	}
 
@@ -66,8 +69,14 @@ public class NetActivity extends Activity {
 				@Override
 				public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 					DeviceInfo devInfo=(DeviceInfo) parent.getItemAtPosition(position);
-			//		MyApp.mBinder.ConnectDeivce(devInfo);
-					Log.e("root",MyApp.mBinder.GetShareList().get(0));
+					CoreApp.mBinder.ConnectDeivce(devInfo);
+					Log.e("devInfo",devInfo.getM_devicename()+"");
+					Log.e("GetShareListSize",CoreApp.mBinder.GetShareList().size()+"");
+					Iterator<String> i =MyApp.mBinder.GetShareList().iterator();
+					while(i.hasNext()){						
+						Log.e("GetShareList",i.next());
+					}
+					
 				//	MyApp.mBinder.getFolderChildren(devInfo, parentfolder, childrenfolder);
 					
 				}
