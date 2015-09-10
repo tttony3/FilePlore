@@ -3,6 +3,7 @@ package com.changhong.fileplore.activities;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.changhong.alljoyn.simpleclient.ClientBusHandler;
 import com.chobit.corestorage.ConnectedService;
 import com.chobit.corestorage.CoreApp;
 import com.chobit.corestorage.CoreHttpServerCB;
@@ -58,6 +59,12 @@ public class MainActivity extends Activity {
 	private ImageView cursor1;// 动画图片
 
 	@Override
+	protected void onResume() {
+		ClientBusHandler.List_DeviceInfo.clear();
+		super.onResume();
+	}
+
+	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		ActionBar actionBar = getActionBar();
@@ -69,17 +76,17 @@ public class MainActivity extends Activity {
 		manager = new LocalActivityManager(this, true);
 		manager.dispatchCreate(savedInstanceState);
 
-//		CoreApp app = (CoreApp) this.getApplicationContext();
-//		app.setConnectedService(new ConnectedService() {
-//
-//			@Override
-//			public void onConnected(Binder b) {
-//				CoreServiceBinder binder = (CoreServiceBinder) b;
-//			//	binder.init();
-//				binder.setCoreHttpServerCBFunction(httpServerCB);	
-//				binder.StartHttpServer("/", context);
-//			}
-//		});
+		CoreApp app = (CoreApp) this.getApplicationContext();
+		app.setConnectedService(new ConnectedService() {
+
+			@Override
+			public void onConnected(Binder b) {
+				CoreServiceBinder binder = (CoreServiceBinder) b;
+				binder.init();
+				binder.setCoreHttpServerCBFunction(httpServerCB);	
+				binder.StartHttpServer("/", context);
+			}
+		});
 
 		InitImageView();
 		initTextView();
@@ -337,6 +344,7 @@ public class MainActivity extends Activity {
 				curtime = System.currentTimeMillis();
 				return true;
 			}
+			else finish();
 		}
 		return super.onKeyDown(keyCode, event);
 	}
@@ -374,4 +382,12 @@ public class MainActivity extends Activity {
 			
 		}
 	};
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		
+		System.exit(0);
+		//或者下面这种方式
+		//android.os.Process.killProcess(android.os.Process.myPid()); 
+	}
 }

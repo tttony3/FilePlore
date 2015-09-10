@@ -35,6 +35,7 @@ import android.widget.Toast;
 
 public class PloreActivity extends Activity {
 	ArrayList<File> fileList = new ArrayList<File>();
+	ArrayList<String> shareList = new ArrayList<String>();
 	ListView mListView;
 	TextView mPathView;
 	ImageView iv_back;
@@ -55,6 +56,7 @@ public class PloreActivity extends Activity {
 		findView();
 
 		initView();
+		
 	}
 
 	private void findView() {
@@ -424,8 +426,9 @@ public class PloreActivity extends Activity {
 								initData(folder);
 							}
 							break;
+							
 						case 2:
-							if (CoreApp.mBinder != null) {
+							
 								if (!mFileAdpter.isShow_cb()) {
 									mFileAdpter.setShow_cb(true);
 									mFileAdpter.notifyDataSetChanged();
@@ -434,15 +437,25 @@ public class PloreActivity extends Activity {
 									for (int i = 0; i < mlist.length; i++) {
 										if (mlist[i]) {
 											File file = (File) mFileAdpter.getItem(i);
+											shareList.add(file.getPath());
+										//	CoreApp.mBinder.AddShareFile(file.getPath());
 											String s = CoreApp.mBinder.AddShareFile(file.getPath());
+											
 											Toast.makeText(PloreActivity.this, "AddShareFile  " + s, Toast.LENGTH_SHORT)
 													.show();
 										}
 									}
 									File folder = new File(mPathView.getText().toString());
 									initData(folder);
+									Toast.makeText(PloreActivity.this, "已共享", Toast.LENGTH_SHORT).show();
+//									Intent intent = new Intent();
+//									intent.setClass(PloreActivity.this,NetActivity.class);
+//									intent.putStringArrayListExtra("shareList", shareList);
+//									startActivity(intent);
+								
+								
 								}
-							}
+							
 							break;
 						default:
 							break;
