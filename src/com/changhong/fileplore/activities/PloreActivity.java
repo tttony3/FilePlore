@@ -53,7 +53,7 @@ public class PloreActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_plore);
 		findView();
-		
+
 		initView();
 	}
 
@@ -62,7 +62,7 @@ public class PloreActivity extends Activity {
 		mPathView = (TextView) findViewById(R.id.path);
 		mItemCount = (TextView) findViewById(R.id.item_count);
 		iv_back = (ImageView) findViewById(R.id.iv_back);
-		
+
 		btn_2 = (Button) findViewById(R.id.plore_btn_2);
 		btn_1 = (Button) findViewById(R.id.plore_btn_1);
 		btn_3 = (Button) findViewById(R.id.plore_btn_3);
@@ -122,7 +122,7 @@ public class PloreActivity extends Activity {
 			iv_back.setOnClickListener(myOnClickListener);
 			mPathView.setOnClickListener(myOnClickListener);
 			mItemCount.setText(names.length + "项");
-			
+
 			ArrayList<File> files = new ArrayList<File>();
 			for (int i = 0; i < names.length; i++) {
 				files.add(new File("/" + path + "/" + names[i]));
@@ -324,6 +324,7 @@ public class PloreActivity extends Activity {
 		public void onClick(View v) {
 
 			switch (v.getId()) {
+
 			case R.id.plore_btn_1:
 				fileList.clear();
 				final EditText ed = new EditText(PloreActivity.this);
@@ -339,8 +340,8 @@ public class PloreActivity extends Activity {
 						else {
 							if (file.mkdir())
 								Toast.makeText(PloreActivity.this, "文件夹创建成功", Toast.LENGTH_SHORT).show();
-							else{
-								
+							else {
+
 							}
 							File folder = new File(mPathView.getText().toString());
 							initData(folder);
@@ -412,7 +413,7 @@ public class PloreActivity extends Activity {
 										File file = (File) mFileAdpter.getItem(i);
 										Log.e("file", file.getName());
 										if (file.delete()) {
-											
+
 											Toast.makeText(PloreActivity.this, "删除成功", Toast.LENGTH_SHORT).show();
 										} else {
 											Toast.makeText(PloreActivity.this, "删除失败", Toast.LENGTH_SHORT).show();
@@ -433,8 +434,9 @@ public class PloreActivity extends Activity {
 									for (int i = 0; i < mlist.length; i++) {
 										if (mlist[i]) {
 											File file = (File) mFileAdpter.getItem(i);
-											String s =CoreApp.mBinder.AddShareFile(file.getPath());
-											Toast.makeText(PloreActivity.this, "AddShareFile  "+s, Toast.LENGTH_SHORT).show();
+											String s = CoreApp.mBinder.AddShareFile(file.getPath());
+											Toast.makeText(PloreActivity.this, "AddShareFile  " + s, Toast.LENGTH_SHORT)
+													.show();
 										}
 									}
 									File folder = new File(mPathView.getText().toString());
