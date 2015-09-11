@@ -1,5 +1,6 @@
 package com.changhong.fileplore.activities;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,7 +53,7 @@ public class MainActivity extends Activity {
 	TextView t1, t2;
 	TableLayout tl_brwloc;
 	RelativeLayout rl_brwnet;
-
+	MyPagerAdapter myPagerAdapter;
 	private int offset = 0;// 动画图片偏移量
 	private int currIndex = 0;// 当前页卡编号
 	private int bmpW;// 动画图片宽度
@@ -83,7 +84,7 @@ public class MainActivity extends Activity {
 			public void onConnected(Binder b) {
 				CoreServiceBinder binder = (CoreServiceBinder) b;
 				binder.init();
-				binder.setCoreHttpServerCBFunction(httpServerCB);	
+				binder.setCoreHttpServerCBFunction(httpServerCB);
 				binder.StartHttpServer("/", context);
 			}
 		});
@@ -122,7 +123,8 @@ public class MainActivity extends Activity {
 		rl_brwnet = (RelativeLayout) list.get(0).findViewById(R.id.browse_rl_net);
 		tl_brwloc.setOnClickListener(new MyOnClickListener(1));
 		rl_brwnet.setOnClickListener(new MyOnClickListener(2));
-		pager.setAdapter(new MyPagerAdapter(list));
+		myPagerAdapter = new MyPagerAdapter(list);
+		pager.setAdapter(myPagerAdapter);
 		pager.setCurrentItem(0);
 		pager.setOnPageChangeListener(new MyOnPageChangeListener());
 	}
@@ -203,6 +205,10 @@ public class MainActivity extends Activity {
 	 */
 	public class MyPagerAdapter extends PagerAdapter {
 		List<View> list = new ArrayList<View>();
+
+		public View getView(int index) {
+			return list.get(index);
+		}
 
 		public MyPagerAdapter(ArrayList<View> list) {
 			this.list = list;
@@ -339,18 +345,32 @@ public class MainActivity extends Activity {
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
-			if (System.currentTimeMillis() - curtime > 1000) {
-				Toast.makeText(MainActivity.this, "再按一次退出", Toast.LENGTH_SHORT).show();
-				curtime = System.currentTimeMillis();
-				return true;
+			if (currIndex == 0) {
+				if (System.currentTimeMillis() - curtime > 1000) {
+					Toast.makeText(MainActivity.this, "再按一次退出", Toast.LENGTH_SHORT).show();
+					curtime = System.currentTimeMillis();
+					return true;
+				} else
+					finish();
+			} else if (currIndex == 1) {
+
+				TextView tv = (TextView) myPagerAdapter.getView(1).findViewById(R.id.path);
+				String str = tv.getText().toString();
+				if (str.lastIndexOf("/") == 0) {
+					pager.setCurrentItem(0);
+					return true;
+				} else {
+					return tv.callOnClick();
+				}
+
 			}
-			else finish();
 		}
 		return super.onKeyDown(keyCode, event);
+		// pager.setCurrentItem(0);
+		// return true;
 	}
-	private CoreHttpServerCB httpServerCB = new CoreHttpServerCB() {
 
-		
+	private CoreHttpServerCB httpServerCB = new CoreHttpServerCB() {
 
 		@Override
 		public void onTransportUpdata(String arg0, String arg1, long arg2, long arg3, long arg4) {
@@ -366,7 +386,7 @@ public class MainActivity extends Activity {
 
 		@Override
 		public void onHttpServerStart(String ip, int port) {
-			
+
 			Log.i("tl", ip + "port" + port);
 
 		}
@@ -379,15 +399,16 @@ public class MainActivity extends Activity {
 		@Override
 		public void recivePushResources(List<String> resourceslist) {
 			// TODO Auto-generated method stub
-			
+
 		}
 	};
+
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
-		
+
 		System.exit(0);
-		//或者下面这种方式
-		//android.os.Process.killProcess(android.os.Process.myPid()); 
+		// 或者下面这种方式
+		// android.os.Process.killProcess(android.os.Process.myPid());
 	}
 }

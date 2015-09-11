@@ -1,9 +1,11 @@
 package com.changhong.fileplore.activities;
 
 import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
+import com.changhong.fileplore.widget.RefreshListView;
 import com.chobit.corestorage.CoreApp;
 import com.example.fileplore.R;
 
@@ -15,8 +17,10 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -33,10 +37,11 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class PloreActivity extends Activity {
+public class PloreActivity extends Activity implements RefreshListView.IOnRefreshListener {
 	ArrayList<File> fileList = new ArrayList<File>();
 	ArrayList<String> shareList = new ArrayList<String>();
-	ListView mListView;
+	private RefreshDataAsynTask mRefreshAsynTask;
+	RefreshListView mListView;
 	TextView mPathView;
 	ImageView iv_back;
 	TextView mItemCount;
@@ -56,11 +61,11 @@ public class PloreActivity extends Activity {
 		findView();
 
 		initView();
-		
+
 	}
 
 	private void findView() {
-		mListView = (ListView) findViewById(R.id.file_list);
+		mListView = (RefreshListView) findViewById(R.id.file_list);
 		mPathView = (TextView) findViewById(R.id.path);
 		mItemCount = (TextView) findViewById(R.id.item_count);
 		iv_back = (ImageView) findViewById(R.id.iv_back);
@@ -87,7 +92,7 @@ public class PloreActivity extends Activity {
 				return true;
 			}
 		});
-
+		mListView.setOnRefreshListener(this);
 		btn_1.setOnClickListener(btn_listener);
 		btn_2.setOnClickListener(btn_listener);
 		btn_3.setOnClickListener(btn_listener);
@@ -112,8 +117,9 @@ public class PloreActivity extends Activity {
 						mFileAdpter.notifyDataSetChanged();
 					} else {
 						String str = (String) mPathView.getText();
-						if (str.lastIndexOf("/") == 1) {
-							initData(new File("/storage"));
+						if (str.lastIndexOf("/") == 0) {
+							
+							 initData(new File("/storage"));
 						} else {
 							initData(new File((String) str.subSequence(0, str.lastIndexOf("/"))));
 						}
@@ -426,36 +432,36 @@ public class PloreActivity extends Activity {
 								initData(folder);
 							}
 							break;
-							
+
 						case 2:
-							
-								if (!mFileAdpter.isShow_cb()) {
-									mFileAdpter.setShow_cb(true);
-									mFileAdpter.notifyDataSetChanged();
-								} else {
-									Boolean[] mlist = mFileAdpter.getCheckBox_List();
-									for (int i = 0; i < mlist.length; i++) {
-										if (mlist[i]) {
-											File file = (File) mFileAdpter.getItem(i);
-											shareList.add(file.getPath());
-										//	CoreApp.mBinder.AddShareFile(file.getPath());
-											String s = CoreApp.mBinder.AddShareFile(file.getPath());
-											
-											Toast.makeText(PloreActivity.this, "AddShareFile  " + s, Toast.LENGTH_SHORT)
-													.show();
-										}
+
+							if (!mFileAdpter.isShow_cb()) {
+								mFileAdpter.setShow_cb(true);
+								mFileAdpter.notifyDataSetChanged();
+							} else {
+								Boolean[] mlist = mFileAdpter.getCheckBox_List();
+								for (int i = 0; i < mlist.length; i++) {
+									if (mlist[i]) {
+										File file = (File) mFileAdpter.getItem(i);
+										shareList.add(file.getPath());
+										// CoreApp.mBinder.AddShareFile(file.getPath());
+										String s = CoreApp.mBinder.AddShareFile(file.getPath());
+
+										Toast.makeText(PloreActivity.this, "AddShareFile  " + s, Toast.LENGTH_SHORT)
+												.show();
 									}
-									File folder = new File(mPathView.getText().toString());
-									initData(folder);
-									Toast.makeText(PloreActivity.this, "已共享", Toast.LENGTH_SHORT).show();
-//									Intent intent = new Intent();
-//									intent.setClass(PloreActivity.this,NetActivity.class);
-//									intent.putStringArrayListExtra("shareList", shareList);
-//									startActivity(intent);
-								
-								
 								}
-							
+								File folder = new File(mPathView.getText().toString());
+								initData(folder);
+								Toast.makeText(PloreActivity.this, "已共享", Toast.LENGTH_SHORT).show();
+								// Intent intent = new Intent();
+								// intent.setClass(PloreActivity.this,NetActivity.class);
+								// intent.putStringArrayListExtra("shareList",
+								// shareList);
+								// startActivity(intent);
+
+							}
+
 							break;
 						default:
 							break;
@@ -471,5 +477,44 @@ public class PloreActivity extends Activity {
 
 		}
 	};
+
+	class RefreshDataAsynTask extends AsyncTask<Void, Void, Void> {
+
+		@Override
+		protected Void doInBackground(Void... arg0) {
+
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			//
+			// index++;
+			// data.addFirst("genius" + index);
+
+			return null;
+		}
+
+		@Override
+		protected void onPostExecute(Void result) {
+			initData(new File(mPathView.getText().toString()));
+			// mFileAdpter.refreshData(data);
+			mListView.onRefreshComplete();
+		}
+
+	}
+
+	@Override
+	public void OnRefresh() {
+		mRefreshAsynTask = new RefreshDataAsynTask();
+		mRefreshAsynTask.execute();
+
+	}
+
+
+
+
+
 
 }

@@ -43,13 +43,13 @@ public class NetActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_net);
 		mList = (ListView) findViewById(R.id.lv_netactivity);
-		Intent intent = getIntent();
-		shareList = intent.getStringArrayListExtra("shareList");
 		dialog = new MyProgressDialog(NetActivity.this).getDialog();
 		Log.e("num", ClientBusHandler.List_DeviceInfo.size() + "");
+		ClientBusHandler.List_DeviceInfo.clear();
+		deviceListener.startWaiting();
 		CoreApp.mBinder.setDeviceListener(deviceListener);
 		CoreApp.mBinder.setShareFileListener(shareListener);
-		deviceListener.startWaiting();
+		
 //		
 //		CoreApp app = (CoreApp) this.getApplicationContext();
 //		app.setConnectedService(new ConnectedService() {
