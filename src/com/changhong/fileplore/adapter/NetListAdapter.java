@@ -1,5 +1,6 @@
 package com.changhong.fileplore.adapter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.changhong.alljoyn.simpleclient.DeviceInfo;
@@ -18,7 +19,10 @@ public class NetListAdapter extends BaseAdapter {
 
 	public NetListAdapter(List<DeviceInfo> list, Context context) {
 		super();
-		this.list = list;
+		if (null==list)
+			this.list=new ArrayList<DeviceInfo>();
+		else 
+			this.list = list;
 		inflater = LayoutInflater.from(context);
 
 	}
@@ -59,6 +63,12 @@ public class NetListAdapter extends BaseAdapter {
 	class ViewHolder {
 		public TextView name;
 		public TextView url;
+		
+	}
+
+	public void updatelistview(List<DeviceInfo> list2) {
+		list=list2;
+		notifyDataSetChanged();
 		
 	}
 }
