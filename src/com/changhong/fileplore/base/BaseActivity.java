@@ -1,4 +1,4 @@
-package com.changhong.fileplore.activities;
+package com.changhong.fileplore.base;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 

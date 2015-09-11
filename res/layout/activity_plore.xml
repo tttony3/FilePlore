@@ -61,10 +61,11 @@
         android:paddingEnd="5dp"
         android:paddingStart="5dp" >
 
-        <com.changhong.fileplore.widget.RefreshListView
+        <com.changhong.fileplore.view.RefreshListView
             android:id="@+id/file_list"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+             android:layout_above="@+id/ll_btn"
             android:cacheColorHint="@android:color/transparent"
             android:divider="@color/main_background"
             android:dividerHeight="4dp"
@@ -78,7 +79,7 @@
         android:layout_height="40dp"
         android:layout_alignParentBottom="true"
         android:orientation="horizontal"
-        android:visibility="visible" >
+        android:visibility="gone" >
 
         <Button
             android:id="@+id/plore_btn_1"

@@ -6,7 +6,7 @@ import java.util.List;
 
 import com.changhong.alljoyn.simpleclient.ClientBusHandler;
 import com.changhong.alljoyn.simpleclient.DeviceInfo;
-import com.changhong.fileplore.adapter.ListNetAdapter;
+import com.changhong.fileplore.adapter.NetListAdapter;
 import com.changhong.fileplore.application.MyApp;
 import com.changhong.fileplore.utils.MyProgressDialog;
 import com.changhong.synergystorage.javadata.JavaFolder;
@@ -113,7 +113,7 @@ public class NetActivity extends Activity {
 		public void updateDeviceList(List<DeviceInfo> list) {
 			Log.e("List_DeviceInfo", ClientBusHandler.List_DeviceInfo.size() + "");
 			Log.e("DeviceInfo", list.size() + "");
-			mList.setAdapter(new ListNetAdapter(list, context));
+			mList.setAdapter(new NetListAdapter(list, context));
 			mList.setOnItemClickListener(new OnItemClickListener() {
 
 				@Override

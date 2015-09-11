@@ -12,11 +12,11 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-public class ListNetAdapter extends BaseAdapter {
+public class NetListAdapter extends BaseAdapter {
 	private LayoutInflater inflater;
 	private List<DeviceInfo> list;
 
-	public ListNetAdapter(List<DeviceInfo> list, Context context) {
+	public NetListAdapter(List<DeviceInfo> list, Context context) {
 		super();
 		this.list = list;
 		inflater = LayoutInflater.from(context);

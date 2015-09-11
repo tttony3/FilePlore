@@ -22,7 +22,7 @@ public class ClassifyGridActivity extends Activity {
 	GridView gv_classify;
 	TextView tv_dir;
 	int flg;
-	GridAdapter gridAdapter;
+	ClassifyGridAdapter gridAdapter;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -44,7 +44,7 @@ public class ClassifyGridActivity extends Activity {
 
 		case R.id.img_movie:
 			ArrayList<Content> videos = Utils.getVideo(this);
-			gridAdapter = new GridAdapter(videos, this, R.id.img_movie);
+			gridAdapter = new ClassifyGridAdapter(videos, this, R.id.img_movie);
 			gv_classify.setAdapter(gridAdapter);
 			gv_classify.setOnItemClickListener(new OnItemClickListener() {
 
@@ -61,7 +61,7 @@ public class ClassifyGridActivity extends Activity {
 			break;
 		case R.id.img_photo:
 			ArrayList<Content> photos = Utils.getPhotoCata(this);
-			gridAdapter = new GridAdapter(photos, this, R.id.img_photo);
+			gridAdapter = new ClassifyGridAdapter(photos, this, R.id.img_photo);
 			gv_classify.setAdapter(gridAdapter);
 			gv_classify.setOnItemClickListener(new myOnItemClickListener());
 			break;

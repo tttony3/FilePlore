@@ -1,6 +1,5 @@
 package com.changhong.fileplore.activities;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -357,7 +356,8 @@ public class MainActivity extends Activity {
 				TextView tv = (TextView) myPagerAdapter.getView(1).findViewById(R.id.path);
 				String str = tv.getText().toString();
 				if (str.lastIndexOf("/") == 0) {
-					pager.setCurrentItem(0);
+						tv.callOnClick();
+						pager.setCurrentItem(0);
 					return true;
 				} else {
 					return tv.callOnClick();
@@ -366,8 +366,7 @@ public class MainActivity extends Activity {
 			}
 		}
 		return super.onKeyDown(keyCode, event);
-		// pager.setCurrentItem(0);
-		// return true;
+	
 	}
 
 	private CoreHttpServerCB httpServerCB = new CoreHttpServerCB() {

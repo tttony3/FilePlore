@@ -1,4 +1,4 @@
-package com.changhong.fileplore.widget;
+package com.changhong.fileplore.view;
 
 import java.util.Date;
 

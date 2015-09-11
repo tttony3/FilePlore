@@ -13,14 +13,22 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class ListAdapter extends BaseAdapter {
+public class ClassifyGridAdapter extends BaseAdapter {
 	private LayoutInflater inflater;
-	private ArrayList<Content> content;
-	private int type;
+	private ArrayList<Content> pictures;
+	private int type = 0;
 
-	public ListAdapter(ArrayList<Content> content, Context context, int type) {
+	/**
+	 * 
+	 * @param pictures
+	 *            适配列表
+	 * @param context
+	 * @param type
+	 *            按钮id(R.id.XX)
+	 */
+	public ClassifyGridAdapter(ArrayList<Content> pictures, Context context, int type) {
 		super();
-		this.content = content;
+		this.pictures = pictures;
 		inflater = LayoutInflater.from(context);
 		this.type = type;
 
@@ -28,18 +36,20 @@ public class ListAdapter extends BaseAdapter {
 
 	@Override
 	public int getCount() {
-		return content.size();
+		if (null != pictures) {
+			return pictures.size();
+		} else {
+			return 0;
+		}
 	}
 
 	@Override
 	public Object getItem(int position) {
-		// TODO Auto-generated method stub
-		return content.get(position);
+		return pictures.get(position);
 	}
 
 	@Override
 	public long getItemId(int position) {
-		// TODO Auto-generated method stub
 		return position;
 	}
 
@@ -47,36 +57,35 @@ public class ListAdapter extends BaseAdapter {
 	public View getView(int position, View convertView, ViewGroup parent) {
 		ViewHolder viewHolder;
 		if (convertView == null) {
-			convertView = inflater.inflate(R.layout.listitem_plore, null);
+			convertView = inflater.inflate(R.layout.griditem_classify, null);
 			viewHolder = new ViewHolder();
-			viewHolder.title = (TextView) convertView.findViewById(R.id.filename);
-			viewHolder.singer = (TextView) convertView.findViewById(R.id.lasttime);
-			viewHolder.image = (ImageView) convertView.findViewById(R.id.fileimg);
+			viewHolder.title = (TextView) convertView.findViewById(R.id.griditem_text);
+			viewHolder.image = (ImageView) convertView.findViewById(R.id.griditem_img);
 			convertView.setTag(viewHolder);
 		} else {
 			viewHolder = (ViewHolder) convertView.getTag();
 		}
-		viewHolder.title.setText(content.get(position).getTitle());
-		if (type == R.id.img_music)
-			viewHolder.singer.setText(content.get(position).getSinger());
-		if (type == R.id.img_txt)
-			viewHolder.singer.setText(content.get(position).getTime());
-		if (null != content.get(position).getImg())
-			viewHolder.image.setImageBitmap(content.get(position).getImg());
+		viewHolder.title.setText(pictures.get(position).getTitle());
+		if (null != pictures.get(position).getImg())
+			viewHolder.image.setImageBitmap(pictures.get(position).getImg());
 		else if (type == R.id.img_music)
 			viewHolder.image.setBackgroundResource(R.drawable.file_icon_music);
+		else if (type == R.id.img_movie)
+			viewHolder.image.setBackgroundResource(R.drawable.file_icon_movie);
 		else if (type == R.id.img_txt)
 			viewHolder.image.setBackgroundResource(R.drawable.file_icon_txt);
 		else if (type == R.id.img_zip)
 			viewHolder.image.setBackgroundResource(R.drawable.file_icon_zip);
-		else if (type == R.id.img_apk)
-			viewHolder.image.setBackgroundResource(R.drawable.file_icon_apk);
+		else if (type == R.id.img_photo)
+			viewHolder.image.setBackgroundResource(R.drawable.file_icon_photo);
+		else
+			viewHolder.image.setBackgroundResource(R.drawable.file_icon_unknown);
 		return convertView;
 	}
 
 	class ViewHolder {
 		public TextView title;
-		public TextView singer;
 		public ImageView image;
 	}
+
 }

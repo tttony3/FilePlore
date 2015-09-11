@@ -1,39 +1,30 @@
 package com.changhong.fileplore.activities;
 
 import java.io.File;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
-import com.changhong.fileplore.widget.RefreshListView;
+import com.changhong.fileplore.adapter.PloreListAdapter;
+import com.changhong.fileplore.view.RefreshListView;
 import com.chobit.corestorage.CoreApp;
 import com.example.fileplore.R;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.ContentProviderOperation;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
-import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ListView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -50,7 +41,8 @@ public class PloreActivity extends Activity implements RefreshListView.IOnRefres
 	Button btn_2;
 	Button btn_3;
 	Button btn_more;
-	FileListAdapter mFileAdpter;
+	public PloreListAdapter mFileAdpter;
+	public LinearLayout ll_btn;
 	public AlertDialog.Builder builder;
 	myItemListener mylistener = new myItemListener();
 
@@ -74,6 +66,7 @@ public class PloreActivity extends Activity implements RefreshListView.IOnRefres
 		btn_1 = (Button) findViewById(R.id.plore_btn_1);
 		btn_3 = (Button) findViewById(R.id.plore_btn_3);
 		btn_more = (Button) findViewById(R.id.plore_btn_more);
+		ll_btn = (LinearLayout) findViewById(R.id.ll_btn);
 	}
 
 	private void initView() {
@@ -83,9 +76,9 @@ public class PloreActivity extends Activity implements RefreshListView.IOnRefres
 
 			@Override
 			public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-
 				if (!mFileAdpter.isShow_cb()) {
 					mFileAdpter.setShow_cb(true);
+					ll_btn.setVisibility(View.VISIBLE);
 					mFileAdpter.notifyDataSetChanged();
 				} else {
 				}
@@ -102,7 +95,7 @@ public class PloreActivity extends Activity implements RefreshListView.IOnRefres
 	}
 
 	void initData(File folder) {
-		mylistener.smb = 0;
+		ll_btn.setVisibility(View.GONE);
 		boolean isRoot = (folder.getParent() == null);
 		if (folder.canRead()) {
 			String path = folder.getPath();
@@ -114,12 +107,13 @@ public class PloreActivity extends Activity implements RefreshListView.IOnRefres
 				public void onClick(View v) {
 					if (mFileAdpter.isShow_cb()) {
 						mFileAdpter.setShow_cb(false);
+						ll_btn.setVisibility(View.GONE);
 						mFileAdpter.notifyDataSetChanged();
 					} else {
 						String str = (String) mPathView.getText();
 						if (str.lastIndexOf("/") == 0) {
-							
-							 initData(new File("/storage"));
+
+							initData(new File("/storage"));
 						} else {
 							initData(new File((String) str.subSequence(0, str.lastIndexOf("/"))));
 						}
@@ -161,122 +155,16 @@ public class PloreActivity extends Activity implements RefreshListView.IOnRefres
 						files.add(j, tmp);
 					}
 				}
-			mFileAdpter = new FileListAdapter(this, files, isRoot);
+			mFileAdpter = new PloreListAdapter(this, files, isRoot);
 
 			mListView.setAdapter(mFileAdpter);
 		}
 
 	}
 
-	public class FileListAdapter extends BaseAdapter {
 
-		private ArrayList<File> files;
-		private Boolean[] checkbox_list;
 
-		public Boolean[] getCheckBox_List() {
-			return checkbox_list;
-		}
-
-		public void setcheckbox_list(Boolean[] checkbox_list) {
-			this.checkbox_list = checkbox_list;
-		}
-
-		private LayoutInflater mInflater;
-		private boolean show_cb = false;
-
-		public FileListAdapter(Context context, ArrayList<File> files, boolean isRoot) {
-			this.files = files;
-			checkbox_list = new Boolean[files.size()];
-			for (int i = 0; i < checkbox_list.length; i++) {
-				checkbox_list[i] = false;
-			}
-			mInflater = LayoutInflater.from(context);
-		}
-
-		@Override
-		public int getCount() {
-			return files.size();
-		}
-
-		@Override
-		public Object getItem(int position) {
-			return files.get(position);
-		}
-
-		@Override
-		public long getItemId(int position) {
-			return position;
-		}
-
-		@SuppressLint("SimpleDateFormat")
-		@Override
-		public View getView(final int position, View convertView, ViewGroup parent) {
-			ViewHolder viewHolder;
-			if (convertView == null) {
-				viewHolder = new ViewHolder();
-				convertView = mInflater.inflate(R.layout.listitem_plore, null);
-				convertView.setTag(viewHolder);
-				viewHolder.cb = (CheckBox) convertView.findViewById(R.id.cb);
-				viewHolder.name = (TextView) convertView.findViewById(R.id.filename);
-				viewHolder.time = (TextView) convertView.findViewById(R.id.lasttime);
-				viewHolder.img = (ImageView) convertView.findViewById(R.id.fileimg);
-			} else {
-				viewHolder = (ViewHolder) convertView.getTag();
-			}
-
-			File file = (File) getItem(position);
-			String fileName = ((File) file).getName();
-			viewHolder.name.setText(fileName);
-			if (show_cb) {
-				viewHolder.cb.setChecked(checkbox_list[position]);
-				viewHolder.cb.setVisibility(View.VISIBLE);
-
-			} else {
-				viewHolder.cb.setChecked(checkbox_list[position]);
-				viewHolder.cb.setVisibility(View.GONE);
-
-			}
-			viewHolder.cb.setOnClickListener(new OnClickListener() {
-
-				@Override
-				public void onClick(View v) {
-					if (((CheckBox) v).isChecked()) {
-						checkbox_list[position] = true;
-					} else
-						checkbox_list[position] = false;
-				}
-			});
-			if (((File) file).isDirectory()) {
-
-				viewHolder.name.setText(fileName);
-				viewHolder.time.setVisibility(View.GONE);
-				viewHolder.img.setImageResource(R.drawable.file_icon_folder);
-			} else {
-
-				viewHolder.name.setText(fileName);
-				viewHolder.img.setImageResource(R.drawable.file_icon_txt);
-				viewHolder.time.setText(new SimpleDateFormat("yyyy/MM/dd HH:mm").format(((File) file).lastModified()));
-			}
-
-			return convertView;
-		}
-
-		public boolean isShow_cb() {
-			return show_cb;
-		}
-
-		public void setShow_cb(boolean show_cb) {
-			this.show_cb = show_cb;
-		}
-
-		class ViewHolder {
-			private CheckBox cb;
-			private ImageView img;
-			private TextView name;
-			private TextView time;
-		}
-	}
-
+	// listview监听
 	class myItemListener implements OnItemClickListener {
 		public int smb = 0;
 
@@ -326,6 +214,9 @@ public class PloreActivity extends Activity implements RefreshListView.IOnRefres
 		}
 	}
 
+	/** 
+	 * 底部button监听
+	 *  */
 	private OnClickListener btn_listener = new View.OnClickListener() {
 
 		@Override
@@ -511,10 +402,5 @@ public class PloreActivity extends Activity implements RefreshListView.IOnRefres
 		mRefreshAsynTask.execute();
 
 	}
-
-
-
-
-
 
 }

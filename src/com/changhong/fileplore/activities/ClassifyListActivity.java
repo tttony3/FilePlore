@@ -4,10 +4,9 @@ import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
-import com.changhong.fileplore.adapter.ListAdapter;
+import com.changhong.fileplore.adapter.ClassifyListAdapter;
 import com.changhong.fileplore.utils.Content;
 import com.changhong.fileplore.utils.Utils;
-import com.chobit.corestorage.CoreApp;
 import com.example.fileplore.R;
 
 import android.app.Activity;
@@ -16,7 +15,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -33,7 +31,7 @@ public class ClassifyListActivity extends Activity {
 	static TextView tv_count;
 	int flg;
 	MyHandler handler;
-	static ListAdapter listAdapter;
+	static ClassifyListAdapter listAdapter;
 	static ProgressDialog dialog;
 
 	static class MyHandler extends Handler {
@@ -53,19 +51,19 @@ public class ClassifyListActivity extends Activity {
 				ArrayList<Content> zips = (ArrayList<Content>) msg.getData().get("zips");
 				ArrayList<Content> apks = (ArrayList<Content>) msg.getData().get("apks");
 				if (txts != null) {
-					listAdapter = new ListAdapter(txts, theActivity, R.id.img_txt);
+					listAdapter = new ClassifyListAdapter(txts, theActivity, R.id.img_txt);
 					dialog.dismiss();
 					lv_classify.setAdapter(listAdapter);
 					tv_count.setText(txts.size() + " 项");
 				}
 				if (zips != null) {
-					listAdapter = new ListAdapter(zips, theActivity, R.id.img_zip);
+					listAdapter = new ClassifyListAdapter(zips, theActivity, R.id.img_zip);
 					dialog.dismiss();
 					lv_classify.setAdapter(listAdapter);
 					tv_count.setText(zips.size() + " 项");
 				}
 				if (apks != null) {
-					listAdapter = new ListAdapter(apks, theActivity, R.id.img_apk);
+					listAdapter = new ClassifyListAdapter(apks, theActivity, R.id.img_apk);
 					dialog.dismiss();
 					lv_classify.setAdapter(listAdapter);
 					tv_count.setText(apks.size() + " 项");
@@ -89,7 +87,7 @@ public class ClassifyListActivity extends Activity {
 		switch (flg) {
 		case R.id.img_music:
 			ArrayList<Content> musics = Utils.getMusic(this);
-			listAdapter = new ListAdapter(musics, this, R.id.img_music);
+			listAdapter = new ClassifyListAdapter(musics, this, R.id.img_music);
 			lv_classify.setAdapter(listAdapter);
 			tv_count.setText(musics.size() + " 项");
 			break;
@@ -206,7 +204,7 @@ public class ClassifyListActivity extends Activity {
 			switch (flg) {
 			case R.id.img_music:
 				ArrayList<Content> musics = Utils.getMusic(this);
-				listAdapter = new ListAdapter(musics, this, R.id.img_music);
+				listAdapter = new ClassifyListAdapter(musics, this, R.id.img_music);
 				lv_classify.setAdapter(listAdapter);
 				tv_count.setText(musics.size() + " 项");
 				break;

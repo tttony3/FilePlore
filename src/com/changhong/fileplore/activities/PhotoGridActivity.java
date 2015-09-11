@@ -3,8 +3,9 @@ package com.changhong.fileplore.activities;
 import java.io.File;
 import java.util.ArrayList;
 
-import com.changhong.fileplore.adapter.GridAdapter;
+import com.changhong.fileplore.adapter.ClassifyGridAdapter;
 import com.changhong.fileplore.adapter.PhotoGirdAdapter;
+import com.changhong.fileplore.base.AbsListViewBaseActivity;
 import com.changhong.fileplore.utils.Content;
 import com.changhong.fileplore.utils.Utils;
 import com.example.fileplore.R;
@@ -30,7 +31,7 @@ public class PhotoGridActivity extends AbsListViewBaseActivity {
 	TextView tv_dir;
 	int flg;
 	Handler handler;
-	GridAdapter gridAdapter;
+	ClassifyGridAdapter gridAdapter;
 	PhotoGirdAdapter imageAdapter;
 	String[] content;
 	ProgressDialog dialog;
