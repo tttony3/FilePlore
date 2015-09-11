@@ -14,7 +14,7 @@ hs_err_pid*
 
 *.class
 *.apk
-bin/
+/bin
 gen/
 .settings/
 proguard/
