@@ -3,7 +3,7 @@ package com.changhong.fileplore.adapter;
 import java.util.ArrayList;
 
 import com.changhong.fileplore.utils.Content;
-import com.example.fileplore.R;
+import com.changhong.fileplore.R;
 
 import android.content.Context;
 import android.view.LayoutInflater;

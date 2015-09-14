@@ -2,7 +2,7 @@ package com.changhong.fileplore.view;
 
 import java.util.Date;
 
-import com.example.fileplore.R;
+import com.changhong.fileplore.R;
 
 import android.content.Context;
 import android.util.AttributeSet;

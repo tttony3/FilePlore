@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.fileplore"
+    package="com.changhong.fileplore"
     android:versionCode="1"
     android:versionName="1.0" >
 
@@ -65,10 +65,13 @@
             android:label="PhotoGridActivity" >
         </activity>
         <activity
-            android:name="com.changhong.fileplore.activities.NetActivity"
-            android:label="NetActivity" >
+            android:name="com.changhong.fileplore.activities.ShowNetDevActivity"
+            android:label="ShowNetDevActivity" >
         </activity>
-
+   <activity
+            android:name="com.changhong.fileplore.activities.ShowNetSharePathActivity"
+            android:label="ShowNetSharePathActivity" >
+        </activity>
         <service
             android:name="com.chobit.corestorage.CoreService"
             android:permission="com.chobit.corestorage.CoreService" >

@@ -8,7 +8,7 @@ import com.changhong.fileplore.adapter.PhotoGirdAdapter;
 import com.changhong.fileplore.base.AbsListViewBaseActivity;
 import com.changhong.fileplore.utils.Content;
 import com.changhong.fileplore.utils.Utils;
-import com.example.fileplore.R;
+import com.changhong.fileplore.R;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
 import android.app.ProgressDialog;

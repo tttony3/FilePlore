@@ -5,18 +5,19 @@ import java.util.List;
 
 import com.changhong.alljoyn.simpleclient.ClientBusHandler;
 import com.changhong.alljoyn.simpleclient.DeviceInfo;
-import com.changhong.fileplore.adapter.NetListAdapter;
+import com.changhong.fileplore.adapter.NetDevListAdapter;
 import com.changhong.fileplore.utils.MyProgressDialog;
 import com.changhong.synergystorage.javadata.JavaFolder;
 import com.chobit.corestorage.CoreApp;
 import com.chobit.corestorage.CoreDeviceListener;
 import com.chobit.corestorage.CoreHttpServerCB;
 import com.chobit.corestorage.CoreShareFileListener;
-import com.example.fileplore.R;
+import com.changhong.fileplore.R;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
@@ -26,71 +27,67 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
-public class NetActivity extends Activity {
-	Context context = NetActivity.this;
+public class ShowNetDevActivity extends Activity {
+	Context context = ShowNetDevActivity.this;
 	ProgressDialog dialog;
-	ListView mList;
+	ListView netList;
 	ArrayList<String> shareList;
-	NetListAdapter netListAdapter;
+	NetDevListAdapter netListAdapter;
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_net);
-		mList = (ListView) findViewById(R.id.lv_netactivity);
-		dialog = new MyProgressDialog(NetActivity.this).getDialog();
-		Log.e("num", ClientBusHandler.List_DeviceInfo.size() + "");
-		 netListAdapter= new NetListAdapter(null, context);
-		mList.setAdapter(netListAdapter);
-		ClientBusHandler.List_DeviceInfo.clear();
-		deviceListener.startWaiting();
-		CoreApp.mBinder.setDeviceListener(deviceListener);
-		CoreApp.mBinder.setShareFileListener(shareListener);
+		setContentView(R.layout.activity_net_dev);
+		netList = (ListView) findViewById(R.id.lv_netactivity);
+		dialog = new MyProgressDialog(ShowNetDevActivity.this).getDialog();
 
-		mList.setOnItemClickListener(new OnItemClickListener() {
+		// ClientBusHandler.List_DeviceInfo.clear();
+
+		if (CoreApp.mBinder != null) {
+			CoreApp.mBinder.setDeviceListener(deviceListener);
+			deviceListener.startWaiting();
+			setUpdateList(CoreApp.mBinder.GetDeviceList());
+
+		}
+
+		netList.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 				DeviceInfo devInfo = (DeviceInfo) parent.getItemAtPosition(position);
-
 				CoreApp.mBinder.ConnectDeivce(devInfo);
+				Intent intent = new Intent();
+				intent.setClass(ShowNetDevActivity.this, ShowNetSharePathActivity.class);
+				// Bundle bundle = new Bundle();
+				// bundle.putSerializable("devinfo", devInfo);
+				// intent.putExtra("devinfo", bundle);
+				startActivity(intent);
+				// CoreApp.mBinder.DisConnectDeivce();
 
-				Log.e("devInfo", devInfo.getM_devicename() + "");
+				// CoreApp.mBinder.setShareFileListener(shareListener);
+				// Log.e("devInfo", devInfo.getM_devicename() + "");
 
 			}
 		});
 		//
-		// CoreApp app = (CoreApp) this.getApplicationContext();
-		// app.setConnectedService(new ConnectedService() {
-		//
-		// @Override
-		// public void onConnected(Binder b) {
-		// CoreServiceBinder binder = (CoreServiceBinder) b;
-		//
-		// binder.setDeviceListener(deviceListener);
-		// binder.init();
-		// binder.setCoreHttpServerCBFunction(httpServerCB);
-		// binder.StartHttpServer("/", context);
-		//// if (shareList != null) {
-		//// Iterator<String> iterator = shareList.iterator();
-		//// while (iterator.hasNext()) {
-		//// String str = iterator.next();
-		//// Log.e("share path", str);
-		//// binder.AddShareFile(str);
-		//// }
-		//// }
-		//
-		// }
-		// });
-		// deviceListener.startWaiting();
+
+	}
+
+	private void setUpdateList(List<DeviceInfo> list) {
+		Log.e("ss", list.toString());
+		if (list.size() > 0) {
+			deviceListener.stopWaiting();
+		}
+		netListAdapter = new NetDevListAdapter(list, context);
+		netList.setAdapter(netListAdapter);
 	}
 
 	private CoreShareFileListener shareListener = new CoreShareFileListener() {
 
 		@Override
 		public void updateShareContent(JavaFolder folder) {
-			Log.e("sss", "folder " + folder.toString());
+			Log.e("sss", "folder " + folder.getSubFileList().toString());
 			Log.e("sss", "folder subnum" + folder.getSubFileNum());
-			
 
 		}
 
@@ -119,20 +116,23 @@ public class NetActivity extends Activity {
 		public void updateDeviceList(List<DeviceInfo> list) {
 			Log.e("List_DeviceInfo", ClientBusHandler.List_DeviceInfo.size() + "");
 			Log.e("DeviceInfo", list.size() + "");
-			netListAdapter.updatelistview(list);
-		//	mList.setAdapter(new NetListAdapter(list, context));
-//			mList.setOnItemClickListener(new OnItemClickListener() {
-//
-//				@Override
-//				public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//					DeviceInfo devInfo = (DeviceInfo) parent.getItemAtPosition(position);
-//
-//					CoreApp.mBinder.ConnectDeivce(devInfo);
-//
-//					Log.e("devInfo", devInfo.getM_devicename() + "");
-//
-//				}
-//			});
+			setUpdateList(list);
+			// netListAdapter.updatelistview(list);
+			// mList.setAdapter(new NetListAdapter(list, context));
+			// mList.setOnItemClickListener(new OnItemClickListener() {
+			//
+			// @Override
+			// public void onItemClick(AdapterView<?> parent, View view, int
+			// position, long id) {
+			// DeviceInfo devInfo = (DeviceInfo)
+			// parent.getItemAtPosition(position);
+			//
+			// CoreApp.mBinder.ConnectDeivce(devInfo);
+			//
+			// Log.e("devInfo", devInfo.getM_devicename() + "");
+			//
+			// }
+			// });
 
 		}
 
@@ -168,8 +168,6 @@ public class NetActivity extends Activity {
 		@Override
 		public void onHttpServerStart(String ip, int port) {
 
-			Log.i("tl", ip + "port" + port);
-
 		}
 
 		@Override
@@ -191,7 +189,7 @@ public class NetActivity extends Activity {
 
 			// app.onTerminate();
 			// CoreApp.mBinder.deinit();
-			 CoreApp.mBinder.DisConnectDeivce();
+			// CoreApp.mBinder.DisConnectDeivce();
 			//
 
 			// Intent intent = new Intent("com.chobit.corestorage.CoreService");

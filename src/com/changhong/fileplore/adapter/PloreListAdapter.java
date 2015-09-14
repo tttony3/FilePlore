@@ -4,7 +4,7 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
-import com.example.fileplore.R;
+import com.changhong.fileplore.R;
 
 import android.annotation.SuppressLint;
 import android.content.Context;

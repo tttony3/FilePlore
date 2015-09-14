@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import com.changhong.fileplore.adapter.ClassifyListAdapter;
 import com.changhong.fileplore.utils.Content;
 import com.changhong.fileplore.utils.Utils;
-import com.example.fileplore.R;
+import com.changhong.fileplore.R;
 
 import android.app.Activity;
 import android.app.ProgressDialog;

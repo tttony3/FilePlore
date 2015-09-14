@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import com.changhong.fileplore.adapter.PloreListAdapter;
 import com.changhong.fileplore.view.RefreshListView;
 import com.chobit.corestorage.CoreApp;
-import com.example.fileplore.R;
+import com.changhong.fileplore.R;
 
 import android.app.Activity;
 import android.app.AlertDialog;

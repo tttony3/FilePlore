@@ -7,7 +7,7 @@ import java.net.MalformedURLException;
 import java.util.ArrayList;
 
 import com.changhong.fileplore.adapter.SambaListAdapter;
-import com.example.fileplore.R;
+import com.changhong.fileplore.R;
 
 import android.app.Activity;
 import android.content.Intent;

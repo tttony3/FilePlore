@@ -1,7 +1,7 @@
 package com.changhong.fileplore.activities;
 
 import com.changhong.fileplore.utils.Utils;
-import com.example.fileplore.R;
+import com.changhong.fileplore.R;
 
 import android.app.Activity;
 import android.content.Intent;

@@ -8,7 +8,7 @@ import com.chobit.corestorage.ConnectedService;
 import com.chobit.corestorage.CoreApp;
 import com.chobit.corestorage.CoreHttpServerCB;
 import com.chobit.corestorage.CoreService.CoreServiceBinder;
-import com.example.fileplore.R;
+import com.changhong.fileplore.R;
 
 import android.os.Binder;
 import android.os.Bundle;
@@ -330,7 +330,7 @@ public class MainActivity extends Activity {
 				pager.setCurrentItem(index);
 			else if (index == 2) {
 				Intent intent = new Intent();
-				intent.setClass(MainActivity.this, NetActivity.class);
+				intent.setClass(MainActivity.this, ShowNetDevActivity.class);
 				startActivity(intent);
 
 				// Toast.makeText(MainActivity.this, "net",

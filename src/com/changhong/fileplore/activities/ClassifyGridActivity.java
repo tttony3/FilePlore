@@ -5,7 +5,7 @@ import java.util.ArrayList;
 
 import com.changhong.fileplore.utils.Utils;
 import com.changhong.fileplore.adapter.*;
-import com.example.fileplore.R;
+import com.changhong.fileplore.R;
 import com.changhong.fileplore.utils.Content;
 
 import android.app.Activity;

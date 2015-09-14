@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.changhong.alljoyn.simpleclient.DeviceInfo;
-import com.example.fileplore.R;
+import com.changhong.fileplore.R;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -13,11 +13,11 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-public class NetListAdapter extends BaseAdapter {
+public class NetDevListAdapter extends BaseAdapter {
 	private LayoutInflater inflater;
 	private List<DeviceInfo> list;
 
-	public NetListAdapter(List<DeviceInfo> list, Context context) {
+	public NetDevListAdapter(List<DeviceInfo> list, Context context) {
 		super();
 		if (null==list)
 			this.list=new ArrayList<DeviceInfo>();
@@ -46,7 +46,7 @@ public class NetListAdapter extends BaseAdapter {
 	public View getView(int position, View convertView, ViewGroup parent) {
 		ViewHolder viewHolder;
 		if (convertView == null) {
-			convertView = inflater.inflate(R.layout.listitem_net, null);
+			convertView = inflater.inflate(R.layout.listitem_netdev, null);
 			viewHolder = new ViewHolder();
 			viewHolder.name = (TextView) convertView.findViewById(R.id.tv_net_devname);
 			viewHolder.url = (TextView) convertView.findViewById(R.id.tv_net_devurl);

@@ -3,7 +3,7 @@ package com.changhong.fileplore.adapter;
 import java.util.ArrayList;
 
 import com.changhong.fileplore.utils.Content;
-import com.example.fileplore.R;
+import com.changhong.fileplore.R;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
