@@ -8,5 +8,6 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="gen"/>
 	<classpathentry kind="lib" path="F:/tlEclipseWorkSpace/FilePlore/libs/CoreSynergyStorage.jar"/>
+	<classpathentry kind="src" path="/SlidingMenuLib"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

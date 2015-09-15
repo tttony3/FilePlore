@@ -8,6 +8,8 @@ import com.chobit.corestorage.ConnectedService;
 import com.chobit.corestorage.CoreApp;
 import com.chobit.corestorage.CoreHttpServerCB;
 import com.chobit.corestorage.CoreService.CoreServiceBinder;
+import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
+import com.jeremyfeinstein.slidingmenu.lib.app.SlidingFragmentActivity;
 import com.changhong.fileplore.R;
 
 import android.os.Binder;
@@ -21,6 +23,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -45,6 +48,7 @@ import android.widget.Toast;
 
 @SuppressWarnings("deprecation")
 public class MainActivity extends Activity {
+	final ArrayList<View> list = new ArrayList<View>();
 	Context context = null;
 	LocalActivityManager manager = null;
 	ViewPager pager = null;
@@ -60,7 +64,7 @@ public class MainActivity extends Activity {
 
 	@Override
 	protected void onResume() {
-		ClientBusHandler.List_DeviceInfo.clear();
+	//	ClientBusHandler.List_DeviceInfo.clear();
 		super.onResume();
 	}
 
@@ -91,7 +95,33 @@ public class MainActivity extends Activity {
 		InitImageView();
 		initTextView();
 		initPagerViewer();
-
+		////////////////////////////////////////////////////////////////
+//		  getSupportFragmentManager().beginTransaction()
+//		  						.replace(R.id.menu_frame, new MenuFragment()).commit();
+//		
+//		 SlidingMenu sm = getSlidingMenu();
+//	        sm.setBehindOffsetRes(R.dimen.slidingmenu_offset);
+//	        sm.setFadeEnabled(false);
+//	        sm.setBehindScrollScale(0.2f);
+//	        sm.setFadeDegree(0.2f);
+//
+//	        sm.setBackgroundImage(R.drawable.img_frame_background);
+//	        sm.setBehindCanvasTransformer(new SlidingMenu.CanvasTransformer() {
+//	            @Override
+//	            public void transformCanvas(Canvas canvas, float percentOpen) {
+//	                float scale = (float) (percentOpen * 0.25 + 0.75);
+//	                canvas.scale(scale, scale, -canvas.getWidth() / 2,
+//	                        canvas.getHeight() / 2);
+//	            }
+//	        });
+//
+//	        sm.setAboveCanvasTransformer(new SlidingMenu.CanvasTransformer() {
+//	            @Override
+//	            public void transformCanvas(Canvas canvas, float percentOpen) {
+//	                float scale = (float) (1 - percentOpen * 0.15);
+//	                canvas.scale(scale, scale, 0, canvas.getHeight() / 2);
+//	            }
+//	        });
 	}
 
 	/**
@@ -112,7 +142,7 @@ public class MainActivity extends Activity {
 	private void initPagerViewer() {
 
 		pager = (ViewPager) findViewById(R.id.viewpage);
-		final ArrayList<View> list = new ArrayList<View>();
+		
 		Intent intent1 = new Intent(context, BrowseActivity.class);
 		list.add(0, getView("A", intent1));
 		Intent intent2 = new Intent(context, PloreActivity.class);
@@ -155,7 +185,7 @@ public class MainActivity extends Activity {
 		if (id == R.id.action_local) {
 			pager.setCurrentItem(1);
 		}
-		if (id == R.id.action_samba) {
+		else if (id == R.id.action_samba) {
 			LayoutInflater inflater = getLayoutInflater();
 			final View layout = inflater.inflate(R.layout.samba_option, (ViewGroup) findViewById(R.id.samba_op));
 
@@ -183,6 +213,11 @@ public class MainActivity extends Activity {
 						}
 					}).setPositiveButton("取消", null).show();
 
+		}
+		else if (id == R.id.action_net) {
+			Intent intent = new Intent();
+			intent.setClass(MainActivity.this, ShowNetDevActivity.class);
+			startActivity(intent);
 		}
 		return super.onOptionsItemSelected(item);
 

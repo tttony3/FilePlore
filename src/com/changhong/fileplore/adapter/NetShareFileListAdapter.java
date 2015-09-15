@@ -28,14 +28,14 @@ public class NetShareFileListAdapter extends BaseAdapter {
 	private List<JavaFolder> folderList;
 
 	public NetShareFileListAdapter(List<JavaFile> fileList, List<JavaFolder> folderList, Context context) {
-		super();
 		if (null == fileList) {
 			this.fileList = new ArrayList<JavaFile>();
-			this.folderList = new ArrayList<JavaFolder>();
-		}
-
-		else {
+		} else {
 			this.fileList = fileList;
+		}
+		if (null == folderList) {
+			this.folderList = new ArrayList<JavaFolder>();
+		} else {
 			this.folderList = folderList;
 		}
 		inflater = LayoutInflater.from(context);
@@ -44,7 +44,11 @@ public class NetShareFileListAdapter extends BaseAdapter {
 
 	@Override
 	public int getCount() {
-		return fileList.size() + folderList.size();
+		if (null == folderList)
+			return fileList.size();
+		if (null == fileList)
+			return folderList.size();
+		return fileList.size()+folderList.size();
 	}
 
 	@Override
@@ -99,6 +103,7 @@ public class NetShareFileListAdapter extends BaseAdapter {
 	}
 
 	public void updatelistview(List<JavaFile> list1, List<JavaFolder> list2) {
+		Log.e("notify", list1.size()+"");
 		fileList = list1;
 		folderList = list2;
 		notifyDataSetChanged();

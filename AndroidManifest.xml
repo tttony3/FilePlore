@@ -28,8 +28,6 @@
         <activity
             android:name="com.changhong.fileplore.activities.MainActivity"
             android:label="@string/app_name" >
-          
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -68,10 +66,11 @@
             android:name="com.changhong.fileplore.activities.ShowNetDevActivity"
             android:label="ShowNetDevActivity" >
         </activity>
-   <activity
-            android:name="com.changhong.fileplore.activities.ShowNetSharePathActivity"
+        <activity
+            android:name="com.changhong.fileplore.activities.ShowNetFileActivity"
             android:label="ShowNetSharePathActivity" >
         </activity>
+
         <service
             android:name="com.chobit.corestorage.CoreService"
             android:permission="com.chobit.corestorage.CoreService" >
