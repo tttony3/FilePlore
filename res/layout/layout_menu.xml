@@ -10,7 +10,6 @@
         android:layout_centerVertical="true"
         android:orientation="vertical" >
 
-
         <RelativeLayout
             android:id="@+id/rl_menu_netfile"
             android:layout_width="match_parent"
@@ -35,6 +34,14 @@
                 android:text="@string/netfile"
                 android:textColor="#f0f0f0"
                 android:textSize="@dimen/menu_text_size" />
+
+            <ImageView
+                android:layout_width="fill_parent"
+                android:layout_height="1dp"
+                android:layout_below="@+id/two"
+                android:layout_marginEnd="7dp"
+                android:layout_marginStart="7dp"
+                android:background="@color/main_background" />
         </RelativeLayout>
 
         <RelativeLayout
@@ -61,6 +68,14 @@
                 android:text="@string/sambafile"
                 android:textColor="#f0f0f0"
                 android:textSize="@dimen/menu_text_size" />
+
+            <ImageView
+                android:layout_width="fill_parent"
+                android:layout_height="1dp"
+                android:layout_below="@+id/three"
+                android:layout_marginEnd="7dp"
+                android:layout_marginStart="7dp"
+                android:background="@color/main_background" />
         </RelativeLayout>
 
         <RelativeLayout
@@ -87,6 +102,14 @@
                 android:text="@string/music"
                 android:textColor="#f0f0f0"
                 android:textSize="@dimen/menu_text_size" />
+
+            <ImageView
+                android:layout_width="fill_parent"
+                android:layout_height="1dp"
+                android:layout_below="@+id/four"
+                android:layout_marginEnd="7dp"
+                android:layout_marginStart="7dp"
+                android:background="@color/main_background" />
         </RelativeLayout>
 
         <RelativeLayout
@@ -113,15 +136,22 @@
                 android:text="@string/movie"
                 android:textColor="#f0f0f0"
                 android:textSize="@dimen/menu_text_size" />
+
+            <ImageView
+                android:layout_width="fill_parent"
+                android:layout_height="1dp"
+                android:layout_below="@+id/five"
+                android:layout_marginEnd="7dp"
+                android:layout_marginStart="7dp"
+                android:background="@color/main_background" />
         </RelativeLayout>
 
         <RelativeLayout
             android:id="@+id/rl_menu_photo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-         
-            android:clickable="true" 
-            android:focusable="true">
+            android:clickable="true"
+            android:focusable="true" >
 
             <ImageView
                 android:id="@+id/six"
@@ -136,11 +166,19 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:layout_marginLeft="15dp"
-                android:layout_toRightOf="@id/six"
+                android:layout_marginStart="15dp"
+                android:layout_toEndOf="@id/six"
                 android:text="@string/photo"
                 android:textColor="#f0f0f0"
                 android:textSize="@dimen/menu_text_size" />
+
+            <ImageView
+                android:layout_width="fill_parent"
+                android:layout_height="1dp"
+                android:layout_below="@+id/six"
+                android:layout_marginEnd="7dp"
+                android:layout_marginStart="7dp"
+                android:background="@color/main_background" />
         </RelativeLayout>
     </LinearLayout>
 

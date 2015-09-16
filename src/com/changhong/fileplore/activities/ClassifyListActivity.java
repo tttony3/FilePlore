@@ -7,34 +7,42 @@ import java.util.ArrayList;
 import com.changhong.fileplore.adapter.ClassifyListAdapter;
 import com.changhong.fileplore.utils.Content;
 import com.changhong.fileplore.utils.Utils;
+import com.changhong.fileplore.view.CircleProgress;
 import com.changhong.fileplore.R;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
 
 public class ClassifyListActivity extends Activity {
-
-	static ListView lv_classify;
+	LayoutInflater inflater;
+	AlertDialog alertDialog;
+	AlertDialog.Builder builder;
+	CircleProgress mProgressView;
+	View layout;
+	ListView lv_classify;
 	TextView tv_dir;
-	static TextView tv_count;
+	TextView tv_count;
 	int flg;
 	MyHandler handler;
-	static ClassifyListAdapter listAdapter;
-	static ProgressDialog dialog;
+	ClassifyListAdapter listAdapter;
+	ProgressDialog dialog;
 
-	static class MyHandler extends Handler {
+	class MyHandler extends Handler {
 		WeakReference<ClassifyListActivity> mActivity;
 
 		MyHandler(ClassifyListActivity activity) {
@@ -52,19 +60,31 @@ public class ClassifyListActivity extends Activity {
 				ArrayList<Content> apks = (ArrayList<Content>) msg.getData().get("apks");
 				if (txts != null) {
 					listAdapter = new ClassifyListAdapter(txts, theActivity, R.id.img_txt);
-					dialog.dismiss();
+					// dialog.dismiss();
+					if (alertDialog.isShowing()) {
+						mProgressView.stopAnim();
+						alertDialog.dismiss();
+					}
 					lv_classify.setAdapter(listAdapter);
 					tv_count.setText(txts.size() + " 项");
 				}
 				if (zips != null) {
 					listAdapter = new ClassifyListAdapter(zips, theActivity, R.id.img_zip);
-					dialog.dismiss();
+					// dialog.dismiss();
+					if (alertDialog.isShowing()) {
+						mProgressView.stopAnim();
+						alertDialog.dismiss();
+					}
 					lv_classify.setAdapter(listAdapter);
 					tv_count.setText(zips.size() + " 项");
 				}
 				if (apks != null) {
 					listAdapter = new ClassifyListAdapter(apks, theActivity, R.id.img_apk);
-					dialog.dismiss();
+					// dialog.dismiss();
+					if (alertDialog.isShowing()) {
+						mProgressView.stopAnim();
+						alertDialog.dismiss();
+					}
 					lv_classify.setAdapter(listAdapter);
 					tv_count.setText(apks.size() + " 项");
 				}
@@ -79,6 +99,7 @@ public class ClassifyListActivity extends Activity {
 		flg = getIntent().getFlags();
 		handler = new MyHandler(this);
 		findView();
+		
 		initView(flg);
 	}
 
@@ -92,17 +113,20 @@ public class ClassifyListActivity extends Activity {
 			tv_count.setText(musics.size() + " 项");
 			break;
 		case R.id.img_txt:
-			showDialog();
+			mProgressView.startAnim();
+			alertDialog.show();
 			new Thread(new GetRunnable("doc", false)).start();
 
 			break;
 		case R.id.img_zip:
-			showDialog();
+			mProgressView.startAnim();
+			alertDialog.show();
 			new Thread(new GetRunnable("zip", false)).start();
 
 			break;
 		case R.id.img_apk:
-			showDialog();
+			mProgressView.startAnim();
+			alertDialog.show();
 			new Thread(new GetRunnable("apk", false)).start();
 
 			break;
@@ -124,30 +148,36 @@ public class ClassifyListActivity extends Activity {
 		});
 	}
 
-	private void showDialog() {
-		dialog = new ProgressDialog(ClassifyListActivity.this);
-		// 设置进度条风格，风格为圆形，旋转的
-		dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-		// 设置ProgressDialog 标题
-		dialog.setTitle("查找中");
-		// 设置ProgressDialog 提示信息
-		dialog.setMessage("请稍等...");
-		// 设置ProgressDialog 标题图标
-		// dialog.setIcon(android.R.drawable.ic_dialog_map);
-		// 设置ProgressDialog 的一个Button
-
-		// 设置ProgressDialog 的进度条是否不明确
-		dialog.setIndeterminate(false);
-		// 设置ProgressDialog 是否可以按退回按键取消
-		dialog.setCancelable(true);
-		// 显示
-		dialog.show();
-	}
+	// private void showDialog() {
+	// dialog = new ProgressDialog(ClassifyListActivity.this);
+	// // 设置进度条风格，风格为圆形，旋转的
+	// dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+	// // 设置ProgressDialog 标题
+	// dialog.setTitle("查找中");
+	// // 设置ProgressDialog 提示信息
+	// dialog.setMessage("请稍等...");
+	// // 设置ProgressDialog 标题图标
+	// // dialog.setIcon(android.R.drawable.ic_dialog_map);
+	// // 设置ProgressDialog 的一个Button
+	//
+	// // 设置ProgressDialog 的进度条是否不明确
+	// dialog.setIndeterminate(false);
+	// // 设置ProgressDialog 是否可以按退回按键取消
+	// dialog.setCancelable(true);
+	// // 显示
+	// dialog.show();
+	// }
 
 	private void findView() {
+		inflater = getLayoutInflater();
 		lv_classify = (ListView) findViewById(R.id.file_list);
 		tv_dir = (TextView) findViewById(R.id.dir);
 		tv_count = (TextView) findViewById(R.id.item_count);
+
+		layout = inflater.inflate(R.layout.circle_progress, (ViewGroup) findViewById(R.id.rl_progress));
+		builder = new AlertDialog.Builder(ClassifyListActivity.this).setView(layout);
+		alertDialog = builder.create();
+		mProgressView = (CircleProgress) layout.findViewById(R.id.progress);
 
 	}
 
@@ -209,17 +239,20 @@ public class ClassifyListActivity extends Activity {
 				tv_count.setText(musics.size() + " 项");
 				break;
 			case R.id.img_txt:
-				showDialog();
+				mProgressView.startAnim();
+				alertDialog.show();
 				new Thread(new GetRunnable("doc", true)).start();
 
 				break;
 			case R.id.img_zip:
-				showDialog();
+				mProgressView.startAnim();
+				alertDialog.show();
 				new Thread(new GetRunnable("zip", true)).start();
 
 				break;
 			case R.id.img_apk:
-				showDialog();
+				mProgressView.startAnim();
+				alertDialog.show();
 				new Thread(new GetRunnable("apk", true)).start();
 
 				break;

@@ -3,7 +3,6 @@ package com.changhong.fileplore.activities;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.changhong.alljoyn.simpleclient.ClientBusHandler;
 import com.chobit.corestorage.ConnectedService;
 import com.chobit.corestorage.CoreApp;
 import com.chobit.corestorage.CoreHttpServerCB;
@@ -16,7 +15,6 @@ import android.os.Binder;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.app.ActionBar;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.LocalActivityManager;
 import android.content.Context;
@@ -35,7 +33,6 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
@@ -122,7 +119,7 @@ public class MainActivity extends SlidingFragmentActivity {
 		sm.setBehindScrollScale(0.2f);
 		sm.setFadeDegree(0.2f);
 		
-		sm.setBackgroundImage(R.drawable.img_frame_background);
+		sm.setBackgroundImage(R.drawable.star_back);
 		sm.setBehindCanvasTransformer(new SlidingMenu.CanvasTransformer() {
 			@Override
 			public void transformCanvas(Canvas canvas, float percentOpen) {
@@ -204,7 +201,6 @@ public class MainActivity extends SlidingFragmentActivity {
 		} else if (id == R.id.action_samba) {
 			LayoutInflater inflater = getLayoutInflater();
 			final View layout = inflater.inflate(R.layout.samba_option, (ViewGroup) findViewById(R.id.samba_op));
-
 			new AlertDialog.Builder(this).setTitle("samba设置").setView(layout)
 					.setNegativeButton("确定", new DialogInterface.OnClickListener() {
 

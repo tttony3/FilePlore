@@ -103,9 +103,15 @@ public class NetShareFileListAdapter extends BaseAdapter {
 	}
 
 	public void updatelistview(List<JavaFile> list1, List<JavaFolder> list2) {
-		Log.e("notify", list1.size()+"");
-		fileList = list1;
-		folderList = list2;
+	//	Log.e("notify", list1.size()+"");
+		if (null==list1)
+			fileList = new  ArrayList<JavaFile>();
+		else 
+			fileList = list1;
+		if (null==list2)
+			folderList = new  ArrayList<JavaFolder>();
+		else 
+			folderList = list2;
 		notifyDataSetChanged();
 
 	}
