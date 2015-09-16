@@ -35,6 +35,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
@@ -47,7 +48,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 @SuppressWarnings("deprecation")
-public class MainActivity extends Activity {
+public class MainActivity extends SlidingFragmentActivity {
+
 	final ArrayList<View> list = new ArrayList<View>();
 	Context context = null;
 	LocalActivityManager manager = null;
@@ -64,7 +66,7 @@ public class MainActivity extends Activity {
 
 	@Override
 	protected void onResume() {
-	//	ClientBusHandler.List_DeviceInfo.clear();
+		// ClientBusHandler.List_DeviceInfo.clear();
 		super.onResume();
 	}
 
@@ -91,37 +93,52 @@ public class MainActivity extends Activity {
 				binder.StartHttpServer("/", context);
 			}
 		});
-
+		setSlidingMenu();
 		InitImageView();
 		initTextView();
 		initPagerViewer();
-		////////////////////////////////////////////////////////////////
-//		  getSupportFragmentManager().beginTransaction()
-//		  						.replace(R.id.menu_frame, new MenuFragment()).commit();
-//		
-//		 SlidingMenu sm = getSlidingMenu();
-//	        sm.setBehindOffsetRes(R.dimen.slidingmenu_offset);
-//	        sm.setFadeEnabled(false);
-//	        sm.setBehindScrollScale(0.2f);
-//	        sm.setFadeDegree(0.2f);
-//
-//	        sm.setBackgroundImage(R.drawable.img_frame_background);
-//	        sm.setBehindCanvasTransformer(new SlidingMenu.CanvasTransformer() {
-//	            @Override
-//	            public void transformCanvas(Canvas canvas, float percentOpen) {
-//	                float scale = (float) (percentOpen * 0.25 + 0.75);
-//	                canvas.scale(scale, scale, -canvas.getWidth() / 2,
-//	                        canvas.getHeight() / 2);
-//	            }
-//	        });
-//
-//	        sm.setAboveCanvasTransformer(new SlidingMenu.CanvasTransformer() {
-//	            @Override
-//	            public void transformCanvas(Canvas canvas, float percentOpen) {
-//	                float scale = (float) (1 - percentOpen * 0.15);
-//	                canvas.scale(scale, scale, 0, canvas.getHeight() / 2);
-//	            }
-//	        });
+
+	}
+
+	private void setSlidingMenu() {
+		if (findViewById(R.id.menu_frame) == null) {
+			setBehindContentView(R.layout.menu_frame);
+			getSlidingMenu().setSlidingEnabled(true);
+			getSlidingMenu().setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);
+		} else {
+			// add a dummy view
+			View v = new View(this);
+			setBehindContentView(v);
+			getSlidingMenu().setSlidingEnabled(false);
+			getSlidingMenu().setTouchModeAbove(SlidingMenu.TOUCHMODE_NONE);
+		}
+		
+		MenuFragment menuFragment =new MenuFragment();		
+		getSupportFragmentManager().beginTransaction().replace(R.id.menu_frame,menuFragment ).commit();
+
+		SlidingMenu sm = getSlidingMenu();
+		sm.setBehindOffsetRes(R.dimen.slidingmenu_offset);
+		sm.setFadeEnabled(false);
+		sm.setBehindScrollScale(0.2f);
+		sm.setFadeDegree(0.2f);
+		
+		sm.setBackgroundImage(R.drawable.img_frame_background);
+		sm.setBehindCanvasTransformer(new SlidingMenu.CanvasTransformer() {
+			@Override
+			public void transformCanvas(Canvas canvas, float percentOpen) {
+				float scale = (float) (percentOpen * 0.25 + 0.75);
+				canvas.scale(scale, scale, -canvas.getWidth() / 2, canvas.getHeight() / 2);
+			}
+		});
+
+		sm.setAboveCanvasTransformer(new SlidingMenu.CanvasTransformer() {
+			@Override
+			public void transformCanvas(Canvas canvas, float percentOpen) {
+				float scale = (float) (1 - percentOpen * 0.15);
+				canvas.scale(scale, scale, 0, canvas.getHeight() / 2);
+			}
+		});
+
 	}
 
 	/**
@@ -142,7 +159,7 @@ public class MainActivity extends Activity {
 	private void initPagerViewer() {
 
 		pager = (ViewPager) findViewById(R.id.viewpage);
-		
+
 		Intent intent1 = new Intent(context, BrowseActivity.class);
 		list.add(0, getView("A", intent1));
 		Intent intent2 = new Intent(context, PloreActivity.class);
@@ -184,8 +201,7 @@ public class MainActivity extends Activity {
 		int id = item.getItemId();
 		if (id == R.id.action_local) {
 			pager.setCurrentItem(1);
-		}
-		else if (id == R.id.action_samba) {
+		} else if (id == R.id.action_samba) {
 			LayoutInflater inflater = getLayoutInflater();
 			final View layout = inflater.inflate(R.layout.samba_option, (ViewGroup) findViewById(R.id.samba_op));
 
@@ -213,8 +229,7 @@ public class MainActivity extends Activity {
 						}
 					}).setPositiveButton("取消", null).show();
 
-		}
-		else if (id == R.id.action_net) {
+		} else if (id == R.id.action_net) {
 			Intent intent = new Intent();
 			intent.setClass(MainActivity.this, ShowNetDevActivity.class);
 			startActivity(intent);
@@ -300,6 +315,7 @@ public class MainActivity extends Activity {
 			Animation animation2 = null;
 			switch (arg0) {
 			case 0:
+				getSlidingMenu().removeIgnoredView(pager);
 				t1.setTextColor(getResources().getColor(R.color.green));
 				t2.setTextColor(getResources().getColor(R.color.black));
 				if (currIndex == 1) {
@@ -310,6 +326,7 @@ public class MainActivity extends Activity {
 				}
 				break;
 			case 1:
+				getSlidingMenu().addIgnoredView(pager);
 				t2.setTextColor(getResources().getColor(R.color.green));
 				t1.setTextColor(getResources().getColor(R.color.black));
 				if (currIndex == 0) {
@@ -361,9 +378,15 @@ public class MainActivity extends Activity {
 
 		@Override
 		public void onClick(View v) {
-			if (index < 2)
+			if (index == 0) {
 				pager.setCurrentItem(index);
-			else if (index == 2) {
+				getSlidingMenu().removeIgnoredView(pager);
+			}
+			if (index == 1) {
+				pager.setCurrentItem(index);
+
+				getSlidingMenu().addIgnoredView(pager);
+			} else if (index == 2) {
 				Intent intent = new Intent();
 				intent.setClass(MainActivity.this, ShowNetDevActivity.class);
 				startActivity(intent);
@@ -391,8 +414,8 @@ public class MainActivity extends Activity {
 				TextView tv = (TextView) myPagerAdapter.getView(1).findViewById(R.id.path);
 				String str = tv.getText().toString();
 				if (str.lastIndexOf("/") == 0) {
-						tv.callOnClick();
-						pager.setCurrentItem(0);
+					tv.callOnClick();
+					pager.setCurrentItem(0);
 					return true;
 				} else {
 					return tv.callOnClick();
@@ -401,7 +424,7 @@ public class MainActivity extends Activity {
 			}
 		}
 		return super.onKeyDown(keyCode, event);
-	
+
 	}
 
 	private CoreHttpServerCB httpServerCB = new CoreHttpServerCB() {

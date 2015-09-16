@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#00000000" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:orientation="vertical" >
+
+
+        <RelativeLayout
+            android:id="@+id/rl_menu_netfile"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clickable="true" >
+
+            <ImageView
+                android:id="@+id/two"
+                android:layout_width="@dimen/menu_img_size"
+                android:layout_height="@dimen/menu_img_size"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="@dimen/menu_img_size_marginstart"
+                android:layout_marginTop="@dimen/menu_img_size_margintop"
+                android:background="@drawable/net" />
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="15dp"
+                android:layout_toRightOf="@id/two"
+                android:text="@string/netfile"
+                android:textColor="#f0f0f0"
+                android:textSize="@dimen/menu_text_size" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/rl_menu_sambafile"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clickable="true" >
+
+            <ImageView
+                android:id="@+id/three"
+                android:layout_width="@dimen/menu_img_size"
+                android:layout_height="@dimen/menu_img_size"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="@dimen/menu_img_size_marginstart"
+                android:layout_marginTop="@dimen/menu_img_size_margintop"
+                android:background="@drawable/icon_samba" />
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="15dp"
+                android:layout_toRightOf="@id/three"
+                android:text="@string/sambafile"
+                android:textColor="#f0f0f0"
+                android:textSize="@dimen/menu_text_size" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/rl_menu_music"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clickable="true" >
+
+            <ImageView
+                android:id="@+id/four"
+                android:layout_width="@dimen/menu_img_size"
+                android:layout_height="@dimen/menu_img_size"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="@dimen/menu_img_size_marginstart"
+                android:layout_marginTop="@dimen/menu_img_size_margintop"
+                android:background="@drawable/file_icon_music" />
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="15dp"
+                android:layout_toRightOf="@id/four"
+                android:text="@string/music"
+                android:textColor="#f0f0f0"
+                android:textSize="@dimen/menu_text_size" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/rl_menu_movie"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clickable="true" >
+
+            <ImageView
+                android:id="@+id/five"
+                android:layout_width="@dimen/menu_img_size"
+                android:layout_height="@dimen/menu_img_size"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="@dimen/menu_img_size_marginstart"
+                android:layout_marginTop="@dimen/menu_img_size_margintop"
+                android:background="@drawable/file_icon_movie" />
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="15dp"
+                android:layout_toRightOf="@id/five"
+                android:text="@string/movie"
+                android:textColor="#f0f0f0"
+                android:textSize="@dimen/menu_text_size" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/rl_menu_photo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+         
+            android:clickable="true" 
+            android:focusable="true">
+
+            <ImageView
+                android:id="@+id/six"
+                android:layout_width="@dimen/menu_img_size"
+                android:layout_height="@dimen/menu_img_size"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="@dimen/menu_img_size_marginstart"
+                android:layout_marginTop="@dimen/menu_img_size_margintop"
+                android:background="@drawable/file_icon_photo" />
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="15dp"
+                android:layout_toRightOf="@id/six"
+                android:text="@string/photo"
+                android:textColor="#f0f0f0"
+                android:textSize="@dimen/menu_text_size" />
+        </RelativeLayout>
+    </LinearLayout>
+
+</RelativeLayout>
