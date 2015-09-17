@@ -18,11 +18,21 @@
             android:layout_marginBottom="2dp"
             android:layout_marginStart="7dp"
             android:layout_marginTop="2dp"
-            android:maxEms="12"
+            android:maxEms="19"
+            android:maxLines="1"
             android:paddingEnd="2dp"
             android:paddingStart="2dp"
-            
-            android:textSize="@dimen/top_textsize" />
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/netfile_num"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/path"
+            android:layout_alignParentEnd="true"
+            android:paddingEnd="2dp"
+            android:paddingStart="2dp"
+            android:textSize="12sp" />
     </RelativeLayout>
 
     <LinearLayout

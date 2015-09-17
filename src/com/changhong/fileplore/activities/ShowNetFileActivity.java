@@ -33,6 +33,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class ShowNetFileActivity extends Activity {
 	static private final int UPDATE_LIST = 1;
@@ -41,12 +42,12 @@ public class ShowNetFileActivity extends Activity {
 	private static ProgressDialog dialog;
 	private List<JavaFile> shareFileList;
 	private List<JavaFolder> shareFolderList;
-	private static ListView lv_sharepath;
+	static private ListView lv_sharepath;
 	private TextView tv_path;
 	private NetShareFileListAdapter netShareFileListAdapter;
 	private MyOnItemClickListener myOnItemClickListener;
 	private Handler handler;
-	private String path;
+	private TextView filenum;
 	AlertDialog alertDialog;
 	AlertDialog.Builder builder;
 	CircleProgress mProgressView;
@@ -58,7 +59,7 @@ public class ShowNetFileActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_net_path);
+		setContentView(R.layout.activity_net_file);
 		findView();
 
 		Intent intent = getIntent();
@@ -66,7 +67,7 @@ public class ShowNetFileActivity extends Activity {
 		devInfo = CoreApp.mBinder.GetDeviceList().get(position);
 		CoreApp.mBinder.setShareFileListener(shareListener);
 		CoreApp.mBinder.ConnectDeivce(devInfo);
-		
+
 		netShareFileListAdapter = new NetShareFileListAdapter(shareFileList, shareFolderList, this);
 		myOnItemClickListener = new MyOnItemClickListener();
 
@@ -77,10 +78,11 @@ public class ShowNetFileActivity extends Activity {
 	private void findView() {
 		handler = new MyNetHandler(this);
 		tv_path = (TextView) findViewById(R.id.path);
+		filenum = (TextView) findViewById(R.id.netfile_num);
 		lv_sharepath = (ListView) findViewById(R.id.lv_netsharepath);
 		// dialog = new MyProgressDialog(ShowNetFileActivity.this).getDialog();
-		path = "共享文件";
-		tv_path.setText(path);
+		// path = "文件路径 : ";
+		// tv_path.setText(path);
 		inflater = getLayoutInflater();
 		layout = inflater.inflate(R.layout.circle_progress, (ViewGroup) findViewById(R.id.rl_progress));
 		builder = new AlertDialog.Builder(this).setView(layout);
@@ -103,17 +105,44 @@ public class ShowNetFileActivity extends Activity {
 
 		@Override
 		public void updateShareContent(JavaFolder folder) {
-			if(folder !=null){
-			shareFileList = folder.getSubFileList();
-			shareFolderList = folder.getSubFolderList();
+			if (folder != null) {
+				tv_path.setText(folder.getLocation());
+				
+				Log.e("this rootlv", folder.getRootLevel() + "");
+				if (null != folder.getParent()) {
+					Log.e("parents rootlv", folder.getParent().getRootLevel() + "");
+					Log.e("parents getLocation", folder.getParent().getLocation() + "");
+				}
+				shareFileList = folder.getSubFileList();
+				shareFolderList = folder.getSubFolderList();
+				int n=0;
+				if (shareFileList != null){
+					n=n+shareFileList.size();
+					Log.e("shareFileList", shareFileList.toString());
+					}
+				if (shareFolderList != null){
+					n=n+shareFolderList.size();
+					Log.e("shareFolderList", shareFolderList.toString());
+					}
+				filenum.setText(n+"项");
+				if (shareFileList != null || shareFolderList != null) {
+					Message msg = new Message();
+					Bundle bundle = new Bundle();
+					bundle.putInt("key", UPDATE_LIST);
+					msg.setData(bundle);
+					handler.sendMessage(msg);
+				}
+			} else {
+				Toast.makeText(ShowNetFileActivity.this, "空文件夹", Toast.LENGTH_SHORT).show();
+				;
+				Log.e("null!!", "folder is null");
+			}
 
 			Message msg = new Message();
 			Bundle bundle = new Bundle();
-			bundle.putInt("key", UPDATE_LIST);
+			bundle.putInt("key", DISMISS_DIALOG);
 			msg.setData(bundle);
 			handler.sendMessage(msg);
-			}
-			else Log.e("null!!", "folder is null");
 		}
 
 		@Override
@@ -159,8 +188,6 @@ public class ShowNetFileActivity extends Activity {
 				switch (key) {
 				case UPDATE_LIST:
 					netShareFileListAdapter.updatelistview(shareFileList, shareFolderList);
-					netShareFileListAdapter.notifyDataSetChanged();
-			//		lv_sharepath.setAdapter(netShareFileListAdapter);
 					break;
 
 				case SHOW_DIALOG:
@@ -190,31 +217,35 @@ public class ShowNetFileActivity extends Activity {
 
 			final JavaFile file;
 			JavaFolder folder;
-			if (position < shareFolderList.size()) {
-				folder = (JavaFolder) parent.getItemAtPosition(position);
-	//			folder.getSubFileList();
-//				Log.e("SubFolderList",
-//						folder.getName() + " file getSubFileNum " + folder.getSubFileNum() + "  folder getSubFolderNum " + folder.getSubFolderNum());
-				JavaFolder childrenfolder = new JavaFolder();
-				childrenfolder.setParent(folder);
-				Log.e("folder loc", folder.getLocation());
-				Log.e("loc", childrenfolder.getLocation());
-				CoreApp.mBinder.getFolderChildren(devInfo, folder, folder);
-			} else {
-				file = (JavaFile) parent.getItemAtPosition(position);
-				// byte [] b =file.toSendData();
-				// JavaAudioFile newfile = new JavaAudioFile();
-				// newfile.fromReceiveData(b);
-				Runnable r = new Runnable() {
-					public void run() {
-						Log.e("down", "" + CoreApp.mBinder.DownloadHttpFile(devInfo.getM_devicename(),
-								file.getmHttpURI(), "/storage/sdcard0/tt1"));
-					}
-				};
-				new Thread(r).start();
-				Log.e("file name", file.getName());
+			Message msg = new Message();
+			Bundle bundle = new Bundle();
+			bundle.putInt("key", SHOW_DIALOG);
+			msg.setData(bundle);
+			handler.sendMessage(msg);
+			if (shareFolderList != null)
+				if (position < shareFolderList.size()) {
+					folder = (JavaFolder) parent.getItemAtPosition(position);
 
-			}
+					// JavaFolder childrenfolder = new JavaFolder();
+					// childrenfolder.setParent(folder);
+					Log.e("folder loc", folder.getLocation());
+
+					CoreApp.mBinder.getFolderChildren(devInfo, folder, folder);
+				} else {
+					file = (JavaFile) parent.getItemAtPosition(position);
+					// byte [] b =file.toSendData();
+					// JavaAudioFile newfile = new JavaAudioFile();
+					// newfile.fromReceiveData(b);
+					Runnable r = new Runnable() {
+						public void run() {
+							Log.e("down", "" + CoreApp.mBinder.DownloadHttpFile(devInfo.getM_devicename(),
+									file.getmHttpURI(), "/storage/sdcard0/tt1"));
+						}
+					};
+					new Thread(r).start();
+					Log.e("file name", file.getName());
+
+				}
 
 		}
 

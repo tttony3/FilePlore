@@ -48,7 +48,7 @@ public class NetShareFileListAdapter extends BaseAdapter {
 			return fileList.size();
 		if (null == fileList)
 			return folderList.size();
-		return fileList.size()+folderList.size();
+		return fileList.size() + folderList.size();
 	}
 
 	@Override
@@ -103,15 +103,21 @@ public class NetShareFileListAdapter extends BaseAdapter {
 	}
 
 	public void updatelistview(List<JavaFile> list1, List<JavaFolder> list2) {
-	//	Log.e("notify", list1.size()+"");
-		if (null==list1)
-			fileList = new  ArrayList<JavaFile>();
-		else 
-			fileList = list1;
-		if (null==list2)
-			folderList = new  ArrayList<JavaFolder>();
-		else 
-			folderList = list2;
+		// Log.e("notify", list1.size()+"");
+		fileList.clear();
+		folderList.clear();
+		if (list1 != null)
+			fileList.addAll(list1);
+		if (list2 != null)
+			folderList.addAll(list2);
+		// if (null==list1)
+		// fileList = new ArrayList<JavaFile>();
+		// else
+		// fileList = list1;
+		// if (null==list2)
+		// folderList = new ArrayList<JavaFolder>();
+		// else
+		// folderList = list2;
 		notifyDataSetChanged();
 
 	}
