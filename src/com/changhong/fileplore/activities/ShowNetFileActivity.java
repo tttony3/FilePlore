@@ -14,7 +14,9 @@ import com.changhong.synergystorage.javadata.JavaFile;
 import com.changhong.synergystorage.javadata.JavaFolder;
 import com.changhong.synergystorage.protobufdata.ProtobufData.PBFile;
 import com.chobit.corestorage.CoreApp;
+import com.chobit.corestorage.CoreDownloadProgressCB;
 import com.chobit.corestorage.CoreShareFileListener;
+import com.example.libevent2.UpdateDownloadPress;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -36,6 +38,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class ShowNetFileActivity extends Activity {
+
 	static private final int UPDATE_LIST = 1;
 	static private final int SHOW_DIALOG = 2;
 	static private final int DISMISS_DIALOG = 3;
@@ -67,7 +70,7 @@ public class ShowNetFileActivity extends Activity {
 		devInfo = CoreApp.mBinder.GetDeviceList().get(position);
 		CoreApp.mBinder.setShareFileListener(shareListener);
 		CoreApp.mBinder.ConnectDeivce(devInfo);
-
+		CoreApp.mBinder.setDownloadCBInterface(downloadCB);
 		netShareFileListAdapter = new NetShareFileListAdapter(shareFileList, shareFolderList, this);
 		myOnItemClickListener = new MyOnItemClickListener();
 
@@ -107,7 +110,7 @@ public class ShowNetFileActivity extends Activity {
 		public void updateShareContent(JavaFolder folder) {
 			if (folder != null) {
 				tv_path.setText(folder.getLocation());
-				
+
 				Log.e("this rootlv", folder.getRootLevel() + "");
 				if (null != folder.getParent()) {
 					Log.e("parents rootlv", folder.getParent().getRootLevel() + "");
@@ -115,16 +118,16 @@ public class ShowNetFileActivity extends Activity {
 				}
 				shareFileList = folder.getSubFileList();
 				shareFolderList = folder.getSubFolderList();
-				int n=0;
-				if (shareFileList != null){
-					n=n+shareFileList.size();
+				int n = 0;
+				if (shareFileList != null) {
+					n = n + shareFileList.size();
 					Log.e("shareFileList", shareFileList.toString());
-					}
-				if (shareFolderList != null){
-					n=n+shareFolderList.size();
+				}
+				if (shareFolderList != null) {
+					n = n + shareFolderList.size();
 					Log.e("shareFolderList", shareFolderList.toString());
-					}
-				filenum.setText(n+"项");
+				}
+				filenum.setText(n + "项");
 				if (shareFileList != null || shareFolderList != null) {
 					Message msg = new Message();
 					Bundle bundle = new Bundle();
@@ -138,11 +141,7 @@ public class ShowNetFileActivity extends Activity {
 				Log.e("null!!", "folder is null");
 			}
 
-			Message msg = new Message();
-			Bundle bundle = new Bundle();
-			bundle.putInt("key", DISMISS_DIALOG);
-			msg.setData(bundle);
-			handler.sendMessage(msg);
+			dismissDialog();
 		}
 
 		@Override
@@ -153,21 +152,13 @@ public class ShowNetFileActivity extends Activity {
 
 		@Override
 		public void stopWaiting() {
-			Message msg = new Message();
-			Bundle bundle = new Bundle();
-			bundle.putInt("key", DISMISS_DIALOG);
-			msg.setData(bundle);
-			handler.sendMessage(msg);
+			dismissDialog();
 
 		}
 
 		@Override
 		public void startWaiting() {
-			Message msg = new Message();
-			Bundle bundle = new Bundle();
-			bundle.putInt("key", SHOW_DIALOG);
-			msg.setData(bundle);
-			handler.sendMessage(msg);
+			showDialog();
 
 		}
 	};
@@ -210,45 +201,86 @@ public class ShowNetFileActivity extends Activity {
 		}
 	};
 
-	private class MyOnItemClickListener implements OnItemClickListener {
+	class MyOnItemClickListener implements OnItemClickListener {
 
 		@Override
 		public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
 			final JavaFile file;
 			JavaFolder folder;
-			Message msg = new Message();
-			Bundle bundle = new Bundle();
-			bundle.putInt("key", SHOW_DIALOG);
-			msg.setData(bundle);
-			handler.sendMessage(msg);
+
 			if (shareFolderList != null)
 				if (position < shareFolderList.size()) {
+					showDialog();
 					folder = (JavaFolder) parent.getItemAtPosition(position);
-
-					// JavaFolder childrenfolder = new JavaFolder();
-					// childrenfolder.setParent(folder);
-					Log.e("folder loc", folder.getLocation());
-
 					CoreApp.mBinder.getFolderChildren(devInfo, folder, folder);
 				} else {
 					file = (JavaFile) parent.getItemAtPosition(position);
-					// byte [] b =file.toSendData();
-					// JavaAudioFile newfile = new JavaAudioFile();
-					// newfile.fromReceiveData(b);
-					Runnable r = new Runnable() {
-						public void run() {
-							Log.e("down", "" + CoreApp.mBinder.DownloadHttpFile(devInfo.getM_devicename(),
-									file.getmHttpURI(), "/storage/sdcard0/tt1"));
-						}
-					};
-					new Thread(r).start();
-					Log.e("file name", file.getName());
+
+					CoreApp.mBinder.getShareFileDownload(devInfo, file.getLocation(), "/storage/sdcard0/tt12/");
 
 				}
 
 		}
 
 	}
+
+	private void showDialog() {
+		Message msg = new Message();
+		Bundle bundle = new Bundle();
+		bundle.putInt("key", SHOW_DIALOG);
+		msg.setData(bundle);
+		handler.sendMessage(msg);
+	}
+
+	private void dismissDialog() {
+		Message msg = new Message();
+		Bundle bundle = new Bundle();
+		bundle.putInt("key", DISMISS_DIALOG);
+		msg.setData(bundle);
+		handler.sendMessage(msg);
+	}
+
+	CoreDownloadProgressCB downloadCB = new CoreDownloadProgressCB() {
+
+		@Override
+		public void onDownloadOK(String fileuri) {
+			Log.e("Progress", "ok" + fileuri);
+			dismissDialog();
+		}
+
+		@Override
+		public void onDowloadProgress(UpdateDownloadPress press) {
+			Log.e("Progress", "Progress");
+			showDialog();
+
+		}
+
+		@Override
+		public void onDowloaStop(String fileuri) {
+			Log.e("Progress", "stop" + fileuri);
+			dismissDialog();
+
+		}
+
+		@Override
+		public void onDowloaFailt(String fileuri) {
+			Log.e("Progress", "failt" + fileuri);
+			dismissDialog();
+
+		}
+
+		@Override
+		public void onDowloaCancel(String fileuri) {
+			dismissDialog();
+
+		}
+
+		@Override
+		public void onConnectError(String fileuri) {
+			Log.e("Progress", "error" + fileuri);
+			dismissDialog();
+		}
+	};
 
 }
