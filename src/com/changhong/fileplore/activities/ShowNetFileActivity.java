@@ -256,8 +256,7 @@ public class ShowNetFileActivity extends Activity {
 					tv_curtime.setText(curtime / 60 + ":" + (curtime - (curtime / 60) * 60));
 					break;
 				case RESET_BAR:
-					if (thread != null)
-						thread.isvalid = false;
+					
 				//	alertDialog_mediaplayer.dismiss();
 					pb_media.setProgress(0);
 					tv_curtime.setText("00:00");
@@ -330,6 +329,8 @@ public class ShowNetFileActivity extends Activity {
 										@Override
 										public void onClick(View v) {
 											try {
+												if (thread != null)
+													thread.isvalid = false;
 												Message msg = new Message();
 												Bundle bundle = new Bundle();
 												bundle.putInt("key", RESET_BAR);
