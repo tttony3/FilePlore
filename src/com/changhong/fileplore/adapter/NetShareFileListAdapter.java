@@ -10,8 +10,10 @@ import com.changhong.fileplore.activities.ClassifyListActivity;
 import com.changhong.fileplore.utils.Content;
 import com.changhong.synergystorage.javadata.JavaFile;
 import com.changhong.synergystorage.javadata.JavaFolder;
+import com.chobit.corestorage.CoreApp;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
@@ -26,8 +28,10 @@ public class NetShareFileListAdapter extends BaseAdapter {
 	private LayoutInflater inflater;
 	private List<JavaFile> fileList;
 	private List<JavaFolder> folderList;
+	private DeviceInfo devInfo;
 
-	public NetShareFileListAdapter(List<JavaFile> fileList, List<JavaFolder> folderList, Context context) {
+	public NetShareFileListAdapter(List<JavaFile> fileList, List<JavaFolder> folderList, DeviceInfo devInfo,
+			Context context) {
 		if (null == fileList) {
 			this.fileList = new ArrayList<JavaFile>();
 		} else {
@@ -38,6 +42,7 @@ public class NetShareFileListAdapter extends BaseAdapter {
 		} else {
 			this.folderList = folderList;
 		}
+		this.devInfo = devInfo;
 		inflater = LayoutInflater.from(context);
 
 	}
@@ -77,9 +82,17 @@ public class NetShareFileListAdapter extends BaseAdapter {
 		if (position >= folderList.size()) {
 			if (JavaFile.FileType.AUDIO == fileList.get(position - folderList.size()).getFileType())
 				viewHolder.img.setBackgroundResource(R.drawable.file_icon_music);
-			else if (JavaFile.FileType.IMAGE == fileList.get(position - folderList.size()).getFileType())
+			else if (JavaFile.FileType.IMAGE == fileList.get(position - folderList.size()).getFileType()) {
 				viewHolder.img.setBackgroundResource(R.drawable.file_icon_photo);
-			else if (JavaFile.FileType.VIDEO == fileList.get(position - folderList.size()).getFileType())
+//				Bitmap bm = CoreApp.mBinder.getThumbnails(devInfo,
+//						fileList.get(position - folderList.size()).getLocation());
+//				if (bm == null) {
+//					
+//				} else {
+//					viewHolder.img.setBackground(null);
+//					viewHolder.img.setImageBitmap(bm);
+//				}
+			} else if (JavaFile.FileType.VIDEO == fileList.get(position - folderList.size()).getFileType())
 				viewHolder.img.setBackgroundResource(R.drawable.file_icon_movie);
 			else if (JavaFile.FileType.OTHER == fileList.get(position - folderList.size()).getFileType())
 				viewHolder.img.setBackgroundResource(R.drawable.file_icon_unknown);

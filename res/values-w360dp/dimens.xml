@@ -14,6 +14,7 @@
     <dimen name="menu_img_size_margintop">10dp</dimen>
     <dimen name="menu_img_size_marginstart">10dp</dimen>
     <dimen name="menu_img_size">45dp</dimen>
+     <dimen name="media_button_size">30dp</dimen>
     <dimen name="default_circle_view_size">80dp</dimen>
 
     <integer name="num_cols">1</integer>

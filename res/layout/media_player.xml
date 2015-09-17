@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/rl_mediaplayer"
+    android:layout_width="wrap_content"
+    android:layout_height="40dp" >
+
+    <ImageButton
+        android:layout_marginStart="20dp"
+        android:id="@+id/media_play"
+        android:layout_width="@dimen/media_button_size"
+        android:layout_height="@dimen/media_button_size"
+        android:layout_centerVertical="true"
+        android:background="@drawable/start" />
+
+    <TextView
+        android:id="@+id/tv_curtime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_toEndOf="@+id/media_play"
+        android:text="00:00" />
+
+    <ProgressBar
+        android:id="@+id/media_bar"
+        style="@style/tallerBarStyle"
+        android:layout_width="160dp"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_toEndOf="@+id/tv_curtime"
+        android:max="10000" />
+
+    <TextView
+        android:id="@+id/tv_totaltime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_toRightOf="@+id/media_bar"
+        android:text="00:00" />
+
+    <ImageButton
+        android:id="@+id/media_stop"
+        android:layout_width="@dimen/media_button_size"
+        android:layout_height="@dimen/media_button_size"
+        android:layout_centerVertical="true"
+        android:layout_toEndOf="@+id/tv_totaltime"
+        android:background="@drawable/stop" />
+
+</RelativeLayout>
