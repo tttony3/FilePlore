@@ -1,22 +1,13 @@
 package com.changhong.fileplore.adapter;
 
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.changhong.alljoyn.simpleclient.DeviceInfo;
 import com.changhong.fileplore.R;
-import com.changhong.fileplore.activities.ClassifyListActivity;
-import com.changhong.fileplore.utils.Content;
 import com.changhong.synergystorage.javadata.JavaFile;
 import com.changhong.synergystorage.javadata.JavaFolder;
-import com.chobit.corestorage.CoreApp;
-
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.os.Handler;
-import android.os.Message;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,8 +19,6 @@ public class NetShareFileListAdapter extends BaseAdapter {
 	private LayoutInflater inflater;
 	private List<JavaFile> fileList;
 	private List<JavaFolder> folderList;
-	private DeviceInfo devInfo;
-
 	public NetShareFileListAdapter(List<JavaFile> fileList, List<JavaFolder> folderList, DeviceInfo devInfo,
 			Context context) {
 		if (null == fileList) {
@@ -42,7 +31,6 @@ public class NetShareFileListAdapter extends BaseAdapter {
 		} else {
 			this.folderList = folderList;
 		}
-		this.devInfo = devInfo;
 		inflater = LayoutInflater.from(context);
 
 	}

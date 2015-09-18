@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/rl_mediaplayer"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:paddingTop="5dp" >
+
+    <ProgressBar
+        android:layout_marginStart="20dp"
+        android:id="@+id/download_bar"
+        style="@style/tallerBarStyle"
+        android:layout_width="260dp"
+        android:layout_height="wrap_content"
+        android:max="10000" />
+
+    <TextView
+        android:id="@+id/tv_process"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+    android:layout_alignBaseline="@+id/download_stop"
+        android:layout_below="@+id/download_bar"
+        android:layout_marginStart="70dp"
+        android:textSize="18sp"
+        android:text="0%" />
+
+    <Button
+        android:id="@+id/download_stop"
+        android:layout_width="75dp"
+        android:layout_height="45dp"
+        android:layout_marginStart="20dp"
+        android:layout_below="@+id/download_bar"
+        android:layout_toEndOf="@+id/tv_process"
+        android:text="取消"
+        android:textSize="14sp" />
+
+</RelativeLayout>

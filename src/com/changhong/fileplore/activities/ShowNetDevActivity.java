@@ -6,7 +6,6 @@ import java.util.List;
 import com.changhong.alljoyn.simpleclient.ClientBusHandler;
 import com.changhong.alljoyn.simpleclient.DeviceInfo;
 import com.changhong.fileplore.adapter.NetDevListAdapter;
-import com.changhong.fileplore.utils.MyProgressDialog;
 import com.changhong.fileplore.view.CircleProgress;
 import com.chobit.corestorage.CoreApp;
 import com.chobit.corestorage.CoreDeviceListener;
@@ -16,7 +15,6 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -25,7 +23,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.EditText;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
@@ -38,7 +35,7 @@ public class ShowNetDevActivity extends Activity {
 	AlertDialog alertDialog;
 	AlertDialog.Builder builder;
 	CircleProgress mProgressView;
-	View layout ;
+	View layout;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -51,7 +48,7 @@ public class ShowNetDevActivity extends Activity {
 		alertDialog = builder.create();
 		mProgressView = (CircleProgress) layout.findViewById(R.id.progress);
 		netList = (ListView) findViewById(R.id.lv_netactivity);
-	//	dialog = new MyProgressDialog(ShowNetDevActivity.this).getDialog();
+		// dialog = new MyProgressDialog(ShowNetDevActivity.this).getDialog();
 
 		// ClientBusHandler.List_DeviceInfo.clear();
 
