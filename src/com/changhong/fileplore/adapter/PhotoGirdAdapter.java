@@ -25,6 +25,11 @@ public class PhotoGirdAdapter extends BaseAdapter {
 	private LayoutInflater inflater;
 	ImageLoader imageLoader;
 
+	public void updateList(ArrayList<Content> results) {
+		this.results = results;
+		notifyDataSetChanged();
+	}
+
 	public PhotoGirdAdapter(ArrayList<Content> results, Context context, ImageLoader imageLoader) {
 		this.results = results;
 		this.imageLoader = imageLoader;

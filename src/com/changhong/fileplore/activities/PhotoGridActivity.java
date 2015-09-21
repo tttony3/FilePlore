@@ -8,13 +8,18 @@ import com.changhong.fileplore.adapter.PhotoGirdAdapter;
 import com.changhong.fileplore.base.AbsListViewBaseActivity;
 import com.changhong.fileplore.utils.Content;
 import com.changhong.fileplore.utils.Utils;
+import com.chobit.corestorage.CoreApp;
 import com.changhong.fileplore.R;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.database.Cursor;
+import android.database.CursorJoiner.Result;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -23,12 +28,14 @@ import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.GridView;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class PhotoGridActivity extends AbsListViewBaseActivity {
-	GridView gv_classify;
+
 	TextView tv_dir;
+	ArrayList<Content> results ;
 	int flg;
 	Handler handler;
 	ClassifyGridAdapter gridAdapter;
@@ -42,25 +49,6 @@ public class PhotoGridActivity extends AbsListViewBaseActivity {
 		imageLoader.init(ImageLoaderConfiguration.createDefault(this));
 		setContentView(R.layout.activity_classify_grid);
 		content = getIntent().getStringArrayExtra("content");
-
-		findView();
-		initView();
-		listView.setOnItemClickListener(new OnItemClickListener() {
-
-			@Override
-			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-				Content content = (Content) parent.getItemAtPosition(position);
-				File file = new File(content.getDir());
-				Intent intent = Utils.openFile(file);
-				startActivity(intent);
-
-			}
-		});
-	}
-
-	private void initView() {
-		showDialog();
 		handler = new Handler() {
 
 			@Override
@@ -75,11 +63,77 @@ public class PhotoGridActivity extends AbsListViewBaseActivity {
 			}
 
 		};
+		findView();
+		initView();
+		listView.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+				Content content = (Content) parent.getItemAtPosition(position);
+				File file = new File(content.getDir());
+				Intent intent = Utils.openFile(file);
+				startActivity(intent);
+
+			}
+		});
+		listView.setOnItemLongClickListener(new OnItemLongClickListener() {
+
+			@Override
+			public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+				final Content content = (Content) parent.getItemAtPosition(position);
+				final File file = new File(content.getDir());
+				String[] data = { "打开", "删除", "共享" };
+				new AlertDialog.Builder(PhotoGridActivity.this).setTitle("选择操作").setItems(data, new OnClickListener() {
+
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						switch (which) {
+						case 0:
+							Intent intent = Utils.openFile(file);
+							startActivity(intent);
+							break;
+						case 1:
+							if (file.exists()) {
+								if (file.delete()) {
+									results.remove(content);
+									imageAdapter.updateList(results);
+									Toast.makeText(PhotoGridActivity.this, "删除成功", Toast.LENGTH_SHORT).show();
+								//	initView();
+								} else {
+									Toast.makeText(PhotoGridActivity.this, "删除失败", Toast.LENGTH_SHORT).show();
+								}
+							} else {
+								Toast.makeText(PhotoGridActivity.this, "文件不存在", Toast.LENGTH_SHORT).show();
+							}
+							break;
+						case 2:
+							if (CoreApp.mBinder.isBinderAlive()) {
+								String s = CoreApp.mBinder.AddShareFile(file.getPath());
+								Toast.makeText(PhotoGridActivity.this, "AddShareFile  " + s, Toast.LENGTH_SHORT).show();
+							} else {
+								Toast.makeText(PhotoGridActivity.this, "服务未开启", Toast.LENGTH_SHORT).show();
+							}
+							break;
+						default:
+							break;
+						}
+
+					}
+				}).create().show();
+				return true;
+			}
+		});
+	}
+
+	private void initView() {
+		showDialog();
+
 		new Thread() {
 			@Override
 			public void run() {
 				ContentResolver cr = getContentResolver();
-				ArrayList<Content> results = new ArrayList<Content>();
+				 results = new ArrayList<Content>();
 				File file = new File(content[0].substring(0, content[0].lastIndexOf("/")));
 
 				if (file.isDirectory()) {

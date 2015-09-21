@@ -1,9 +1,11 @@
 package com.changhong.fileplore.activities;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import com.changhong.fileplore.adapter.PloreListAdapter;
+import com.changhong.fileplore.application.MyApp;
 import com.changhong.fileplore.view.RefreshListView;
 import com.chobit.corestorage.CoreApp;
 import com.changhong.fileplore.R;
@@ -27,6 +29,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import com.changhong.fileplore.utils.*;
 
 public class PloreActivity extends Activity implements RefreshListView.IOnRefreshListener {
 	ArrayList<File> fileList = new ArrayList<File>();
@@ -44,12 +47,15 @@ public class PloreActivity extends Activity implements RefreshListView.IOnRefres
 	public PloreListAdapter mFileAdpter;
 	public LinearLayout ll_btn;
 	public AlertDialog.Builder builder;
+	boolean isCopy = false;
 	myItemListener mylistener = new myItemListener();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_plore);
+		MyApp myapp = (MyApp) getApplication();
+		fileList = myapp.getFileList();
 		findView();
 
 		initView();
@@ -62,8 +68,8 @@ public class PloreActivity extends Activity implements RefreshListView.IOnRefres
 		mItemCount = (TextView) findViewById(R.id.item_count);
 		iv_back = (ImageView) findViewById(R.id.iv_back);
 
-		btn_2 = (Button) findViewById(R.id.plore_btn_2);
 		btn_1 = (Button) findViewById(R.id.plore_btn_1);
+		btn_2 = (Button) findViewById(R.id.plore_btn_2);
 		btn_3 = (Button) findViewById(R.id.plore_btn_3);
 		btn_more = (Button) findViewById(R.id.plore_btn_more);
 		ll_btn = (LinearLayout) findViewById(R.id.ll_btn);
@@ -162,8 +168,6 @@ public class PloreActivity extends Activity implements RefreshListView.IOnRefres
 
 	}
 
-
-
 	// listview监听
 	class myItemListener implements OnItemClickListener {
 		public int smb = 0;
@@ -214,9 +218,9 @@ public class PloreActivity extends Activity implements RefreshListView.IOnRefres
 		}
 	}
 
-	/** 
+	/**
 	 * 底部button监听
-	 *  */
+	 */
 	private OnClickListener btn_listener = new View.OnClickListener() {
 
 		@Override
@@ -249,20 +253,7 @@ public class PloreActivity extends Activity implements RefreshListView.IOnRefres
 				}).setPositiveButton("取消", null).create().show();
 
 				break;
-			case R.id.plore_btn_3:
-				if (fileList.isEmpty())
-					Toast.makeText(PloreActivity.this, "没有选择文件", Toast.LENGTH_SHORT).show();
-				else {
-					String path = mPathView.getText().toString();
-					for (int i = 0; i < fileList.size(); i++) {
-						File file = fileList.get(i);
-						file.renameTo(new File(path + "/" + file.getName()));
-					}
-					fileList.clear();
-					File folder = new File(mPathView.getText().toString());
-					initData(folder);
-				}
-				break;
+
 			case R.id.plore_btn_2:
 				if (!mFileAdpter.isShow_cb()) {
 					mFileAdpter.setShow_cb(true);
@@ -280,10 +271,47 @@ public class PloreActivity extends Activity implements RefreshListView.IOnRefres
 					}
 					mFileAdpter.setShow_cb(false);
 					mFileAdpter.notifyDataSetChanged();
+					isCopy = false;
 					Toast.makeText(PloreActivity.this, "剪切成功", Toast.LENGTH_SHORT).show();
 				}
 				break;
+				
+			case R.id.plore_btn_3:
+				if (fileList.isEmpty())
+					Toast.makeText(PloreActivity.this, "没有选择文件", Toast.LENGTH_SHORT).show();
+				else {
+					String path = mPathView.getText().toString();
+					if (!isCopy) {
+						for (int i = 0; i < fileList.size(); i++) {
+							File file = fileList.get(i);
+							file.renameTo(new File(path + "/" + file.getName()));
+						}
+						fileList.clear();
+						File folder = new File(mPathView.getText().toString());
+						initData(folder);
+					} else {
+						for (int i = 0; i < fileList.size(); i++) {
+							File file = fileList.get(i);
+							File newFile = new File(path + "/" + file.getName());
+							if (!newFile.exists()) {
+								try {
+									newFile.createNewFile();
+								} catch (IOException e) {
 
+									e.printStackTrace();
+								}
+
+								FileUtils.fileChannelCopy(file, newFile);
+							} else {
+								Toast.makeText(PloreActivity.this, "文件已存在", Toast.LENGTH_SHORT).show();
+							}
+						}
+						fileList.clear();
+						File folder = new File(mPathView.getText().toString());
+						initData(folder);
+					}
+				}
+				break;
 			case R.id.plore_btn_more:
 
 				AlertDialog.Builder dialog = new AlertDialog.Builder(PloreActivity.this);
@@ -299,7 +327,25 @@ public class PloreActivity extends Activity implements RefreshListView.IOnRefres
 						// dialog.dismiss();
 						switch (which) {
 						case 0:
-
+							if (!mFileAdpter.isShow_cb()) {
+								mFileAdpter.setShow_cb(true);
+								mFileAdpter.notifyDataSetChanged();
+							} else {
+								Boolean[] mlist = mFileAdpter.getCheckBox_List();
+								fileList.clear();
+								if (mFileAdpter.isShow_cb()) {
+									for (int i = 0; i < mlist.length; i++) {
+										if (mlist[i]) {
+											File file = (File) mFileAdpter.getItem(i);
+											fileList.add(file);
+										}
+									}
+								}
+								mFileAdpter.setShow_cb(false);
+								mFileAdpter.notifyDataSetChanged();
+								isCopy = true;
+								Toast.makeText(PloreActivity.this, "复制成功", Toast.LENGTH_SHORT).show();
+							}
 							break;
 						case 1:
 							if (!mFileAdpter.isShow_cb()) {
@@ -337,14 +383,14 @@ public class PloreActivity extends Activity implements RefreshListView.IOnRefres
 										shareList.add(file.getPath());
 										// CoreApp.mBinder.AddShareFile(file.getPath());
 										String s = CoreApp.mBinder.AddShareFile(file.getPath());
-
 										Toast.makeText(PloreActivity.this, "AddShareFile  " + s, Toast.LENGTH_SHORT)
 												.show();
 									}
 								}
 								File folder = new File(mPathView.getText().toString());
 								initData(folder);
-								Toast.makeText(PloreActivity.this, "已共享", Toast.LENGTH_SHORT).show();
+								// Toast.makeText(PloreActivity.this, "已共享",
+								// Toast.LENGTH_SHORT).show();
 								// Intent intent = new Intent();
 								// intent.setClass(PloreActivity.this,NetActivity.class);
 								// intent.putStringArrayListExtra("shareList",
@@ -375,22 +421,16 @@ public class PloreActivity extends Activity implements RefreshListView.IOnRefres
 		protected Void doInBackground(Void... arg0) {
 
 			try {
-				Thread.sleep(1000);
+				Thread.sleep(700);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			//
-			// index++;
-			// data.addFirst("genius" + index);
-
 			return null;
 		}
 
 		@Override
 		protected void onPostExecute(Void result) {
 			initData(new File(mPathView.getText().toString()));
-			// mFileAdpter.refreshData(data);
 			mListView.onRefreshComplete();
 		}
 

@@ -79,4 +79,10 @@ public class ClassifyListAdapter extends BaseAdapter {
 		public TextView singer;
 		public ImageView image;
 	}
+
+	public void updateList(ArrayList<Content> results) {
+		content = results;
+		notifyDataSetChanged();
+		
+	}
 }

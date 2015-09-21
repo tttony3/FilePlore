@@ -8,12 +8,15 @@ import com.changhong.fileplore.adapter.ClassifyListAdapter;
 import com.changhong.fileplore.utils.Content;
 import com.changhong.fileplore.utils.Utils;
 import com.changhong.fileplore.view.CircleProgress;
+import com.chobit.corestorage.CoreApp;
 import com.changhong.fileplore.R;
 
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -26,9 +29,12 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
 
 public class ClassifyListActivity extends Activity {
+	ArrayList<Content> results;
 	LayoutInflater inflater;
 	AlertDialog alertDialog;
 	AlertDialog.Builder builder;
@@ -146,27 +152,54 @@ public class ClassifyListActivity extends Activity {
 			}
 
 		});
-	}
+		lv_classify.setOnItemLongClickListener(new OnItemLongClickListener() {
 
-	// private void showDialog() {
-	// dialog = new ProgressDialog(ClassifyListActivity.this);
-	// // 设置进度条风格，风格为圆形，旋转的
-	// dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-	// // 设置ProgressDialog 标题
-	// dialog.setTitle("查找中");
-	// // 设置ProgressDialog 提示信息
-	// dialog.setMessage("请稍等...");
-	// // 设置ProgressDialog 标题图标
-	// // dialog.setIcon(android.R.drawable.ic_dialog_map);
-	// // 设置ProgressDialog 的一个Button
-	//
-	// // 设置ProgressDialog 的进度条是否不明确
-	// dialog.setIndeterminate(false);
-	// // 设置ProgressDialog 是否可以按退回按键取消
-	// dialog.setCancelable(true);
-	// // 显示
-	// dialog.show();
-	// }
+			@Override
+			public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+				final Content content = (Content) parent.getItemAtPosition(position);
+				final File file = new File(content.getDir());
+				String[] data = { "打开", "删除", "共享" };
+				new AlertDialog.Builder(ClassifyListActivity.this).setTitle("选择操作").setItems(data, new OnClickListener() {
+
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						switch (which) {
+						case 0:
+							Intent intent = Utils.openFile(file);
+							startActivity(intent);
+							break;
+						case 1:
+							if (file.exists()) {
+								if (file.delete()) {
+									results.remove(content);
+									listAdapter.updateList(results);
+									Toast.makeText(ClassifyListActivity.this, "删除成功", Toast.LENGTH_SHORT).show();
+								//	initView();
+								} else {
+									Toast.makeText(ClassifyListActivity.this, "删除失败", Toast.LENGTH_SHORT).show();
+								}
+							} else {
+								Toast.makeText(ClassifyListActivity.this, "文件不存在", Toast.LENGTH_SHORT).show();
+							}
+							break;
+						case 2:
+							if (CoreApp.mBinder.isBinderAlive()) {
+								String s = CoreApp.mBinder.AddShareFile(file.getPath());
+								Toast.makeText(ClassifyListActivity.this, "AddShareFile  " + s, Toast.LENGTH_SHORT).show();
+							} else {
+								Toast.makeText(ClassifyListActivity.this, "服务未开启", Toast.LENGTH_SHORT).show();
+							}
+							break;
+						default:
+							break;
+						}
+
+					}
+				}).create().show();
+				return true;
+			}
+		});
+	}
 
 	private void findView() {
 		inflater = getLayoutInflater();
@@ -199,7 +232,7 @@ public class ClassifyListActivity extends Activity {
 
 		@Override
 		public void run() {
-			ArrayList<Content> results = null;
+			
 			Message msg = new Message();
 			Bundle data = new Bundle();
 			if (type.equals("apk")) {

@@ -26,6 +26,10 @@ public class ClassifyGridAdapter extends BaseAdapter {
 	 * @param type
 	 *            按钮id(R.id.XX)
 	 */
+	public void updateList(ArrayList<Content> pictures){
+		this.pictures = pictures;
+		notifyDataSetChanged();
+	}
 	public ClassifyGridAdapter(ArrayList<Content> pictures, Context context, int type) {
 		super();
 		this.pictures = pictures;

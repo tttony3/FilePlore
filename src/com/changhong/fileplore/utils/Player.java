@@ -24,6 +24,7 @@ public class Player implements OnBufferingUpdateListener,
 	private SurfaceHolder surfaceHolder;
 	private SeekBar skbProgress;
 	private Timer mTimer=new Timer();
+	@SuppressWarnings("deprecation")
 	public Player(SurfaceView surfaceView,SeekBar skbProgress)
 	{
 		this.skbProgress=skbProgress;
