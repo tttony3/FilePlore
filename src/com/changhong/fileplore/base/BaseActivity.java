@@ -1,33 +1,20 @@
 package com.changhong.fileplore.base;
 
-import com.nostra13.universalimageloader.core.ImageLoader;
-
 import android.app.Activity;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.view.View;
 
-public class BaseActivity  extends Activity {  
-  
-    protected  ImageLoader imageLoader = ImageLoader.getInstance();  
-  
-    @Override  
-    public boolean onCreateOptionsMenu(Menu menu) {  
-        // 加载菜单  
-   //     getMenuInflater().inflate(R.menu.main_menu, menu);  
-        return true;  
-    }  
-  
-    @Override  
-    public boolean onOptionsItemSelected(MenuItem item) {  
-        switch (item.getItemId()) {  
-//            case R.id.item_clear_memory_cache:  
-//                imageLoader.clearMemoryCache();     // 清除内存缓存  
-//                return true;  
-//            case R.id.item_clear_disc_cache:  
-//                imageLoader.clearDiscCache();       // 清除SD卡中的缓存  
-//                return true;  
-            default:  
-                return false;  
-        }  
-    }  
-}  
+public abstract class BaseActivity   extends Activity {  
+	/**
+	 * 加载布局中的控件
+	 */	
+	protected abstract void findView();
+
+
+	@SuppressWarnings("unchecked")
+	public <T extends View> T findView(int id) {
+	        return (T) findViewById(id);
+	   
+	}
+	
+	
+}

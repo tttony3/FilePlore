@@ -2,16 +2,15 @@ package com.changhong.fileplore.activities;
 
 import java.io.File;
 import java.util.ArrayList;
-
 import com.changhong.fileplore.adapter.ClassifyGridAdapter;
 import com.changhong.fileplore.adapter.PhotoGirdAdapter;
+import com.changhong.fileplore.application.MyApp;
 import com.changhong.fileplore.base.AbsListViewBaseActivity;
 import com.changhong.fileplore.utils.Content;
 import com.changhong.fileplore.utils.Utils;
 import com.chobit.corestorage.CoreApp;
 import com.changhong.fileplore.R;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
-
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
@@ -19,7 +18,6 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.database.Cursor;
-import android.database.CursorJoiner.Result;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -47,6 +45,8 @@ public class PhotoGridActivity extends AbsListViewBaseActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		imageLoader.init(ImageLoaderConfiguration.createDefault(this));
+		MyApp myapp = (MyApp) getApplication();
+		myapp.setContext(this);
 		setContentView(R.layout.activity_classify_grid);
 		content = getIntent().getStringArrayExtra("content");
 		handler = new Handler() {
@@ -175,22 +175,13 @@ public class PhotoGridActivity extends AbsListViewBaseActivity {
 
 	private void showDialog() {
 		dialog = new ProgressDialog(PhotoGridActivity.this);
-		// 设置进度条风格，风格为圆形，旋转的
 		dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-		// 设置ProgressDialog 标题
 		dialog.setTitle("查找中");
-		// 设置ProgressDialog 提示信息
 		dialog.setMessage("请稍等...");
-		// 设置ProgressDialog 标题图标
-		// dialog.setIcon(android.R.drawable.ic_dialog_map);
-		// 设置ProgressDialog 的一个Button
-
-		// 设置ProgressDialog 的进度条是否不明确
 		dialog.setIndeterminate(false);
-		// 设置ProgressDialog 是否可以按退回按键取消
 		dialog.setCancelable(true);
-		// 显示
 		dialog.show();
+		
 	}
 
 }

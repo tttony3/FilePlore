@@ -5,6 +5,7 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
 import com.changhong.fileplore.adapter.ClassifyListAdapter;
+import com.changhong.fileplore.application.MyApp;
 import com.changhong.fileplore.utils.Content;
 import com.changhong.fileplore.utils.Utils;
 import com.changhong.fileplore.view.CircleProgress;
@@ -34,6 +35,9 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 
 public class ClassifyListActivity extends Activity {
+	static private final int APK = 1;
+	static private final int DOC = 2;
+	static private final int ZIP = 3;
 	ArrayList<Content> results;
 	LayoutInflater inflater;
 	AlertDialog alertDialog;
@@ -61,51 +65,45 @@ public class ClassifyListActivity extends Activity {
 			ClassifyListActivity theActivity = mActivity.get();
 			if (theActivity != null) {
 				super.handleMessage(msg);
-				ArrayList<Content> txts = (ArrayList<Content>) msg.getData().get("docs");
-				ArrayList<Content> zips = (ArrayList<Content>) msg.getData().get("zips");
-				ArrayList<Content> apks = (ArrayList<Content>) msg.getData().get("apks");
-				if (txts != null) {
-					listAdapter = new ClassifyListAdapter(txts, theActivity, R.id.img_txt);
-					// dialog.dismiss();
-					if (alertDialog.isShowing()) {
-						mProgressView.stopAnim();
-						alertDialog.dismiss();
-					}
-					lv_classify.setAdapter(listAdapter);
-					tv_count.setText(txts.size() + " 项");
+				ArrayList<Content> data = null;
+				switch (msg.getData().getInt("tag")) {
+				case APK:
+					data = (ArrayList<Content>) msg.getData().get("data");
+					listAdapter = new ClassifyListAdapter(data, theActivity, R.id.img_apk);
+					break;
+				case DOC:
+					data = (ArrayList<Content>) msg.getData().get("data");
+					listAdapter = new ClassifyListAdapter(data, theActivity, R.id.img_txt);
+					break;
+				case ZIP:
+					data = (ArrayList<Content>) msg.getData().get("data");
+					listAdapter = new ClassifyListAdapter(data, theActivity, R.id.img_zip);
+					break;
+
+				default:
+					break;
 				}
-				if (zips != null) {
-					listAdapter = new ClassifyListAdapter(zips, theActivity, R.id.img_zip);
-					// dialog.dismiss();
-					if (alertDialog.isShowing()) {
-						mProgressView.stopAnim();
-						alertDialog.dismiss();
-					}
-					lv_classify.setAdapter(listAdapter);
-					tv_count.setText(zips.size() + " 项");
+				if (alertDialog.isShowing()) {
+					mProgressView.stopAnim();
+					alertDialog.dismiss();
 				}
-				if (apks != null) {
-					listAdapter = new ClassifyListAdapter(apks, theActivity, R.id.img_apk);
-					// dialog.dismiss();
-					if (alertDialog.isShowing()) {
-						mProgressView.stopAnim();
-						alertDialog.dismiss();
-					}
-					lv_classify.setAdapter(listAdapter);
-					tv_count.setText(apks.size() + " 项");
-				}
+				lv_classify.setAdapter(listAdapter);
+				tv_count.setText(data.size() + " 项");
 			}
+
 		}
-	};
+	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_classify_list);
 		flg = getIntent().getFlags();
+		MyApp myapp = (MyApp) getApplication();
+		myapp.setContext(this);
 		handler = new MyHandler(this);
 		findView();
-		
+
 		initView(flg);
 	}
 
@@ -121,19 +119,19 @@ public class ClassifyListActivity extends Activity {
 		case R.id.img_txt:
 			mProgressView.startAnim();
 			alertDialog.show();
-			new Thread(new GetRunnable("doc", false)).start();
+			new Thread(new GetRunnable(DOC, false)).start();
 
 			break;
 		case R.id.img_zip:
 			mProgressView.startAnim();
 			alertDialog.show();
-			new Thread(new GetRunnable("zip", false)).start();
+			new Thread(new GetRunnable(ZIP, false)).start();
 
 			break;
 		case R.id.img_apk:
 			mProgressView.startAnim();
 			alertDialog.show();
-			new Thread(new GetRunnable("apk", false)).start();
+			new Thread(new GetRunnable(APK, false)).start();
 
 			break;
 		default:
@@ -159,7 +157,8 @@ public class ClassifyListActivity extends Activity {
 				final Content content = (Content) parent.getItemAtPosition(position);
 				final File file = new File(content.getDir());
 				String[] data = { "打开", "删除", "共享" };
-				new AlertDialog.Builder(ClassifyListActivity.this).setTitle("选择操作").setItems(data, new OnClickListener() {
+				new AlertDialog.Builder(ClassifyListActivity.this).setTitle("选择操作")
+						.setItems(data, new OnClickListener() {
 
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
@@ -174,7 +173,7 @@ public class ClassifyListActivity extends Activity {
 									results.remove(content);
 									listAdapter.updateList(results);
 									Toast.makeText(ClassifyListActivity.this, "删除成功", Toast.LENGTH_SHORT).show();
-								//	initView();
+									// initView();
 								} else {
 									Toast.makeText(ClassifyListActivity.this, "删除失败", Toast.LENGTH_SHORT).show();
 								}
@@ -185,7 +184,8 @@ public class ClassifyListActivity extends Activity {
 						case 2:
 							if (CoreApp.mBinder.isBinderAlive()) {
 								String s = CoreApp.mBinder.AddShareFile(file.getPath());
-								Toast.makeText(ClassifyListActivity.this, "AddShareFile  " + s, Toast.LENGTH_SHORT).show();
+								Toast.makeText(ClassifyListActivity.this, "AddShareFile  " + s, Toast.LENGTH_SHORT)
+										.show();
 							} else {
 								Toast.makeText(ClassifyListActivity.this, "服务未开启", Toast.LENGTH_SHORT).show();
 							}
@@ -206,7 +206,6 @@ public class ClassifyListActivity extends Activity {
 		lv_classify = (ListView) findViewById(R.id.file_list);
 		tv_dir = (TextView) findViewById(R.id.dir);
 		tv_count = (TextView) findViewById(R.id.item_count);
-
 		layout = inflater.inflate(R.layout.circle_progress, (ViewGroup) findViewById(R.id.rl_progress));
 		builder = new AlertDialog.Builder(ClassifyListActivity.this).setView(layout);
 		alertDialog = builder.create();
@@ -222,28 +221,31 @@ public class ClassifyListActivity extends Activity {
 	}
 
 	class GetRunnable implements Runnable {
-		String type;
+		int type;
 		boolean reseach;
 
-		GetRunnable(String type, boolean reseach) {
+		GetRunnable(int type, boolean reseach) {
 			this.type = type;
 			this.reseach = reseach;
 		}
 
 		@Override
 		public void run() {
-			
+
 			Message msg = new Message();
 			Bundle data = new Bundle();
-			if (type.equals("apk")) {
+			if (type == APK) {
 				results = Utils.getApk(ClassifyListActivity.this, reseach);
-				data.putSerializable("apks", results);
-			} else if (type.equals("doc")) {
+				data.putSerializable("data", results);
+				data.putInt("tag", APK);
+			} else if (type == DOC) {
 				results = Utils.getDoc(ClassifyListActivity.this, reseach);
-				data.putSerializable("docs", results);
-			} else if (type.equals("zip")) {
+				data.putSerializable("data", results);
+				data.putInt("tag", DOC);
+			} else if (type == ZIP) {
 				results = Utils.getZip(ClassifyListActivity.this, reseach);
-				data.putSerializable("zips", results);
+				data.putSerializable("data", results);
+				data.putInt("tag", ZIP);
 			}
 
 			msg.setData(data);
@@ -274,19 +276,19 @@ public class ClassifyListActivity extends Activity {
 			case R.id.img_txt:
 				mProgressView.startAnim();
 				alertDialog.show();
-				new Thread(new GetRunnable("doc", true)).start();
+				new Thread(new GetRunnable(DOC, true)).start();
 
 				break;
 			case R.id.img_zip:
 				mProgressView.startAnim();
 				alertDialog.show();
-				new Thread(new GetRunnable("zip", true)).start();
+				new Thread(new GetRunnable(ZIP, true)).start();
 
 				break;
 			case R.id.img_apk:
 				mProgressView.startAnim();
 				alertDialog.show();
-				new Thread(new GetRunnable("apk", true)).start();
+				new Thread(new GetRunnable(APK, true)).start();
 
 				break;
 			default:

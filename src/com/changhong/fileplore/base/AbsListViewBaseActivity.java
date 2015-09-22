@@ -7,7 +7,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.AbsListView;
 
-public class AbsListViewBaseActivity  extends BaseActivity {  
+public class AbsListViewBaseActivity  extends ImageLoaderBaseActivity {  
   
     protected static final String STATE_PAUSE_ON_SCROLL = "STATE_PAUSE_ON_SCROLL";  
     protected static final String STATE_PAUSE_ON_FLING = "STATE_PAUSE_ON_FLING";  

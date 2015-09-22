@@ -96,7 +96,6 @@ public class MenuFragment extends Fragment {
 
 				break;
 			case R.id.rl_menu_music:
-				Log.e("123", "123");
 				intent.setClass(getActivity(), ClassifyListActivity.class);
 				intent.setFlags(R.id.img_music);
 				startActivity(intent);

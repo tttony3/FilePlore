@@ -6,7 +6,6 @@ import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -15,12 +14,11 @@ import com.changhong.alljoyn.simpleservice.FC_GetShareFile;
 import com.changhong.fileplore.R;
 
 import com.changhong.fileplore.adapter.NetShareFileListAdapter;
-import com.changhong.fileplore.utils.Player;
+import com.changhong.fileplore.application.MyApp;
 import com.changhong.fileplore.utils.StreamTool;
 import com.changhong.fileplore.view.CircleProgress;
 import com.changhong.synergystorage.javadata.JavaFile;
 import com.changhong.synergystorage.javadata.JavaFolder;
-import com.changhong.synergystorage.javadata.JavaVideoFile;
 import com.chobit.corestorage.CoreApp;
 import com.chobit.corestorage.CoreDownloadProgressCB;
 import com.chobit.corestorage.CoreShareFileListener;
@@ -33,11 +31,8 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.BitmapFactory.Options;
-import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
-import android.media.MediaPlayer.OnPreparedListener;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
@@ -46,22 +41,11 @@ import android.os.Message;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
-import android.view.SurfaceView;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ImageView;
+import android.widget.*;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.Button;
-import android.widget.ImageButton;
-import android.widget.ListView;
-import android.widget.MediaController;
-import android.widget.ProgressBar;
-import android.widget.SeekBar;
-import android.widget.TextView;
-import android.widget.Toast;
-import android.widget.VideoView;
 
 public class ShowNetFileActivity extends Activity {
 
@@ -71,14 +55,10 @@ public class ShowNetFileActivity extends Activity {
 	static private final int SHOW_PREVIEW_DIALOG = 4;
 	static private final int UPDATE_BAR = 5;
 	static private final int RESET_BAR = 6;
-	static private final int SET_CURTIME = 7;
 	static private final int SET_TOTALTIME = 8;
-	static private final int UPDATE_PREVIEW = 9;
 	static private final int UPDATE_DOWNLOAD_BAR = 10;
-	static private final int SHOW_DOWN_BAR = 11;
 	static private final int DISMISS_DOWN_BAR = 12;
-	// private static ProgressDialog dialog;
-	JavaFile file;
+	private JavaFile file;
 	private List<JavaFile> shareFileList;
 	private List<JavaFolder> shareFolderList;
 	static private ListView lv_sharepath;
@@ -87,55 +67,51 @@ public class ShowNetFileActivity extends Activity {
 	private MyOnItemClickListener myOnItemClickListener;
 	private Handler handler;
 	private TextView filenum;
-	AlertDialog alertDialog_progress;
-	AlertDialog.Builder builder_progress;
-	CircleProgress mProgressView;
-	View layout_progress;
-	LinkedList<JavaFolder> fatherList = new LinkedList<JavaFolder>();
-	View layout_preview;
-	AlertDialog alertDialog_preview;
-	AlertDialog.Builder builder_preview;
-	ImageView iv_preview;
+	private AlertDialog alertDialog_progress;
+	private AlertDialog.Builder builder_progress;
+	private CircleProgress mProgressView;
+	private View layout_progress;
+	private LinkedList<JavaFolder> fatherList = new LinkedList<JavaFolder>();
+	private View layout_preview;
+	private AlertDialog alertDialog_preview;
+	private AlertDialog.Builder builder_preview;
+	private ImageView iv_preview;
 
-	View layout_mediaplayer;
-	AlertDialog alertDialog_mediaplayer;
-	AlertDialog.Builder builder_mediaplayer;
-	ImageButton ib_start;
-	ImageButton ib_stop;
-	ProgressBar pb_media;
-	TextView tv_curtime;
-	TextView tv_totaltime;
-	int curtime = 0;
-	LayoutInflater inflater;
-	DeviceInfo devInfo;
+	private View layout_mediaplayer;
+	private AlertDialog alertDialog_mediaplayer;
+	private AlertDialog.Builder builder_mediaplayer;
+	private ImageButton ib_start;
+	private ImageButton ib_stop;
+	private ProgressBar pb_media;
+	private TextView tv_curtime;
+	private TextView tv_totaltime;
+	private int curtime = 0;
+	private LayoutInflater inflater;
+	private DeviceInfo devInfo;
 	private MediaPlayer mp = new MediaPlayer();
 
-	View layout_videoplayer;
-	AlertDialog alertDialog_videoplayer;
-	AlertDialog.Builder builder_videoplayer;
-	private VideoView video1;
-	MediaController mediaco;
-	private SurfaceView surfaceView;
-	private Button btnPause, btnPlayUrl, btnStop;
-	private SeekBar skbProgress;
-	private Player player;
-
-	View layout_download;
-	AlertDialog alertDialog_download;
-	AlertDialog.Builder builder_download;
-	Button btn_stop;
-	ProgressBar pb_download;
-	TextView tv_download;
-	boolean isremove = false;
-	boolean isadd = true;
-	boolean isexit = false;
-	JavaFolder lastremove;
+	private View layout_videoplayer;
+	private AlertDialog alertDialog_videoplayer;
+	private AlertDialog.Builder builder_videoplayer;
+	private MediaController mediaco;
+	private View layout_download;
+	private AlertDialog alertDialog_download;
+	private AlertDialog.Builder builder_download;
+	private Button btn_stop;
+	private ProgressBar pb_download;
+	private TextView tv_download;
+	private boolean isremove = false;
+	private boolean isadd = true;
+	private boolean isexit = false;
+	private JavaFolder lastremove;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_net_file);
+		MyApp myapp = (MyApp) getApplication();
+		myapp.setContext(this);
 		findView();
 
 		Intent intent = getIntent();
@@ -366,7 +342,7 @@ public class ShowNetFileActivity extends Activity {
 
 		@Override
 		public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-			if(filenum.getText().equals("0项")){
+			if (filenum.getText().equals("0项")) {
 				Toast.makeText(ShowNetFileActivity.this, "空文件夹", Toast.LENGTH_SHORT).show();
 				return;
 			}
@@ -375,18 +351,18 @@ public class ShowNetFileActivity extends Activity {
 			if (shareFolderList != null) {
 				if (position < shareFolderList.size()) {
 					showDialog();
-					if (!isadd&&!isexit) {
+					if (!isadd && !isexit) {
 						fatherList.addLast(lastremove);
 						isadd = true;
 					}
 					isexit = false;
-					
+
 					folder = (JavaFolder) parent.getItemAtPosition(position);
 					// if (!fatherList.contains(folder)) {
 					// fatherList.addLast(folder);
 					// Log.e("add", folder.getLocation());
 					// }
-				
+
 					CoreApp.mBinder.getFolderChildren(devInfo, folder, folder);
 					isremove = true;
 
@@ -399,7 +375,7 @@ public class ShowNetFileActivity extends Activity {
 		}
 
 		private void setFileOnClick(AdapterView<?> parent, int position) {
-			if(filenum.getText().equals("0项")){
+			if (filenum.getText().equals("0项")) {
 				Toast.makeText(ShowNetFileActivity.this, "空文件夹", Toast.LENGTH_SHORT).show();
 				return;
 			}
@@ -454,13 +430,9 @@ public class ShowNetFileActivity extends Activity {
 					default:
 						break;
 					}
-
 				}
-
 			}).show();
-
 		}
-
 	}
 
 	private void showPreviewDialog(String path) {

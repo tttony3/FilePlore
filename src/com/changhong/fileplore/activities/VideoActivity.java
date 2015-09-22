@@ -1,6 +1,7 @@
 package com.changhong.fileplore.activities;
 
 import com.changhong.fileplore.R;
+import com.changhong.fileplore.application.MyApp;
 import com.changhong.fileplore.utils.Player;
 
 import android.app.Activity;
@@ -92,6 +93,8 @@ public class VideoActivity extends Activity  {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		MyApp myapp = (MyApp) getApplication();
+		myapp.setContext(this);
 		Intent intent = getIntent();
 		String uri =intent.getStringExtra("uri");
 		setContentView(R.layout.activity_video);

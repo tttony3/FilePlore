@@ -10,15 +10,21 @@ import com.chobit.corestorage.CoreService.CoreServiceBinder;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.jeremyfeinstein.slidingmenu.lib.app.SlidingFragmentActivity;
 import com.changhong.fileplore.R;
+import com.changhong.fileplore.adapter.MainViewPagerAdapter;
+import com.changhong.fileplore.application.MyApp;
 
 import android.os.Binder;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.app.ActionBar;
+import android.app.Activity;
+import android.app.ActivityManager;
+import android.app.ActivityManager.RunningTaskInfo;
 import android.app.AlertDialog;
 import android.app.LocalActivityManager;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -34,6 +40,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 import android.widget.EditText;
@@ -55,17 +62,12 @@ public class MainActivity extends SlidingFragmentActivity {
 	TextView t1, t2;
 	TableLayout tl_brwloc;
 	RelativeLayout rl_brwnet;
-	MyPagerAdapter myPagerAdapter;
+	MainViewPagerAdapter myPagerAdapter;
 	private int offset = 0;// 动画图片偏移量
 	private int currIndex = 0;// 当前页卡编号
 	private int bmpW;// 动画图片宽度
 	private ImageView cursor1;// 动画图片
 
-	@Override
-	protected void onResume() {
-		// ClientBusHandler.List_DeviceInfo.clear();
-		super.onResume();
-	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -73,7 +75,8 @@ public class MainActivity extends SlidingFragmentActivity {
 		ActionBar actionBar = getActionBar();
 		actionBar.setDisplayShowHomeEnabled(false);
 		setContentView(R.layout.activity_main);
-
+		MyApp myapp = (MyApp) getApplication();
+		myapp.setContext(this);
 		//
 		context = MainActivity.this;
 		manager = new LocalActivityManager(this, true);
@@ -109,16 +112,16 @@ public class MainActivity extends SlidingFragmentActivity {
 			getSlidingMenu().setSlidingEnabled(false);
 			getSlidingMenu().setTouchModeAbove(SlidingMenu.TOUCHMODE_NONE);
 		}
-		
-		MenuFragment menuFragment =new MenuFragment();		
-		getSupportFragmentManager().beginTransaction().replace(R.id.menu_frame,menuFragment ).commit();
+
+		MenuFragment menuFragment = new MenuFragment();
+		getSupportFragmentManager().beginTransaction().replace(R.id.menu_frame, menuFragment).commit();
 
 		SlidingMenu sm = getSlidingMenu();
 		sm.setBehindOffsetRes(R.dimen.slidingmenu_offset);
 		sm.setFadeEnabled(false);
 		sm.setBehindScrollScale(0.2f);
 		sm.setFadeDegree(0.2f);
-		
+
 		sm.setBackgroundImage(R.drawable.star_back);
 		sm.setBehindCanvasTransformer(new SlidingMenu.CanvasTransformer() {
 			@Override
@@ -166,7 +169,7 @@ public class MainActivity extends SlidingFragmentActivity {
 		rl_brwnet = (RelativeLayout) list.get(0).findViewById(R.id.browse_rl_net);
 		tl_brwloc.setOnClickListener(new MyOnClickListener(1));
 		rl_brwnet.setOnClickListener(new MyOnClickListener(2));
-		myPagerAdapter = new MyPagerAdapter(list);
+		myPagerAdapter = new MainViewPagerAdapter(list);
 		pager.setAdapter(myPagerAdapter);
 		pager.setCurrentItem(0);
 		pager.setOnPageChangeListener(new MyOnPageChangeListener());
@@ -248,54 +251,7 @@ public class MainActivity extends SlidingFragmentActivity {
 	/**
 	 * Pager适配器
 	 */
-	public class MyPagerAdapter extends PagerAdapter {
-		List<View> list = new ArrayList<View>();
-
-		public View getView(int index) {
-			return list.get(index);
-		}
-
-		public MyPagerAdapter(ArrayList<View> list) {
-			this.list = list;
-		}
-
-		@Override
-		public void destroyItem(ViewGroup container, int position, Object object) {
-			ViewPager pViewPager = ((ViewPager) container);
-			pViewPager.removeView(list.get(position));
-		}
-
-		@Override
-		public boolean isViewFromObject(View arg0, Object arg1) {
-			return arg0 == arg1;
-		}
-
-		@Override
-		public int getCount() {
-			return list.size();
-		}
-
-		@Override
-		public Object instantiateItem(View arg0, int arg1) {
-			ViewPager pViewPager = ((ViewPager) arg0);
-			pViewPager.addView(list.get(arg1));
-			return list.get(arg1);
-		}
-
-		@Override
-		public void restoreState(Parcelable arg0, ClassLoader arg1) {
-
-		}
-
-		@Override
-		public Parcelable saveState() {
-			return null;
-		}
-
-		@Override
-		public void startUpdate(View arg0) {
-		}
-	}
+	
 
 	/**
 	 * 页卡切换监听
@@ -427,7 +383,8 @@ public class MainActivity extends SlidingFragmentActivity {
 
 		@Override
 		public void onTransportUpdata(String arg0, String arg1, long arg2, long arg3, long arg4) {
-			// TODO Auto-generated method stub
+			Log.e("onTransportUpdata",
+					"agr0 " + arg0 + " arg1 " + arg1 + " arg2 " + arg2 + " arg3 " + arg3 + " arg4  " + arg4);
 
 		}
 
@@ -446,12 +403,26 @@ public class MainActivity extends SlidingFragmentActivity {
 
 		@Override
 		public String onGetRealFullPath(String arg0) {
+			Log.e("onGetRealFullPath", arg0);
 			return null;
 		}
 
 		@Override
 		public void recivePushResources(List<String> resourceslist) {
-			// TODO Auto-generated method stub
+			MyApp myapp = (MyApp) getApplication();
+
+			final List<String> list = resourceslist;
+			AlertDialog.Builder dialog = new AlertDialog.Builder(myapp.getContext());
+
+			AlertDialog alert = dialog.setTitle("有推送文件，是否接收").setNegativeButton("查看", new OnClickListener() {
+
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+			
+					Log.e("getpush", list.toString());
+				}
+			}).setPositiveButton("取消", null).create();
+			alert.show();
 
 		}
 	};
@@ -459,9 +430,8 @@ public class MainActivity extends SlidingFragmentActivity {
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
-
 		System.exit(0);
-		// 或者下面这种方式
-		// android.os.Process.killProcess(android.os.Process.myPid());
+
 	}
+
 }

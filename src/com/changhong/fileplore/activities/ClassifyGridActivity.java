@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import com.changhong.fileplore.utils.Utils;
 import com.chobit.corestorage.CoreApp;
 import com.changhong.fileplore.adapter.*;
+import com.changhong.fileplore.application.MyApp;
 import com.changhong.fileplore.R;
 import com.changhong.fileplore.utils.Content;
 
@@ -34,6 +35,8 @@ public class ClassifyGridActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_classify_grid);
+		MyApp myapp = (MyApp) getApplication();
+		myapp.setContext(this);
 		flg = getIntent().getFlags();
 		findView();
 		initView(flg);

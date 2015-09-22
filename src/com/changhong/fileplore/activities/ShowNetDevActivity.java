@@ -6,6 +6,7 @@ import java.util.List;
 import com.changhong.alljoyn.simpleclient.ClientBusHandler;
 import com.changhong.alljoyn.simpleclient.DeviceInfo;
 import com.changhong.fileplore.adapter.NetDevListAdapter;
+import com.changhong.fileplore.application.MyApp;
 import com.changhong.fileplore.view.CircleProgress;
 import com.chobit.corestorage.CoreApp;
 import com.chobit.corestorage.CoreDeviceListener;
@@ -15,15 +16,18 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
 
 public class ShowNetDevActivity extends Activity {
@@ -36,14 +40,21 @@ public class ShowNetDevActivity extends Activity {
 	AlertDialog.Builder builder;
 	CircleProgress mProgressView;
 	View layout;
+	ArrayList<String> pushList;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_net_dev);
-
+		MyApp myapp = (MyApp) getApplication();
+		myapp.setContext(this);
 		LayoutInflater inflater = getLayoutInflater();
 		layout = inflater.inflate(R.layout.circle_progress, (ViewGroup) findViewById(R.id.rl_progress));
+		Intent intent = getIntent();
+		Bundle b = intent.getBundleExtra("pushList");
+		if (b != null) {
+			pushList = b.getStringArrayList("pushList");
+		}
 		builder = new AlertDialog.Builder(this).setView(layout);
 		alertDialog = builder.create();
 		mProgressView = (CircleProgress) layout.findViewById(R.id.progress);
@@ -72,8 +83,35 @@ public class ShowNetDevActivity extends Activity {
 				startActivity(intent);
 			}
 		});
-		//
+		netList.setOnItemLongClickListener(new OnItemLongClickListener() {
 
+			@Override
+			public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+				final DeviceInfo info = (DeviceInfo) parent.getItemAtPosition(position);
+				AlertDialog.Builder dialog = new AlertDialog.Builder(ShowNetDevActivity.this);
+				dialog.setTitle("");
+				String[] dataArray = new String[] { "推送" };
+				dialog.setItems(dataArray, new DialogInterface.OnClickListener() {
+					/***
+					 * 我们这里传递给dialog.setItems方法的参数为数组，这就导致了我们下面的
+					 * onclick方法中的which就跟数组下标是一样的，点击hello时返回0；点击baby返回1……
+					 */
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						switch (which) {
+						case 0:
+							CoreApp.mBinder.PushResourceToDevice(info, pushList);
+							break;
+						default:
+							break;
+						}
+
+					}
+				}).create().show();
+				return true;
+			}
+
+		});
 	}
 
 	private void setUpdateList(List<DeviceInfo> list) {

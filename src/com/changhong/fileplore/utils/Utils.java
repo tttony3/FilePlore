@@ -71,6 +71,7 @@ public class Utils {
 			return (new String[] { "未装载", "未装载", "000" });
 
 	}
+
 	/**
 	 * 
 	 * @param context
@@ -98,11 +99,12 @@ public class Utils {
 		cursor.close();
 		return results;
 	}
-/**
- * 
- * @param context
- * @return Arraylist<content> content包含路径，标题，演唱者
- */
+
+	/**
+	 * 
+	 * @param context
+	 * @return Arraylist<content> content包含路径，标题，演唱者
+	 */
 	public static ArrayList<Content> getMusic(Context context) {
 		ArrayList<Content> results = new ArrayList<Content>();
 		ContentResolver contentResolver = context.getContentResolver();
@@ -139,10 +141,12 @@ public class Utils {
 		cursor.close();
 		return results;
 	}
+
 	/**
 	 * 获取系统内图片相册
+	 * 
 	 * @param context
-	 * @return 返回相册列表的Arraylist<content> content包含  dir:路径，(title:相册名)，缩略图
+	 * @return 返回相册列表的Arraylist<content> content包含 dir:路径，(title:相册名)，缩略图
 	 */
 	public static ArrayList<Content> getPhotoCata(Context context) {
 
@@ -189,9 +193,10 @@ public class Utils {
 				results = getObject("result_doc");
 			} catch (Exception e2) {
 				reSeach("doc");
+			} 
+				return results;
+			
 
-			}
-			return results;
 		} else {
 			reSeach("doc");
 			return results;
@@ -321,6 +326,7 @@ public class Utils {
 
 	/**
 	 * 使用系统工具打开文件
+	 * 
 	 * @param file
 	 * @return 对应的Intent
 	 */
@@ -409,11 +415,14 @@ public class Utils {
 			}
 		}
 	}
-/**
- * 从指定文件递归获取文件列表
- * @param file
- * @param type "zip","doc","apk"其中之一
- */
+
+	/**
+	 * 从指定文件递归获取文件列表
+	 * 
+	 * @param file
+	 * @param type
+	 *            "zip","doc","apk"其中之一
+	 */
 	public static void getresult(File file, String type) {
 
 		if (type.equals("zip")) {
@@ -479,7 +488,7 @@ public class Utils {
 	 * 
 	 * @param name
 	 *            文件名
-
+	 * 
 	 */
 	@SuppressWarnings("unchecked")
 	static ArrayList<Content> getObject(String name) throws Exception {

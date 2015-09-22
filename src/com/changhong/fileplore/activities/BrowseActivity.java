@@ -2,6 +2,7 @@ package com.changhong.fileplore.activities;
 
 import com.changhong.fileplore.utils.Utils;
 import com.changhong.fileplore.R;
+import com.changhong.fileplore.application.MyApp;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -37,7 +38,8 @@ public class BrowseActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_browse);
-
+		MyApp myapp = (MyApp) getApplication();
+		myapp.setContext(this);
 		findView();
 		setView();
 		setOnClickListener();

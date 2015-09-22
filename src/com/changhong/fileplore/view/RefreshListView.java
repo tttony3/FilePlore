@@ -31,6 +31,10 @@ public class RefreshListView extends ListView implements OnScrollListener, OnCli
 	}
 
 	public interface IOnRefreshListener {
+		
+		/**
+		 * 下拉刷新时的动作
+		 */
 		void OnRefresh();
 	}
 

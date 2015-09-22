@@ -3,6 +3,7 @@ package com.changhong.fileplore.adapter;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.List;
 
 import com.changhong.fileplore.R;
 
@@ -25,7 +26,7 @@ public class PloreListAdapter extends BaseAdapter {
 	static final private int MOVIE = 5;
 	static final private int UNKNOW = 6;
 
-	private ArrayList<File> files;
+	private List<File> files;
 	private Boolean[] checkbox_list;
 
 	public Boolean[] getCheckBox_List() {
@@ -39,7 +40,7 @@ public class PloreListAdapter extends BaseAdapter {
 	private LayoutInflater mInflater;
 	private boolean show_cb = false;
 
-	public PloreListAdapter(Context context, ArrayList<File> files, boolean isRoot) {
+	public PloreListAdapter(Context context, List<File> files, boolean isRoot) {
 		this.files = files;
 		checkbox_list = new Boolean[files.size()];
 		for (int i = 0; i < checkbox_list.length; i++) {
