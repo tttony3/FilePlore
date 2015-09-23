@@ -9,6 +9,33 @@ import android.content.Context;
 
 public class MyApp extends CoreApp {
 	Context context;
+	Context mainContext;
+	String ip;
+	int port;
+	public String getIp() {
+		return ip;
+	}
+
+	public void setIp(String ip) {
+		this.ip = ip;
+	}
+
+	public int getPort() {
+		return port;
+	}
+
+	public void setPort(int port) {
+		this.port = port;
+	}
+
+	public Context getMainContext() {
+		return mainContext;
+	}
+
+	public void setMainContext(Context mainContext) {
+		this.mainContext = mainContext;
+	}
+
 	ArrayList<File> fileList = new ArrayList<File>();
 
 	/**

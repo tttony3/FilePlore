@@ -29,6 +29,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
+import android.widget.Toast;
 
 public class ShowNetDevActivity extends Activity {
 	Context context = ShowNetDevActivity.this;
@@ -90,17 +91,18 @@ public class ShowNetDevActivity extends Activity {
 				final DeviceInfo info = (DeviceInfo) parent.getItemAtPosition(position);
 				AlertDialog.Builder dialog = new AlertDialog.Builder(ShowNetDevActivity.this);
 				dialog.setTitle("");
-				String[] dataArray = new String[] { "推送" };
+				String[] dataArray = new String[] { "推送到此设备" };
 				dialog.setItems(dataArray, new DialogInterface.OnClickListener() {
-					/***
-					 * 我们这里传递给dialog.setItems方法的参数为数组，这就导致了我们下面的
-					 * onclick方法中的which就跟数组下标是一样的，点击hello时返回0；点击baby返回1……
-					 */
+
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 						switch (which) {
 						case 0:
-							CoreApp.mBinder.PushResourceToDevice(info, pushList);
+							if (pushList != null && pushList.size() != 0) {
+								CoreApp.mBinder.PushResourceToDevice(info, pushList);
+							} else {
+								Toast.makeText(ShowNetDevActivity.this, "未选择推送文件", Toast.LENGTH_SHORT).show();
+							}
 							break;
 						default:
 							break;
@@ -135,8 +137,7 @@ public class ShowNetDevActivity extends Activity {
 
 		@Override
 		public void stopWaiting() {
-			// if (dialog.isShowing())
-			// dialog.dismiss();
+
 			if (alertDialog.isShowing()) {
 				mProgressView.stopAnim();
 				alertDialog.dismiss();
@@ -161,18 +162,15 @@ public class ShowNetDevActivity extends Activity {
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
 			finish();
-			// CoreApp app = (CoreApp) this.getApplicationContext();
-
-			// app.onTerminate();
-			// CoreApp.mBinder.deinit();
-			// CoreApp.mBinder.DisConnectDeivce();
-			//
-
-			// Intent intent = new Intent("com.chobit.corestorage.CoreService");
-			//
-			// app.stopService(intent);
-			//
 		}
 		return super.onKeyDown(keyCode, event);
 	}
+
+	@Override
+	protected void onResume() {
+		MyApp myapp = (MyApp) getApplication();
+		myapp.setContext(this);
+		super.onResume();
+	}
+
 }

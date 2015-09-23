@@ -606,4 +606,25 @@ public class Utils {
 		}
 		return count;
 	}
+/**
+ * 
+ * @param name 文件名
+ * @return 文件类型   one of {"audio","video","image","*"}
+ */
+	public static String getMIMEType(String name) {
+		String type;
+		String end = name.substring(name.lastIndexOf(".") + 1, name.length()).toLowerCase();
+		if (end.equals("m4a") || end.equals("mp3") || end.equals("wav")) {
+			type = "audio";
+		} else if (end.equals("mp4") || end.equals("3gp")) {
+			type = "video";
+		} else if (end.equals("jpg") || end.equals("png") || end.equals("jpeg") || end.equals("bmp")
+				|| end.equals("gif")) {
+			type = "image";
+		} else {
+			type = "*";
+		}
+		return type;
+		
+	}
 }

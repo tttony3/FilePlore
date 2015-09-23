@@ -68,7 +68,6 @@ public class MainActivity extends SlidingFragmentActivity {
 	private int bmpW;// 动画图片宽度
 	private ImageView cursor1;// 动画图片
 
-
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -77,6 +76,7 @@ public class MainActivity extends SlidingFragmentActivity {
 		setContentView(R.layout.activity_main);
 		MyApp myapp = (MyApp) getApplication();
 		myapp.setContext(this);
+		myapp.setMainContext(this);
 		//
 		context = MainActivity.this;
 		manager = new LocalActivityManager(this, true);
@@ -251,7 +251,6 @@ public class MainActivity extends SlidingFragmentActivity {
 	/**
 	 * Pager适配器
 	 */
-	
 
 	/**
 	 * 页卡切换监听
@@ -390,14 +389,15 @@ public class MainActivity extends SlidingFragmentActivity {
 
 		@Override
 		public void onHttpServerStop() {
-			// TODO Auto-generated method stub
 
 		}
 
 		@Override
 		public void onHttpServerStart(String ip, int port) {
-
-			Log.i("tl", ip + "port" + port);
+			MyApp myapp = (MyApp) getApplication();
+			myapp.setIp(ip);
+			myapp.setPort(port);
+		//	Log.i("tl", ip + "port" + port);
 
 		}
 
@@ -407,25 +407,57 @@ public class MainActivity extends SlidingFragmentActivity {
 			return null;
 		}
 
-		@Override
-		public void recivePushResources(List<String> resourceslist) {
-			MyApp myapp = (MyApp) getApplication();
+		// @Override
+		// public void recivePushResources(List<String> resourceslist) {
+		// final MyApp myapp = (MyApp) getApplication();
+		// final List<String> list = resourceslist;
+		// AlertDialog.Builder dialog = new
+		// AlertDialog.Builder(myapp.getContext());
+		//
+		// AlertDialog alert =
+		// dialog.setTitle("有推送文件，是否接收").setNegativeButton("查看", new
+		// OnClickListener() {
+		//
+		// @Override
+		// public void onClick(DialogInterface dialog, int which) {
+		// Intent intent = new Intent();
+		// intent.setClass(myapp.getContext(), ShowPushFileActivity.class);
+		// intent.putStringArrayListExtra("pushList", (ArrayList<String>) list);
+		// startActivity(intent);
+		// }
+		// }).setPositiveButton("取消", null).create();
+		// alert.show();
+		//
+		// }
 
-			final List<String> list = resourceslist;
+		@Override
+		public void recivePushResources(List<String> pushlist) {
+			final MyApp myapp = (MyApp) getApplication();
+			final List<String> list = pushlist;
 			AlertDialog.Builder dialog = new AlertDialog.Builder(myapp.getContext());
 
 			AlertDialog alert = dialog.setTitle("有推送文件，是否接收").setNegativeButton("查看", new OnClickListener() {
 
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
-			
-					Log.e("getpush", list.toString());
+					Intent intent = new Intent();
+					intent.setClass(myapp.getContext(), ShowPushFileActivity.class);
+					intent.putStringArrayListExtra("pushList", (ArrayList<String>) list);
+				//	intent.putExtra("pushname", pushname);
+					startActivity(intent);
 				}
 			}).setPositiveButton("取消", null).create();
 			alert.show();
 
 		}
 	};
+
+	@Override
+	protected void onResume() {
+		MyApp myapp = (MyApp) getApplication();
+		myapp.setContext(this);
+		super.onResume();
+	}
 
 	@Override
 	protected void onDestroy() {

@@ -20,6 +20,10 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.SET_WALLPAPER" />
 
+    <uses-sdk
+        android:minSdkVersion="17"
+        android:targetSdkVersion="22" />
+
     <application
         android:name="com.changhong.fileplore.application.MyApp"
         android:allowBackup="true"
@@ -76,6 +80,10 @@
             android:name="com.changhong.fileplore.activities.VideoActivity"
             android:label="VideoActivity" >
         </activity>
+        <activity
+            android:name="com.changhong.fileplore.activities.ShowPushFileActivity"
+            android:label="VideoActivity" >
+        </activity>
 
         <service
             android:name="com.chobit.corestorage.CoreService"
@@ -85,9 +93,5 @@
             </intent-filter>
         </service>
     </application>
-
-    <uses-sdk
-        android:minSdkVersion="17"
-        android:targetSdkVersion="22" />
 
 </manifest>

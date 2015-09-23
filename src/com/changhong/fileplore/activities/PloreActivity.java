@@ -56,7 +56,7 @@ public class PloreActivity extends BaseActivity implements RefreshListView.IOnRe
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_plore);
 		MyApp myapp = (MyApp) getApplication();
-		myapp.setContext(this);
+		myapp.setContext(myapp.getMainContext());
 		fileList = myapp.getFileList();
 		findView();
 		initView();
@@ -289,7 +289,10 @@ public class PloreActivity extends BaseActivity implements RefreshListView.IOnRe
 							for (int i = 0; i < mlist.length; i++) {
 								if (mlist[i]) {
 									File file = (File) mFileAdpter.getItem(i);
-									pushList.add(file.getPath());
+									MyApp myapp = (MyApp) getApplication();
+									String ip=myapp.getIp();
+									int port =myapp.getPort();
+									pushList.add("http://"+ip+":"+port+file.getPath());
 								}
 							}
 							Intent intent = new Intent();
@@ -374,7 +377,7 @@ public class PloreActivity extends BaseActivity implements RefreshListView.IOnRe
 			} else if (file.isDirectory()) {
 				loadData(file);
 			} else {
-				Utils.openFile(file);
+				startActivity(Utils.openFile(file));
 			}
 			break;
 

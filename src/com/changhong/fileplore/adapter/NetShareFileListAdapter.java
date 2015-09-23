@@ -58,7 +58,7 @@ public class NetShareFileListAdapter extends BaseAdapter {
 	public View getView(int position, View convertView, ViewGroup parent) {
 		ViewHolder viewHolder;
 		if (convertView == null) {
-			convertView = inflater.inflate(R.layout.listitem_netsharepath, null);
+			convertView = inflater.inflate(R.layout.listitem_netfile, null);
 			viewHolder = new ViewHolder();
 			viewHolder.name = (TextView) convertView.findViewById(R.id.tv_net_filename);
 			viewHolder.url = (TextView) convertView.findViewById(R.id.tv_net_fileurl);

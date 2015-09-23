@@ -15,6 +15,7 @@ import com.changhong.fileplore.R;
 
 import com.changhong.fileplore.adapter.NetShareFileListAdapter;
 import com.changhong.fileplore.application.MyApp;
+import com.changhong.fileplore.utils.MyCoreDownloadProgressCB;
 import com.changhong.fileplore.utils.StreamTool;
 import com.changhong.fileplore.view.CircleProgress;
 import com.changhong.synergystorage.javadata.JavaFile;
@@ -119,7 +120,7 @@ public class ShowNetFileActivity extends Activity {
 		devInfo = CoreApp.mBinder.GetDeviceList().get(position);
 		CoreApp.mBinder.setShareFileListener(shareListener);
 		CoreApp.mBinder.ConnectDeivce(devInfo);
-		CoreApp.mBinder.setDownloadCBInterface(downloadCB);
+		CoreApp.mBinder.setDownloadCBInterface(new MyCoreDownloadProgressCB(handler,this));
 		netShareFileListAdapter = new NetShareFileListAdapter(shareFileList, shareFolderList, devInfo, this);
 		myOnItemClickListener = new MyOnItemClickListener();
 
@@ -239,11 +240,6 @@ public class ShowNetFileActivity extends Activity {
 		}
 
 		@Override
-		public void updateImageThumbNails(Bitmap bt) {
-
-		}
-
-		@Override
 		public void stopWaiting() {
 			dismissDialog();
 
@@ -252,6 +248,11 @@ public class ShowNetFileActivity extends Activity {
 		@Override
 		public void startWaiting() {
 			showDialog();
+
+		}
+
+		@Override
+		public void updateImageThumbNails( Bitmap arg1) {
 
 		}
 	};
@@ -309,7 +310,7 @@ public class ShowNetFileActivity extends Activity {
 				case SET_TOTALTIME:
 					tv_totaltime.setText(time / 60 + ":" + (time - (time / 60) * 60));
 					break;
-				case UPDATE_DOWNLOAD_BAR:
+				case MyCoreDownloadProgressCB.UPDATE_DOWNLOAD_BAR:
 					if (!alertDialog_download.isShowing()) {
 						long total = msg.getData().getLong("total");
 						int max = (int) (total / 100);
@@ -323,7 +324,7 @@ public class ShowNetFileActivity extends Activity {
 						tv_download.setText(p + "%");
 					}
 					break;
-				case DISMISS_DOWN_BAR:
+				case MyCoreDownloadProgressCB.DISMISS_DOWN_BAR:
 					if (alertDialog_download.isShowing())
 						alertDialog_download.dismiss();
 					break;
@@ -425,6 +426,7 @@ public class ShowNetFileActivity extends Activity {
 
 							}
 						});
+						Log.e("location", file.getLocation());
 						CoreApp.mBinder.getShareFileDownload(devInfo, file.getLocation(), null);
 						break;
 					default:
@@ -460,71 +462,7 @@ public class ShowNetFileActivity extends Activity {
 		handler.sendMessage(msg);
 	}
 
-	CoreDownloadProgressCB downloadCB = new CoreDownloadProgressCB() {
-
-		@Override
-		public void onDownloadOK(String fileuri) {
-
-			dismissDownDialog();
-
-			String download_Path = Environment.getExternalStorageDirectory().getAbsolutePath();
-			String appname = FC_GetShareFile.getApplicationName(ShowNetFileActivity.this);
-			Toast.makeText(ShowNetFileActivity.this, "下载成功,保存在" + download_Path + "/" + appname + "/download/ 目录下",
-					Toast.LENGTH_SHORT).show();
-		}
-
-		@Override
-		public void onDowloadProgress(UpdateDownloadPress press) {
-			Message msg = new Message();
-			Bundle bundle = new Bundle();
-			bundle.putInt("key", UPDATE_DOWNLOAD_BAR);
-			bundle.putLong("part", press.part);
-			bundle.putLong("total", press.total);
-			msg.setData(bundle);
-			handler.sendMessage(msg);
-
-		}
-
-		@Override
-		public void onDowloaStop(String fileuri) {
-			Log.e("Progress", "stop" + fileuri);
-			Toast.makeText(ShowNetFileActivity.this, "下载停止", Toast.LENGTH_SHORT).show();
-			dismissDownDialog();
-
-		}
-
-		private void dismissDownDialog() {
-			Message msg = new Message();
-			Bundle bundle = new Bundle();
-			bundle.putInt("key", DISMISS_DOWN_BAR);
-			msg.setData(bundle);
-			handler.sendMessage(msg);
-
-		}
-
-		@Override
-		public void onDowloaFailt(String fileuri) {
-			Log.e("Progress", "failt" + fileuri);
-			Toast.makeText(ShowNetFileActivity.this, "下载失败", Toast.LENGTH_SHORT).show();
-			dismissDownDialog();
-
-		}
-
-		@Override
-		public void onDowloaCancel(String fileuri) {
-			Toast.makeText(ShowNetFileActivity.this, "下载取消", Toast.LENGTH_SHORT).show();
-			dismissDownDialog();
-
-		}
-
-		@Override
-		public void onConnectError(String fileuri) {
-			Log.e("Progress", "error" + fileuri);
-			Toast.makeText(ShowNetFileActivity.this, "下载错误", Toast.LENGTH_SHORT).show();
-			dismissDownDialog();
-
-		}
-	};
+	
 
 	class MediaButtonListener implements OnClickListener {
 		JavaFile file;
