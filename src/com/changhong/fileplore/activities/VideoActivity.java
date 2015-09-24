@@ -4,6 +4,7 @@ import com.changhong.fileplore.R;
 import com.changhong.fileplore.application.MyApp;
 import com.changhong.fileplore.utils.Player;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
@@ -93,6 +94,8 @@ public class VideoActivity extends Activity  {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		ActionBar actionBar = getActionBar();
+		actionBar.setDisplayShowHomeEnabled(false);
 		MyApp myapp = (MyApp) getApplication();
 		myapp.setContext(this);
 		Intent intent = getIntent();

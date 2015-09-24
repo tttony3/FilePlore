@@ -7,6 +7,7 @@ import com.changhong.fileplore.application.MyApp;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -49,13 +50,13 @@ public class BrowseActivity extends Activity {
 	}
 
 	private void setOnClickListener() {
-		MyClickListener myclick = new MyClickListener();
-		iv_apk.setOnClickListener(myclick);
-		iv_movie.setOnClickListener(myclick);
-		iv_music.setOnClickListener(myclick);
-		iv_photo.setOnClickListener(myclick);
-		iv_txt.setOnClickListener(myclick);
-		iv_zip.setOnClickListener(myclick);
+//		MyClickListener myclick = new MyClickListener();
+//		iv_apk.setOnClickListener(myclick);
+//		iv_movie.setOnClickListener(myclick);
+//		iv_music.setOnClickListener(myclick);
+//		iv_photo.setOnClickListener(myclick);
+//		iv_txt.setOnClickListener(myclick);
+//		iv_zip.setOnClickListener(myclick);
 
 	}
 
@@ -91,8 +92,9 @@ public class BrowseActivity extends Activity {
 		tv_phoneNotUse.setText(phoneSpace[1]);
 		tv_sdTotal.setText(sdSpace[0]);
 		tv_sdNotUse.setText(sdSpace[1]);
-		pb_sd.setProgress(100 - Integer.parseInt(sdSpace[2].substring(0, 2)));
-		pb_phone.setProgress(100 - Integer.parseInt(phoneSpace[2].substring(0, 2)));
+	
+		pb_sd.setProgress(100 - Integer.parseInt(sdSpace[2].substring(0, (sdSpace[2].indexOf(".")==-1)?2:sdSpace[2].indexOf("."))));
+		pb_phone.setProgress(100 - Integer.parseInt(phoneSpace[2].substring(0, (phoneSpace[2].indexOf(".")==-1)?2:phoneSpace[2].indexOf("."))));
 		tv_apk.append("(" + Utils.getCount("result_apk", BrowseActivity.this) + ")");
 		tv_movie.append("(" + Utils.getCount("result_movie", BrowseActivity.this) + ")");
 		tv_music.append("(" + Utils.getCount("result_music", BrowseActivity.this) + ")");
@@ -101,51 +103,51 @@ public class BrowseActivity extends Activity {
 		tv_zip.append("(" + Utils.getCount("result_zip", BrowseActivity.this) + ")");
 	}
 
-	class MyClickListener implements OnClickListener {
-
-		@Override
-		public void onClick(View v) {
-			Intent intent = new Intent();
-			switch (v.getId()) {
-			case R.id.img_apk:
-
-				intent.setClass(BrowseActivity.this, ClassifyListActivity.class);
-				intent.setFlags(R.id.img_apk);
-
-				break;
-			case R.id.img_movie:
-
-				intent.setClass(BrowseActivity.this, ClassifyGridActivity.class);
-				intent.setFlags(R.id.img_movie);
-				break;
-			case R.id.img_music:
-
-				intent.setClass(BrowseActivity.this, ClassifyListActivity.class);
-				intent.setFlags(R.id.img_music);
-				break;
-			case R.id.img_photo:
-
-				intent.setClass(BrowseActivity.this, ClassifyGridActivity.class);
-				intent.setFlags(R.id.img_photo);
-				break;
-			case R.id.img_txt:
-
-				intent.setClass(BrowseActivity.this, ClassifyListActivity.class);
-				intent.setFlags(R.id.img_txt);
-				break;
-			case R.id.img_zip:
-
-				intent.setClass(BrowseActivity.this, ClassifyListActivity.class);
-				intent.setFlags(R.id.img_zip);
-				break;
-			default:
-				break;
-			}
-			startActivity(intent);
-			getParent().overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
-
-		}
-	}
+//	class MyClickListener implements OnClickListener {
+//
+//		@Override
+//		public void onClick(View v) {
+//			Intent intent = new Intent();
+//			switch (v.getId()) {
+//			case R.id.img_apk:
+//
+//				intent.setClass(BrowseActivity.this, ClassifyListActivity.class);
+//				intent.setFlags(R.id.img_apk);
+//
+//				break;
+//			case R.id.img_movie:
+//
+//				intent.setClass(BrowseActivity.this, ClassifyGridActivity.class);
+//				intent.setFlags(R.id.img_movie);
+//				break;
+//			case R.id.img_music:
+//
+//				intent.setClass(BrowseActivity.this, ClassifyListActivity.class);
+//				intent.setFlags(R.id.img_music);
+//				break;
+//			case R.id.img_photo:
+//
+//				intent.setClass(BrowseActivity.this, ClassifyGridActivity.class);
+//				intent.setFlags(R.id.img_photo);
+//				break;
+//			case R.id.img_txt:
+//
+//				intent.setClass(BrowseActivity.this, ClassifyListActivity.class);
+//				intent.setFlags(R.id.img_txt);
+//				break;
+//			case R.id.img_zip:
+//
+//				intent.setClass(BrowseActivity.this, ClassifyListActivity.class);
+//				intent.setFlags(R.id.img_zip);
+//				break;
+//			default:
+//				break;
+//			}
+//			startActivity(intent);
+//		//	getParent().overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
+//
+//		}
+//	}
 
 	long curtime = 0;
 

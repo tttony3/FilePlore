@@ -12,6 +12,7 @@ import com.chobit.corestorage.CoreApp;
 import com.chobit.corestorage.CoreDeviceListener;
 import com.changhong.fileplore.R;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -46,6 +47,8 @@ public class ShowNetDevActivity extends Activity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		ActionBar actionBar = getActionBar();
+		actionBar.setDisplayShowHomeEnabled(false);
 		setContentView(R.layout.activity_net_dev);
 		MyApp myapp = (MyApp) getApplication();
 		myapp.setContext(this);

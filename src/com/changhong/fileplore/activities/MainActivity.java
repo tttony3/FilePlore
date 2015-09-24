@@ -52,7 +52,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 @SuppressWarnings("deprecation")
-public class MainActivity extends SlidingFragmentActivity {
+public class MainActivity extends SlidingFragmentActivity implements android.view.View.OnClickListener {
+	ImageView iv_apk;
+	ImageView iv_movie;
+	ImageView iv_music;
+	ImageView iv_photo;
+	ImageView iv_txt;
+	ImageView iv_zip;
 
 	final ArrayList<View> list = new ArrayList<View>();
 	Context context = null;
@@ -70,9 +76,10 @@ public class MainActivity extends SlidingFragmentActivity {
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
 		ActionBar actionBar = getActionBar();
 		actionBar.setDisplayShowHomeEnabled(false);
+		super.onCreate(savedInstanceState);
+
 		setContentView(R.layout.activity_main);
 		MyApp myapp = (MyApp) getApplication();
 		myapp.setContext(this);
@@ -168,11 +175,24 @@ public class MainActivity extends SlidingFragmentActivity {
 		tl_brwloc = (TableLayout) list.get(0).findViewById(R.id.browse_tab_2);
 		rl_brwnet = (RelativeLayout) list.get(0).findViewById(R.id.browse_rl_net);
 		tl_brwloc.setOnClickListener(new MyOnClickListener(1));
-		rl_brwnet.setOnClickListener(new MyOnClickListener(2));
+		rl_brwnet.setOnClickListener(this);
+		iv_apk = (ImageView) list.get(0).findViewById(R.id.img_apk);
+		iv_movie = (ImageView) list.get(0).findViewById(R.id.img_movie);
+		iv_music = (ImageView) list.get(0).findViewById(R.id.img_music);
+		iv_photo = (ImageView) list.get(0).findViewById(R.id.img_photo);
+		iv_txt = (ImageView) list.get(0).findViewById(R.id.img_txt);
+		iv_zip = (ImageView) list.get(0).findViewById(R.id.img_zip);
 		myPagerAdapter = new MainViewPagerAdapter(list);
 		pager.setAdapter(myPagerAdapter);
 		pager.setCurrentItem(0);
 		pager.setOnPageChangeListener(new MyOnPageChangeListener());
+
+		iv_apk.setOnClickListener(this);
+		iv_movie.setOnClickListener(this);
+		iv_music.setOnClickListener(this);
+		iv_photo.setOnClickListener(this);
+		iv_txt.setOnClickListener(this);
+		iv_zip.setOnClickListener(this);
 	}
 
 	/**
@@ -337,13 +357,6 @@ public class MainActivity extends SlidingFragmentActivity {
 				pager.setCurrentItem(index);
 
 				getSlidingMenu().addIgnoredView(pager);
-			} else if (index == 2) {
-				Intent intent = new Intent();
-				intent.setClass(MainActivity.this, ShowNetDevActivity.class);
-				startActivity(intent);
-
-				// Toast.makeText(MainActivity.this, "net",
-				// Toast.LENGTH_SHORT).show();
 			}
 		}
 	};
@@ -397,7 +410,7 @@ public class MainActivity extends SlidingFragmentActivity {
 			MyApp myapp = (MyApp) getApplication();
 			myapp.setIp(ip);
 			myapp.setPort(port);
-		//	Log.i("tl", ip + "port" + port);
+			// Log.i("tl", ip + "port" + port);
 
 		}
 
@@ -406,29 +419,6 @@ public class MainActivity extends SlidingFragmentActivity {
 			Log.e("onGetRealFullPath", arg0);
 			return null;
 		}
-
-		// @Override
-		// public void recivePushResources(List<String> resourceslist) {
-		// final MyApp myapp = (MyApp) getApplication();
-		// final List<String> list = resourceslist;
-		// AlertDialog.Builder dialog = new
-		// AlertDialog.Builder(myapp.getContext());
-		//
-		// AlertDialog alert =
-		// dialog.setTitle("有推送文件，是否接收").setNegativeButton("查看", new
-		// OnClickListener() {
-		//
-		// @Override
-		// public void onClick(DialogInterface dialog, int which) {
-		// Intent intent = new Intent();
-		// intent.setClass(myapp.getContext(), ShowPushFileActivity.class);
-		// intent.putStringArrayListExtra("pushList", (ArrayList<String>) list);
-		// startActivity(intent);
-		// }
-		// }).setPositiveButton("取消", null).create();
-		// alert.show();
-		//
-		// }
 
 		@Override
 		public void recivePushResources(List<String> pushlist) {
@@ -441,6 +431,7 @@ public class MainActivity extends SlidingFragmentActivity {
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
 					Intent intent = new Intent();
+					Log.e("a", myapp.getContext() + "");
 					intent.setClass(myapp.getContext(), ShowPushFileActivity.class);
 					intent.putStringArrayListExtra("pushList", (ArrayList<String>) list);
 					startActivity(intent);
@@ -462,6 +453,56 @@ public class MainActivity extends SlidingFragmentActivity {
 	protected void onDestroy() {
 		super.onDestroy();
 		System.exit(0);
+
+	}
+
+	@Override
+	public void onClick(View v) {
+		Intent intent = new Intent();
+		switch (v.getId()) {
+		case R.id.img_apk:
+
+			intent.setClass(MainActivity.this, ClassifyListActivity.class);
+			intent.putExtra("key", R.id.img_apk);
+			startActivity(intent);
+
+			break;
+		case R.id.img_movie:
+
+			intent.setClass(MainActivity.this, ClassifyGridActivity.class);
+			intent.putExtra("key", R.id.img_movie);
+			startActivity(intent);
+			break;
+		case R.id.img_music:
+
+			intent.setClass(MainActivity.this, ClassifyListActivity.class);
+			intent.putExtra("key", R.id.img_music);
+			startActivity(intent);
+			break;
+		case R.id.img_photo:
+
+			intent.setClass(MainActivity.this, ClassifyGridActivity.class);
+			intent.putExtra("key", R.id.img_photo);
+			startActivity(intent);
+			break;
+		case R.id.img_txt:
+
+			intent.setClass(MainActivity.this, ClassifyListActivity.class);
+			intent.putExtra("key", R.id.img_txt);
+			startActivity(intent);
+			break;
+		case R.id.img_zip:
+
+			intent.setClass(MainActivity.this, ClassifyListActivity.class);
+			intent.putExtra("key", R.id.img_zip);
+			startActivity(intent);
+			break;
+		case R.id.browse_rl_net:
+			intent.setClass(MainActivity.this, ShowNetDevActivity.class);
+			startActivity(intent);
+		default:
+			break;
+		}
 
 	}
 

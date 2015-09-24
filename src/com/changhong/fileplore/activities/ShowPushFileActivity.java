@@ -7,6 +7,7 @@ import java.util.List;
 import com.changhong.fileplore.R;
 import com.changhong.fileplore.activities.ShowNetFileActivity.MediaButtonListener;
 import com.changhong.fileplore.adapter.NetPushFileListAdapter;
+import com.changhong.fileplore.application.MyApp;
 import com.changhong.fileplore.base.BaseActivity;
 import com.changhong.fileplore.thread.SetMediaProgressBarThread;
 import com.changhong.fileplore.utils.DownloadImageTask;
@@ -16,6 +17,7 @@ import com.changhong.fileplore.view.CircleProgress;
 import com.changhong.synergystorage.javadata.JavaFile;
 import com.chobit.corestorage.CoreApp;
 
+import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
@@ -45,6 +47,8 @@ public class ShowPushFileActivity extends BaseActivity implements OnItemClickLis
 	static private final int RESET_BAR = 6;
 	static private final int SET_TOTALTIME = 8;
 	private int curtime = 0;
+	SetMediaProgressBarThread thread;
+	int time;
 	private MediaPlayer mp = new MediaPlayer();
 	private ListView lv_pushfile;
 	private TextView tv_pushfilepath;
@@ -79,6 +83,10 @@ public class ShowPushFileActivity extends BaseActivity implements OnItemClickLis
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		MyApp myapp = (MyApp) getApplication();
+		myapp.setContext(this);
+		ActionBar actionBar = getActionBar();
+		actionBar.setDisplayShowHomeEnabled(false);
 		setContentView(R.layout.activity_push_file);
 		findView();
 		Intent intent = getIntent();
@@ -223,8 +231,7 @@ public class ShowPushFileActivity extends BaseActivity implements OnItemClickLis
 		}
 	};
 
-	SetMediaProgressBarThread thread;
-	int time;
+	
 
 	class MediaButtonListener implements OnClickListener {
 		String file;

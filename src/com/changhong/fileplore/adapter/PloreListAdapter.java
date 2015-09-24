@@ -1,14 +1,29 @@
 package com.changhong.fileplore.adapter;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
+import com.changhong.alljoyn.simpleservice.FC_GetShareFile;
 import com.changhong.fileplore.R;
+import com.changhong.fileplore.utils.Utils;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Bitmap.CompressFormat;
+import android.os.Environment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +34,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 public class PloreListAdapter extends BaseAdapter {
+	DisplayImageOptions options = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.file_icon_photo)
+			.showImageForEmptyUri(R.drawable.file_icon_photo).showImageOnFail(R.drawable.file_icon_photo)
+			.cacheInMemory(true).cacheOnDisk(true).bitmapConfig(Bitmap.Config.RGB_565).displayer(new RoundedBitmapDisplayer(20)) // 设置图片的解码类型
+			.build();
+	ImageLoader imageLoader;
 	static final private int DOC = 1;
 	static final private int MUSIC = 2;
 	static final private int PHOTO = 3;
@@ -39,14 +59,29 @@ public class PloreListAdapter extends BaseAdapter {
 
 	private LayoutInflater mInflater;
 	private boolean show_cb = false;
-
-	public PloreListAdapter(Context context, List<File> files, boolean isRoot) {
+	private Context context;
+	String download_Path = Environment.getExternalStorageDirectory().getAbsolutePath();
+	String storagepath = download_Path + "/FilePlore/cache/";
+	File folder = new File(storagepath);
+	File[] folderfiles ;
+	Set<String> fileSet ;
+	public PloreListAdapter(Context context, List<File> files, boolean isRoot, ImageLoader imageLoader) {
+		this.imageLoader = imageLoader;
 		this.files = files;
+		this.context = context;
 		checkbox_list = new Boolean[files.size()];
 		for (int i = 0; i < checkbox_list.length; i++) {
 			checkbox_list[i] = false;
 		}
 		mInflater = LayoutInflater.from(context);
+		if(!folder.exists()){
+			folder.mkdir();
+		}
+		folderfiles = folder.listFiles();
+		fileSet = new HashSet<String>();
+		for (int i = 0; i < folderfiles.length; i++) {
+			fileSet.add(folderfiles[i].getName());
+		}
 	}
 
 	@Override
@@ -67,7 +102,7 @@ public class PloreListAdapter extends BaseAdapter {
 	@SuppressLint("SimpleDateFormat")
 	@Override
 	public View getView(final int position, View convertView, ViewGroup parent) {
-		ViewHolder viewHolder;
+		final ViewHolder viewHolder;
 		if (convertView == null) {
 			viewHolder = new ViewHolder();
 			convertView = mInflater.inflate(R.layout.listitem_plore, null);
@@ -117,13 +152,33 @@ public class PloreListAdapter extends BaseAdapter {
 
 			switch (getMIMEType(fileName)) {
 			case MOVIE:
-				viewHolder.img.setImageResource(R.drawable.file_icon_movie);
+				final String path1 = file.getPath();
+				final String name1 = file.getName();
+				imageLoader.displayImage("file://"+path1, viewHolder.img, options);
+			//	viewHolder.img.setImageResource(R.drawable.file_icon_movie);
 				break;
 			case MUSIC:
 				viewHolder.img.setImageResource(R.drawable.file_icon_music);
 				break;
 			case PHOTO:
-				viewHolder.img.setImageResource(R.drawable.file_icon_photo);
+				final String path = file.getPath();
+				final String name = file.getName();
+//				if (fileSet.contains("cache" + name)) {
+//					imageLoader.displayImage("file://" + storagepath+"cache"+name, viewHolder.img, options);
+//				} else {
+//					 new Thread(new Runnable() {
+//						public void run() {
+//							Bitmap btm = Utils.getImageThumbnail(path, 70, 70);
+//							saveBitmap2file(btm, "cache" + name);
+//							imageLoader.displayImage("file://" + storagepath+"cache"+name, viewHolder.img, options);
+//
+//						}
+//					}).start();
+//					
+//				}
+				imageLoader.displayImage("file://"+path, viewHolder.img, options);
+				// viewHolder.img.setImageBitmap(
+
 				break;
 			case DOC:
 				viewHolder.img.setImageResource(R.drawable.file_icon_txt);
@@ -174,5 +229,18 @@ public class PloreListAdapter extends BaseAdapter {
 			return DOC;
 		}
 		return UNKNOW;
+	}
+
+	boolean saveBitmap2file(Bitmap bmp, String filename) {
+		CompressFormat format = Bitmap.CompressFormat.JPEG;
+		int quality = 100;
+		OutputStream stream = null;
+		try {
+			stream = new FileOutputStream(storagepath + filename);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+
+		return bmp.compress(format, quality, stream);
 	}
 }

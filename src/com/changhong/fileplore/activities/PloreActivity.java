@@ -11,6 +11,9 @@ import com.changhong.fileplore.base.BaseActivity;
 import com.changhong.fileplore.implement.PloreInterface;
 import com.changhong.fileplore.view.RefreshListView;
 import com.chobit.corestorage.CoreApp;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.nostra13.universalimageloader.core.listener.PauseOnScrollListener;
 import com.changhong.fileplore.R;
 
 import android.app.AlertDialog;
@@ -37,6 +40,11 @@ import com.changhong.fileplore.utils.*;
 
 public class PloreActivity extends BaseActivity implements RefreshListView.IOnRefreshListener, View.OnClickListener,
 		PloreInterface, OnItemClickListener, OnItemLongClickListener {
+	protected  ImageLoader imageLoader = ImageLoader.getInstance();  
+	protected static final String STATE_PAUSE_ON_SCROLL = "STATE_PAUSE_ON_SCROLL";
+	protected static final String STATE_PAUSE_ON_FLING = "STATE_PAUSE_ON_FLING";
+	protected boolean pauseOnScroll = false;
+	protected boolean pauseOnFling = true;
 	ArrayList<File> fileList;
 	private RefreshDataAsynTask mRefreshAsynTask;
 	RefreshListView mListView;
@@ -54,8 +62,15 @@ public class PloreActivity extends BaseActivity implements RefreshListView.IOnRe
 	boolean isCopy = false;
 
 	@Override
+	public void onRestoreInstanceState(Bundle savedInstanceState) {
+		pauseOnScroll = savedInstanceState.getBoolean(STATE_PAUSE_ON_SCROLL, false);
+		pauseOnFling = savedInstanceState.getBoolean(STATE_PAUSE_ON_FLING, true);
+	}
+
+	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		imageLoader.init(ImageLoaderConfiguration.createDefault(this));
 		setContentView(R.layout.activity_plore);
 		MyApp myapp = (MyApp) getApplication();
 		myapp.setContext(myapp.getMainContext());
@@ -106,7 +121,7 @@ public class PloreActivity extends BaseActivity implements RefreshListView.IOnRe
 
 			PloreData mPloreData = new PloreData();
 			List<File> files = mPloreData.lodaData(folder);
-			mFileAdpter = new PloreListAdapter(this, files, isRoot);
+			mFileAdpter = new PloreListAdapter(this, files, isRoot,imageLoader);
 			mListView.setAdapter(mFileAdpter);
 		}
 
@@ -296,9 +311,9 @@ public class PloreActivity extends BaseActivity implements RefreshListView.IOnRe
 										String ip = myapp.getIp();
 										int port = myapp.getPort();
 										pushList.add("http://" + ip + ":" + port + file.getPath());
+									} else {
+										Toast.makeText(PloreActivity.this, "文件夹暂不支持推送", Toast.LENGTH_SHORT).show();
 									}
-								} else {
-									Toast.makeText(PloreActivity.this, "文件夹暂不支持推送", Toast.LENGTH_SHORT).show();
 								}
 							}
 							Intent intent = new Intent();
@@ -309,6 +324,7 @@ public class PloreActivity extends BaseActivity implements RefreshListView.IOnRe
 							startActivity(intent);
 
 						}
+						break;
 					default:
 						break;
 					}
@@ -422,6 +438,7 @@ public class PloreActivity extends BaseActivity implements RefreshListView.IOnRe
 	}
 
 	long curtime = 0;
+
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
@@ -440,5 +457,15 @@ public class PloreActivity extends BaseActivity implements RefreshListView.IOnRe
 			}
 		}
 		return super.onKeyDown(keyCode, event);
+	}
+
+	private void applyScrollListener() {
+		mListView.setOnScrollListener(new PauseOnScrollListener(imageLoader, pauseOnScroll, pauseOnFling));
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		applyScrollListener();
 	}
 }

@@ -9,11 +9,12 @@ import android.widget.AbsListView;
 
 public class AbsListViewBaseActivity  extends ImageLoaderBaseActivity {  
   
+   
+  
+    protected AbsListView listView; 
+    
     protected static final String STATE_PAUSE_ON_SCROLL = "STATE_PAUSE_ON_SCROLL";  
     protected static final String STATE_PAUSE_ON_FLING = "STATE_PAUSE_ON_FLING";  
-  
-    protected AbsListView listView;  
-  
     protected boolean pauseOnScroll = false;  
     protected boolean pauseOnFling = true;  
   

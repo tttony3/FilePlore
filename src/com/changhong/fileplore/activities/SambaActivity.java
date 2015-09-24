@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import com.changhong.fileplore.adapter.SambaListAdapter;
 import com.changhong.fileplore.R;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
@@ -42,6 +43,8 @@ public class SambaActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		ActionBar actionBar = getActionBar();
+		actionBar.setDisplayShowHomeEnabled(false);
 		Intent intent = getIntent();
 		ip = intent.getStringExtra("ip");
 		password = intent.getStringExtra("password");

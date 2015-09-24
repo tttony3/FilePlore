@@ -4,10 +4,23 @@ import java.io.File;
 import java.util.ArrayList;
 
 import com.chobit.corestorage.CoreApp;
+import com.nostra13.universalimageloader.cache.disc.impl.UnlimitedDiskCache;
+import com.nostra13.universalimageloader.cache.disc.naming.HashCodeFileNameGenerator;
+import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
+import com.nostra13.universalimageloader.cache.memory.impl.LruMemoryCache;
+import com.nostra13.universalimageloader.cache.memory.impl.UsingFreqLimitedMemoryCache;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
+import com.nostra13.universalimageloader.core.decode.BaseImageDecoder;
+import com.nostra13.universalimageloader.core.download.BaseImageDownloader;
+import com.nostra13.universalimageloader.utils.StorageUtils;
 
 import android.content.Context;
 
 public class MyApp extends CoreApp {
+	
 	Context context;
 	Context mainContext;
 	String ip;
@@ -67,11 +80,7 @@ public class MyApp extends CoreApp {
 		;
 	}
 
-	@Override
-	public void onCreate() {
-		// TODO Auto-generated method stub
-		super.onCreate();
-	}
+
 
 	@Override
 	public void onLowMemory() {
@@ -84,5 +93,11 @@ public class MyApp extends CoreApp {
 		// TODO Auto-generated method stub
 		super.onTerminate();
 	}
+	   public void onCreate() {
+	        super.onCreate();
+	      
+	    }
+	 
 
+	
 }

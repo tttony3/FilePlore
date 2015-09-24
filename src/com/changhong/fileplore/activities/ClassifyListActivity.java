@@ -12,6 +12,7 @@ import com.changhong.fileplore.view.CircleProgress;
 import com.chobit.corestorage.CoreApp;
 import com.changhong.fileplore.R;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -97,8 +98,10 @@ public class ClassifyListActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		ActionBar actionBar = getActionBar();
+		actionBar.setDisplayShowHomeEnabled(false);
 		setContentView(R.layout.activity_classify_list);
-		flg = getIntent().getFlags();
+		flg = getIntent().getIntExtra("key", 0);
 		MyApp myapp = (MyApp) getApplication();
 		myapp.setContext(this);
 		handler = new MyHandler(this);
@@ -111,10 +114,17 @@ public class ClassifyListActivity extends Activity {
 
 		switch (flg) {
 		case R.id.img_music:
+//			mProgressView.startAnim();
+//			alertDialog.show();
 			ArrayList<Content> musics = Utils.getMusic(this);
 			listAdapter = new ClassifyListAdapter(musics, this, R.id.img_music);
 			lv_classify.setAdapter(listAdapter);
 			tv_count.setText(musics.size() + " 项");
+//			Message msg = new Message();
+//			Bundle data = new Bundle();
+//			data.putInt("tag", 123);
+//			msg.setData(data);
+//			handler.sendMessage(msg);
 			break;
 		case R.id.img_txt:
 			mProgressView.startAnim();
@@ -156,7 +166,7 @@ public class ClassifyListActivity extends Activity {
 			public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
 				final Content content = (Content) parent.getItemAtPosition(position);
 				final File file = new File(content.getDir());
-				String[] data = { "打开", "删除", "共享" };
+				String[] data = { "打开", "删除", "共享", "推送" };
 				new AlertDialog.Builder(ClassifyListActivity.this).setTitle("选择操作")
 						.setItems(data, new OnClickListener() {
 
@@ -190,6 +200,25 @@ public class ClassifyListActivity extends Activity {
 								Toast.makeText(ClassifyListActivity.this, "服务未开启", Toast.LENGTH_SHORT).show();
 							}
 							break;
+						case 3:
+							ArrayList<String> pushList = new ArrayList<String>();
+							if (!file.isDirectory()) {
+								MyApp myapp = (MyApp) getApplication();
+								String ip = myapp.getIp();
+								int port = myapp.getPort();
+								pushList.add("http://" + ip + ":" + port + file.getPath());
+							} else {
+								Toast.makeText(ClassifyListActivity.this, "文件夹暂不支持推送", Toast.LENGTH_SHORT).show();
+							}
+
+							intent = new Intent();
+							Bundle b = new Bundle();
+							b.putStringArrayList("pushList", pushList);
+							intent.putExtra("pushList", b);
+							intent.setClass(ClassifyListActivity.this, ShowNetDevActivity.class);
+							startActivity(intent);
+
+							break;
 						default:
 							break;
 						}
@@ -199,6 +228,7 @@ public class ClassifyListActivity extends Activity {
 				return true;
 			}
 		});
+
 	}
 
 	private void findView() {
@@ -234,6 +264,7 @@ public class ClassifyListActivity extends Activity {
 
 			Message msg = new Message();
 			Bundle data = new Bundle();
+		
 			if (type == APK) {
 				results = Utils.getApk(ClassifyListActivity.this, reseach);
 				data.putSerializable("data", results);

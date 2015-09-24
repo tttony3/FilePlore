@@ -27,6 +27,7 @@ import com.chobit.corestorage.CoreDownloadProgressCB;
 import com.chobit.corestorage.CoreShareFileListener;
 import com.example.libevent2.UpdateDownloadPress;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -112,6 +113,8 @@ public class ShowNetFileActivity extends Activity {
 
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_net_file);
+		ActionBar actionBar = getActionBar();
+		actionBar.setDisplayShowHomeEnabled(false);
 		MyApp myapp = (MyApp) getApplication();
 		myapp.setContext(this);
 		findView();

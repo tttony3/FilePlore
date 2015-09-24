@@ -11,6 +11,8 @@ import com.changhong.fileplore.utils.Utils;
 import com.chobit.corestorage.CoreApp;
 import com.changhong.fileplore.R;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+
+import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
@@ -44,6 +46,8 @@ public class PhotoGridActivity extends AbsListViewBaseActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		ActionBar actionBar = getActionBar();
+		actionBar.setDisplayShowHomeEnabled(false);
 		imageLoader.init(ImageLoaderConfiguration.createDefault(this));
 		MyApp myapp = (MyApp) getApplication();
 		myapp.setContext(this);
@@ -83,7 +87,7 @@ public class PhotoGridActivity extends AbsListViewBaseActivity {
 			public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
 				final Content content = (Content) parent.getItemAtPosition(position);
 				final File file = new File(content.getDir());
-				String[] data = { "打开", "删除", "共享" };
+				String[] data = { "打开", "删除", "共享","推送" };
 				new AlertDialog.Builder(PhotoGridActivity.this).setTitle("选择操作").setItems(data, new OnClickListener() {
 
 					@Override
@@ -114,6 +118,25 @@ public class PhotoGridActivity extends AbsListViewBaseActivity {
 							} else {
 								Toast.makeText(PhotoGridActivity.this, "服务未开启", Toast.LENGTH_SHORT).show();
 							}
+							break;
+						case 3:
+							ArrayList<String> pushList = new ArrayList<String>();
+							if (!file.isDirectory()) {
+								MyApp myapp = (MyApp) getApplication();
+								String ip = myapp.getIp();
+								int port = myapp.getPort();
+								pushList.add("http://" + ip + ":" + port + file.getPath());
+							} else {
+								Toast.makeText(PhotoGridActivity.this, "文件夹暂不支持推送", Toast.LENGTH_SHORT).show();
+							}
+
+							intent = new Intent();
+							Bundle b = new Bundle();
+							b.putStringArrayList("pushList", pushList);
+							intent.putExtra("pushList", b);
+							intent.setClass(PhotoGridActivity.this, ShowNetDevActivity.class);
+							startActivity(intent);
+
 							break;
 						default:
 							break;
