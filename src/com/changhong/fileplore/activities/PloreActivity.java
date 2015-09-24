@@ -18,7 +18,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.Settings.System;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -289,10 +291,14 @@ public class PloreActivity extends BaseActivity implements RefreshListView.IOnRe
 							for (int i = 0; i < mlist.length; i++) {
 								if (mlist[i]) {
 									File file = (File) mFileAdpter.getItem(i);
-									MyApp myapp = (MyApp) getApplication();
-									String ip=myapp.getIp();
-									int port =myapp.getPort();
-									pushList.add("http://"+ip+":"+port+file.getPath());
+									if (!file.isDirectory()) {
+										MyApp myapp = (MyApp) getApplication();
+										String ip = myapp.getIp();
+										int port = myapp.getPort();
+										pushList.add("http://" + ip + ":" + port + file.getPath());
+									}
+								} else {
+									Toast.makeText(PloreActivity.this, "文件夹暂不支持推送", Toast.LENGTH_SHORT).show();
 								}
 							}
 							Intent intent = new Intent();
@@ -413,5 +419,26 @@ public class PloreActivity extends BaseActivity implements RefreshListView.IOnRe
 		mRefreshAsynTask = new RefreshDataAsynTask();
 		mRefreshAsynTask.execute();
 
+	}
+
+	long curtime = 0;
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		if (keyCode == KeyEvent.KEYCODE_BACK) {
+			if (mPathView.getText().toString().lastIndexOf("/") == 0) {
+
+				if (java.lang.System.currentTimeMillis() - curtime > 1000) {
+					Toast.makeText(PloreActivity.this, "再按一次退出", Toast.LENGTH_SHORT).show();
+					curtime = java.lang.System.currentTimeMillis();
+					return true;
+				} else {
+					finish();
+				}
+				return true;
+			} else {
+				return iv_back.callOnClick();
+			}
+		}
+		return super.onKeyDown(keyCode, event);
 	}
 }

@@ -443,7 +443,6 @@ public class MainActivity extends SlidingFragmentActivity {
 					Intent intent = new Intent();
 					intent.setClass(myapp.getContext(), ShowPushFileActivity.class);
 					intent.putStringArrayListExtra("pushList", (ArrayList<String>) list);
-				//	intent.putExtra("pushname", pushname);
 					startActivity(intent);
 				}
 			}).setPositiveButton("取消", null).create();

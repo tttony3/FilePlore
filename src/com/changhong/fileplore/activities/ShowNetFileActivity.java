@@ -15,6 +15,8 @@ import com.changhong.fileplore.R;
 
 import com.changhong.fileplore.adapter.NetShareFileListAdapter;
 import com.changhong.fileplore.application.MyApp;
+import com.changhong.fileplore.thread.SetMediaProgressBarThread;
+import com.changhong.fileplore.utils.DownloadImageTask;
 import com.changhong.fileplore.utils.MyCoreDownloadProgressCB;
 import com.changhong.fileplore.utils.StreamTool;
 import com.changhong.fileplore.view.CircleProgress;
@@ -57,8 +59,7 @@ public class ShowNetFileActivity extends Activity {
 	static private final int UPDATE_BAR = 5;
 	static private final int RESET_BAR = 6;
 	static private final int SET_TOTALTIME = 8;
-	static private final int UPDATE_DOWNLOAD_BAR = 10;
-	static private final int DISMISS_DOWN_BAR = 12;
+
 	private JavaFile file;
 	private List<JavaFile> shareFileList;
 	private List<JavaFolder> shareFolderList;
@@ -120,7 +121,7 @@ public class ShowNetFileActivity extends Activity {
 		devInfo = CoreApp.mBinder.GetDeviceList().get(position);
 		CoreApp.mBinder.setShareFileListener(shareListener);
 		CoreApp.mBinder.ConnectDeivce(devInfo);
-		CoreApp.mBinder.setDownloadCBInterface(new MyCoreDownloadProgressCB(handler,this));
+		CoreApp.mBinder.setDownloadCBInterface(new MyCoreDownloadProgressCB(handler, this));
 		netShareFileListAdapter = new NetShareFileListAdapter(shareFileList, shareFolderList, devInfo, this);
 		myOnItemClickListener = new MyOnItemClickListener();
 
@@ -136,6 +137,11 @@ public class ShowNetFileActivity extends Activity {
 		// dialog = new MyProgressDialog(ShowNetFileActivity.this).getDialog();
 		// path = "文件路径 : ";
 		// tv_path.setText(path);
+		findAlertDialog();
+
+	}
+
+	private void findAlertDialog() {
 		inflater = getLayoutInflater();
 		layout_progress = inflater.inflate(R.layout.circle_progress, (ViewGroup) findViewById(R.id.rl_progress));
 		builder_progress = new AlertDialog.Builder(this).setView(layout_progress);
@@ -169,7 +175,6 @@ public class ShowNetFileActivity extends Activity {
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
 			isadd = false;
-			Log.e("fatherList", "aa");
 			if (isremove && fatherList.size() != 1) {
 
 				Log.e("remove", fatherList.removeLast().getLocation());
@@ -178,9 +183,6 @@ public class ShowNetFileActivity extends Activity {
 
 			if (fatherList.size() >= 1 && !isexit) {
 				JavaFolder folder;
-
-				Log.e("fatherList", "bb");
-				Log.e("fatherList", fatherList.toString());
 				if (fatherList.size() == 1) {
 					folder = fatherList.getLast();
 					isexit = true;
@@ -252,92 +254,15 @@ public class ShowNetFileActivity extends Activity {
 		}
 
 		@Override
-		public void updateImageThumbNails( Bitmap arg1) {
+		public void updateImageThumbNails(Bitmap arg1) {
 
 		}
 	};
 
-	class MyNetHandler extends Handler {
-		private WeakReference<ShowNetFileActivity> mActivity;
-
-		public MyNetHandler(ShowNetFileActivity activity) {
-			mActivity = new WeakReference<ShowNetFileActivity>(activity);
-		}
-
-		@Override
-		public void handleMessage(Message msg) {
-			ShowNetFileActivity theActivity = mActivity.get();
-			if (theActivity != null) {
-				super.handleMessage(msg);
-				int key = msg.getData().getInt("key");
-				switch (key) {
-				case UPDATE_LIST:
-					netShareFileListAdapter.updatelistview(shareFileList, shareFolderList);
-					lv_sharepath.invalidate();
-					break;
-
-				case SHOW_DIALOG:
-					mProgressView.startAnim();
-					alertDialog_progress.show();
-					break;
-
-				case DISMISS_DIALOG:
-					if (alertDialog_progress.isShowing()) {
-						mProgressView.stopAnim();
-						alertDialog_progress.dismiss();
-					}
-					break;
-
-				case SHOW_PREVIEW_DIALOG:
-					iv_preview.setImageResource(R.drawable.picload);
-					String path = msg.getData().getString("path");
-					new DownloadImageTask(iv_preview).execute(devInfo.getM_httpserverurl() + path);
-					alertDialog_preview.show();
-					break;
-				case UPDATE_BAR:
-					Log.e("value", msg.getData().getInt("value") + "");
-					pb_media.setProgress(msg.getData().getInt("value"));
-					curtime = curtime + 1;
-					tv_curtime.setText(curtime / 60 + ":" + (curtime - (curtime / 60) * 60));
-					break;
-				case RESET_BAR:
-
-					pb_media.setProgress(0);
-					tv_curtime.setText("00:00");
-					tv_totaltime.setText("00:00");
-					curtime = 0;
-					break;
-				case SET_TOTALTIME:
-					tv_totaltime.setText(time / 60 + ":" + (time - (time / 60) * 60));
-					break;
-				case MyCoreDownloadProgressCB.UPDATE_DOWNLOAD_BAR:
-					if (!alertDialog_download.isShowing()) {
-						long total = msg.getData().getLong("total");
-						int max = (int) (total / 100);
-						pb_download.setMax(max);
-						tv_download.setText("0%");
-						alertDialog_download.show();
-					} else {
-						long part = msg.getData().getLong("part");
-						pb_download.setProgress((int) (part / 100));
-						int p = (int) (part / pb_download.getMax());
-						tv_download.setText(p + "%");
-					}
-					break;
-				case MyCoreDownloadProgressCB.DISMISS_DOWN_BAR:
-					if (alertDialog_download.isShowing())
-						alertDialog_download.dismiss();
-					break;
-				default:
-					break;
-				}
-
-			}
-		}
-	};
+	
 
 	int time = 0;
-	MyBarThread thread;
+	SetMediaProgressBarThread thread;
 
 	class MyOnItemClickListener implements OnItemClickListener {
 
@@ -415,6 +340,8 @@ public class ShowNetFileActivity extends Activity {
 							intent.putExtra("uri", devInfo.getM_httpserverurl() + file.getLocation());
 							intent.setClass(ShowNetFileActivity.this, VideoActivity.class);
 							startActivity(intent);
+						} else {
+							Toast.makeText(ShowNetFileActivity.this, "所选文件暂不支持在线打开", Toast.LENGTH_SHORT).show();
 						}
 						break;
 					case 1:
@@ -426,7 +353,6 @@ public class ShowNetFileActivity extends Activity {
 
 							}
 						});
-						Log.e("location", file.getLocation());
 						CoreApp.mBinder.getShareFileDownload(devInfo, file.getLocation(), null);
 						break;
 					default:
@@ -462,8 +388,6 @@ public class ShowNetFileActivity extends Activity {
 		handler.sendMessage(msg);
 	}
 
-	
-
 	class MediaButtonListener implements OnClickListener {
 		JavaFile file;
 
@@ -478,7 +402,7 @@ public class ShowNetFileActivity extends Activity {
 			case R.id.media_play:
 				try {
 					if (thread != null)
-						thread.isvalid = false;
+						thread.setIsvalid(false);
 					Message msg = new Message();
 					Bundle bundle = new Bundle();
 					bundle.putInt("key", RESET_BAR);
@@ -489,7 +413,7 @@ public class ShowNetFileActivity extends Activity {
 					mp.setDataSource(devInfo.getM_httpserverurl() + file.getLocation());
 					mp.prepare();
 					mp.start();
-					thread = new MyBarThread();
+					thread = new SetMediaProgressBarThread(handler, pb_media, time);
 					thread.start();
 
 				} catch (IllegalArgumentException e) {
@@ -517,7 +441,7 @@ public class ShowNetFileActivity extends Activity {
 					@Override
 					public void onCompletion(MediaPlayer mp) {
 						mp.release();
-						thread.isvalid = false;
+						thread.setIsvalid(false);
 						Message msg = new Message();
 						Bundle bundle = new Bundle();
 						bundle.putInt("key", RESET_BAR);
@@ -531,7 +455,7 @@ public class ShowNetFileActivity extends Activity {
 
 				if (mp.isPlaying())
 					mp.stop();
-				thread.isvalid = false;
+				thread.setIsvalid(false);
 				Message msg = new Message();
 				Bundle bundle = new Bundle();
 				bundle.putInt("key", RESET_BAR);
@@ -547,72 +471,82 @@ public class ShowNetFileActivity extends Activity {
 
 	}
 
-	class MyBarThread extends Thread {
+	class MyNetHandler extends Handler {
+		private WeakReference<ShowNetFileActivity> mActivity;
 
-		public Boolean isvalid = true;
+		public MyNetHandler(ShowNetFileActivity activity) {
+			mActivity = new WeakReference<ShowNetFileActivity>(activity);
+		}
 
 		@Override
-		public void run() {
+		public void handleMessage(Message msg) {
+			ShowNetFileActivity theActivity = mActivity.get();
+			if (theActivity != null) {
+				super.handleMessage(msg);
+				int key = msg.getData().getInt("key");
+				switch (key) {
+				case UPDATE_LIST:
+					netShareFileListAdapter.updatelistview(shareFileList, shareFolderList);
+					lv_sharepath.invalidate();
+					break;
 
-			super.run();
-			while (pb_media.getProgress() <= 10010 && isvalid) {
-				try {
-					Thread.sleep(1000);
-					Message msg = new Message();
-					Bundle bundle = new Bundle();
-					bundle.putInt("key", UPDATE_BAR);
-					bundle.putInt("value", pb_media.getProgress() + 10000 / time);
-					msg.setData(bundle);
-					handler.sendMessage(msg);
-				} catch (InterruptedException e) {
-					//
+				case SHOW_DIALOG:
+					mProgressView.startAnim();
+					alertDialog_progress.show();
+					break;
 
-					e.printStackTrace();
+				case DISMISS_DIALOG:
+					if (alertDialog_progress.isShowing()) {
+						mProgressView.stopAnim();
+						alertDialog_progress.dismiss();
+					}
+					break;
+
+				case SHOW_PREVIEW_DIALOG:
+					iv_preview.setImageResource(R.drawable.picload);
+					String path = msg.getData().getString("path");
+					new DownloadImageTask(iv_preview).execute(devInfo.getM_httpserverurl() + path);
+					alertDialog_preview.show();
+					break;
+				case SetMediaProgressBarThread.UPDATE_BAR:
+					
+					pb_media.setProgress(msg.getData().getInt("value"));
+					curtime = curtime + 1;
+					tv_curtime.setText(curtime / 60 + ":" + (curtime - (curtime / 60) * 60));
+					break;
+				case RESET_BAR:
+
+					pb_media.setProgress(0);
+					tv_curtime.setText("00:00");
+					tv_totaltime.setText("00:00");
+					curtime = 0;
+					break;
+				case SET_TOTALTIME:
+					tv_totaltime.setText(time / 60 + ":" + (time - (time / 60) * 60));
+					break;
+				case MyCoreDownloadProgressCB.UPDATE_DOWNLOAD_BAR:
+					if (!alertDialog_download.isShowing()) {
+						long total = msg.getData().getLong("total");
+						int max = (int) (total / 100);
+						pb_download.setMax(max);
+						tv_download.setText("0%");
+						alertDialog_download.show();
+					} else {
+						long part = msg.getData().getLong("part");
+						pb_download.setProgress((int) (part / 100));
+						int p = (int) (part / pb_download.getMax());
+						tv_download.setText(p + "%");
+					}
+					break;
+				case MyCoreDownloadProgressCB.DISMISS_DOWN_BAR:
+					if (alertDialog_download.isShowing())
+						alertDialog_download.dismiss();
+					break;
+				default:
+					break;
 				}
 
 			}
 		}
-
-	}
-
-	class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
-		ImageView im;
-
-		public DownloadImageTask(ImageView im) {
-			this.im = im;
-		}
-
-		protected Bitmap doInBackground(String... urls) {
-
-			return loadImageFromNetwork(urls[0]);
-		}
-
-		private Bitmap loadImageFromNetwork(String string) {
-			Bitmap bitmap = null;
-			URL url;
-			try {
-				url = new URL(string);
-				HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-				conn.setRequestMethod("GET"); // 设置请求方法为GET
-				conn.setReadTimeout(5 * 1000); // 设置请求过时时间为5秒
-				InputStream inputStream = conn.getInputStream(); // 通过输入流获得图片数据
-				byte[] data = StreamTool.readInputStream(inputStream);
-				Options op = new Options();
-				op.inSampleSize = 4;
-				bitmap = BitmapFactory.decodeByteArray(data, 0, data.length, op);
-			} catch (MalformedURLException e) {
-
-				e.printStackTrace();
-			} catch (IOException e) {
-
-				e.printStackTrace();
-			}
-
-			return bitmap;
-		}
-
-		protected void onPostExecute(Bitmap result) {
-			im.setImageBitmap(result);
-		}
-	}
+	};
 }
