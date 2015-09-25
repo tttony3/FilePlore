@@ -39,6 +39,7 @@ public class ClassifyListActivity extends Activity {
 	static private final int APK = 1;
 	static private final int DOC = 2;
 	static private final int ZIP = 3;
+	static private final int MUSIC = 4;
 	ArrayList<Content> results;
 	LayoutInflater inflater;
 	AlertDialog alertDialog;
@@ -51,7 +52,7 @@ public class ClassifyListActivity extends Activity {
 	int flg;
 	MyHandler handler;
 	ClassifyListAdapter listAdapter;
-	ProgressDialog dialog;
+
 
 	class MyHandler extends Handler {
 		WeakReference<ClassifyListActivity> mActivity;
@@ -79,6 +80,10 @@ public class ClassifyListActivity extends Activity {
 				case ZIP:
 					data = (ArrayList<Content>) msg.getData().get("data");
 					listAdapter = new ClassifyListAdapter(data, theActivity, R.id.img_zip);
+					break;
+				case MUSIC:
+					data = (ArrayList<Content>) msg.getData().get("data");
+					listAdapter = new ClassifyListAdapter(data, theActivity, R.id.img_music);
 					break;
 
 				default:
@@ -114,17 +119,10 @@ public class ClassifyListActivity extends Activity {
 
 		switch (flg) {
 		case R.id.img_music:
-//			mProgressView.startAnim();
-//			alertDialog.show();
-			ArrayList<Content> musics = Utils.getMusic(this);
-			listAdapter = new ClassifyListAdapter(musics, this, R.id.img_music);
-			lv_classify.setAdapter(listAdapter);
-			tv_count.setText(musics.size() + " 项");
-//			Message msg = new Message();
-//			Bundle data = new Bundle();
-//			data.putInt("tag", 123);
-//			msg.setData(data);
-//			handler.sendMessage(msg);
+			mProgressView.startAnim();
+			alertDialog.show();
+			new Thread(new GetRunnable(MUSIC, false)).start();
+
 			break;
 		case R.id.img_txt:
 			mProgressView.startAnim();
@@ -277,6 +275,10 @@ public class ClassifyListActivity extends Activity {
 				results = Utils.getZip(ClassifyListActivity.this, reseach);
 				data.putSerializable("data", results);
 				data.putInt("tag", ZIP);
+			}else if(type == MUSIC){
+				results = Utils.getMusic(ClassifyListActivity.this);
+				data.putSerializable("data", results);
+				data.putInt("tag", MUSIC);
 			}
 
 			msg.setData(data);

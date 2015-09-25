@@ -1,9 +1,11 @@
 package com.changhong.fileplore.activities;
 
 import java.io.File;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
 import com.changhong.fileplore.utils.Utils;
+import com.changhong.fileplore.view.CircleProgress;
 import com.chobit.corestorage.CoreApp;
 import com.changhong.fileplore.adapter.*;
 import com.changhong.fileplore.application.MyApp;
@@ -17,8 +19,12 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
@@ -30,8 +36,14 @@ public class ClassifyGridActivity extends Activity {
 	GridView gv_classify;
 	TextView tv_dir;
 	int flg;
+	AlertDialog alertDialog;
+	AlertDialog.Builder builder;
+	CircleProgress mProgressView;
 	ClassifyGridAdapter gridAdapter;
-
+	View layout;
+	LayoutInflater inflater;
+	ArrayList<Content> results;
+	MyHandler handler ;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -46,18 +58,26 @@ public class ClassifyGridActivity extends Activity {
 	}
 
 	void findView() {
+		inflater = getLayoutInflater();
 		gv_classify = (GridView) findViewById(R.id.gv_classify);
 		tv_dir = (TextView) findViewById(R.id.tv_classify_dir);
+		handler = new MyHandler(this);
+		layout = inflater.inflate(R.layout.circle_progress, (ViewGroup) findViewById(R.id.rl_progress));
+		builder = new AlertDialog.Builder(ClassifyGridActivity.this).setView(layout);
+		alertDialog = builder.create();
+		mProgressView = (CircleProgress) layout.findViewById(R.id.progress);
 	}
 
 	void initView(int flg) {
-
+		mProgressView.startAnim();
+		alertDialog.show();
 		switch (flg) {
 
 		case R.id.img_movie:
-			ArrayList<Content> videos = Utils.getVideo(this);
-			gridAdapter = new ClassifyGridAdapter(videos, this, R.id.img_movie);
-			gv_classify.setAdapter(gridAdapter);
+			new Thread(new GridRunnable(R.id.img_movie)).start();
+//			ArrayList<Content> videos = Utils.getVideo(this);
+//			gridAdapter = new ClassifyGridAdapter(videos, this, R.id.img_movie);
+//			gv_classify.setAdapter(gridAdapter);
 			gv_classify.setOnItemClickListener(new OnItemClickListener() {
 
 				@Override
@@ -76,7 +96,7 @@ public class ClassifyGridActivity extends Activity {
 				public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
 					final Content content = (Content) parent.getItemAtPosition(position);
 					final File file = new File(content.getDir());
-					String[] data = { "打开", "删除", "共享" ,"推送"};
+					String[] data = { "打开", "删除", "共享", "推送" };
 					new AlertDialog.Builder(ClassifyGridActivity.this).setTitle("选择操作")
 							.setItems(data, new OnClickListener() {
 
@@ -139,9 +159,11 @@ public class ClassifyGridActivity extends Activity {
 			});
 			break;
 		case R.id.img_photo:
-			ArrayList<Content> photos = Utils.getPhotoCata(this);
-			gridAdapter = new ClassifyGridAdapter(photos, this, R.id.img_photo);
-			gv_classify.setAdapter(gridAdapter);
+			// CircleProgress cp = new CircleProgress(this);
+			new Thread(new GridRunnable(R.id.img_photo)).start();
+//			ArrayList<Content> photos = Utils.getPhotoCata(this);
+//			gridAdapter = new ClassifyGridAdapter(photos, this, R.id.img_photo);
+//			gv_classify.setAdapter(gridAdapter);
 			gv_classify.setOnItemClickListener(new OnPhotoItemClickListener());
 			break;
 
@@ -170,8 +192,75 @@ public class ClassifyGridActivity extends Activity {
 			intent.putExtra("content", s);
 			intent.setClass(ClassifyGridActivity.this, PhotoGridActivity.class);
 			startActivity(intent);
-			ClassifyGridActivity.this.overridePendingTransition(android.R.anim.slide_in_left,
-					android.R.anim.slide_out_right);
+
+		}
+	}
+
+	class GridRunnable implements Runnable {
+		int id;
+
+		public GridRunnable(int id) {
+			this.id = id;
+		}
+
+		@Override
+		public void run() {
+			Message msg = new Message();
+			Bundle data = new Bundle();
+			switch (id) {
+			case R.id.img_movie:
+				results = Utils.getVideo(ClassifyGridActivity.this);
+				data.putSerializable("data", results);
+				data.putInt("tag", R.id.img_movie);
+				break;
+			case R.id.img_photo:
+				results = Utils.getPhotoCata(ClassifyGridActivity.this);
+				data.putSerializable("data", results);
+				data.putInt("tag", R.id.img_photo);
+				break;
+			default:
+				break;
+			}
+			msg.setData(data);
+			handler.sendMessage(msg);
+		}
+
+	}
+	
+	class MyHandler extends Handler {
+		WeakReference<ClassifyGridActivity> mActivity;
+
+		MyHandler(ClassifyGridActivity activity) {
+			mActivity = new WeakReference<ClassifyGridActivity>(activity);
+		}
+
+		@SuppressWarnings("unchecked")
+		@Override
+		public void handleMessage(Message msg) {
+			ClassifyGridActivity theActivity = mActivity.get();
+			if (theActivity != null) {
+				super.handleMessage(msg);
+				ArrayList<Content> data = null;
+				switch (msg.getData().getInt("tag")) {
+				case R.id.img_movie:
+					data = (ArrayList<Content>) msg.getData().get("data");
+					gridAdapter = new ClassifyGridAdapter(results, theActivity, R.id.img_movie);
+					gv_classify.setAdapter(gridAdapter);
+					break;
+				case R.id.img_photo:
+					data = (ArrayList<Content>) msg.getData().get("data");
+					gridAdapter = new ClassifyGridAdapter(results, theActivity, R.id.img_movie);
+					gv_classify.setAdapter(gridAdapter);
+					break;
+
+				default:
+					break;
+				}
+				if (alertDialog.isShowing()) {
+					mProgressView.stopAnim();
+					alertDialog.dismiss();
+				}
+			}
 
 		}
 	}
