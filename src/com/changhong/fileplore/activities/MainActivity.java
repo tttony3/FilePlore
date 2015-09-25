@@ -18,12 +18,6 @@ import android.os.Bundle;
 
 import android.app.ActionBar;
 
-import android.os.Parcelable;
-import android.app.ActionBar;
-import android.app.Activity;
-import android.app.ActivityManager;
-import android.app.ActivityManager.RunningTaskInfo;
-
 import android.app.AlertDialog;
 import android.app.LocalActivityManager;
 import android.content.Context;
@@ -33,7 +27,6 @@ import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
-import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.util.DisplayMetrics;
@@ -44,8 +37,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-
-import android.view.WindowManager;
 
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;

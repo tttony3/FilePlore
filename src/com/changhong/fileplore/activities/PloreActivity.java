@@ -8,6 +8,7 @@ import java.util.List;
 import com.changhong.fileplore.adapter.PloreListAdapter;
 import com.changhong.fileplore.application.MyApp;
 import com.changhong.fileplore.base.BaseActivity;
+import com.changhong.fileplore.data.PloreData;
 import com.changhong.fileplore.implement.PloreInterface;
 import com.changhong.fileplore.view.RefreshListView;
 import com.chobit.corestorage.CoreApp;
@@ -34,7 +35,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-import data.PloreData;
 
 import com.changhong.fileplore.utils.*;
 

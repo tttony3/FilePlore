@@ -164,7 +164,6 @@ public class PloreListAdapter extends BaseAdapter {
 				final String path = file.getPath();
 				final String name = file.getName();
 				if (MyApp.fileSet.contains("cache" + name)) {
-					Log.e("contains", "contains");
 					imageLoader.displayImage("file://" + MyApp.storagepath + "cache" + name, viewHolder.img, options);
 				} else {
 

@@ -6,5 +6,13 @@
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.DEPENDENCIES"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/SlidingMenuLib"/>
+	<classpathentry kind="lib" path="E:/android-sdk/platforms/android-19/android.jar" sourcepath="E:/android-sdk/sources/android-19">
+		<attributes>
+			<attribute name="javadoc_location" value="file:/E:/android-sdk/docs/reference"/>
+		</attributes>
+		<accessrules>
+			<accessrule kind="nonaccessible" pattern="com/android/internal/**"/>
+		</accessrules>
+	</classpathentry>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>
