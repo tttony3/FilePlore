@@ -6,9 +6,15 @@
 	<classpathentry exported="true" kind="lib" path="libs/android-support-v4.jar"/>
 	<classpathentry kind="lib" path="libs/jcifs-1.3.18.jar"/>
 	<classpathentry kind="lib" path="libs/CoreSynergyStorage.jar"/>
+<<<<<<< HEAD
+	<classpathentry kind="src" path="/SlidingMenuLib"/>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="gen"/>
+=======
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="gen"/>
 	<classpathentry kind="lib" path="F:/tlEclipseWorkSpace/FilePlore/libs/CoreSynergyStorage.jar"/>
 	<classpathentry kind="src" path="/SlidingMenuLib"/>
+>>>>>>> 02a1afe2bd852c7d4dc367a59659e3ed12d26e0d
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

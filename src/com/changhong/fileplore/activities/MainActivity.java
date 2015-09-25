@@ -15,11 +15,15 @@ import com.changhong.fileplore.application.MyApp;
 
 import android.os.Binder;
 import android.os.Bundle;
+<<<<<<< HEAD
+import android.app.ActionBar;
+=======
 import android.os.Parcelable;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningTaskInfo;
+>>>>>>> 02a1afe2bd852c7d4dc367a59659e3ed12d26e0d
 import android.app.AlertDialog;
 import android.app.LocalActivityManager;
 import android.content.Context;
@@ -29,7 +33,10 @@ import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
+<<<<<<< HEAD
+=======
 import android.support.v4.view.PagerAdapter;
+>>>>>>> 02a1afe2bd852c7d4dc367a59659e3ed12d26e0d
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.util.DisplayMetrics;
@@ -40,7 +47,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+<<<<<<< HEAD
+=======
 import android.view.WindowManager;
+>>>>>>> 02a1afe2bd852c7d4dc367a59659e3ed12d26e0d
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 import android.widget.EditText;
