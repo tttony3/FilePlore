@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/corners_bg"
+    android:orientation="horizontal"
+    android:paddingBottom="0dp"
+    android:paddingTop="0dp" >
+
+    <CheckBox
+        android:id="@+id/cb"
+        android:layout_marginStart="5dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:checked="false"   
+        android:visibility="gone" >
+    </CheckBox>
+
+    <ImageView
+        android:layout_toEndOf="@+id/cb"
+        android:id="@+id/fileimg"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="5dp"
+        android:contentDescription="@string/img_description" />
+
+    <TextView
+        android:id="@+id/filename"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:layout_toEndOf="@+id/fileimg"
+        android:ellipsize="end"
+        android:ems="9"
+        android:maxLines="2"
+        android:paddingTop="3dp"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/lasttime"
+         android:layout_toEndOf="@+id/filename"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="2dp"
+        android:paddingTop="3dp"
+        android:textSize="12sp" />
+
+</RelativeLayout>

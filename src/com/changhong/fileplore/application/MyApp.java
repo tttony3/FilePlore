@@ -12,6 +12,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import com.chobit.corestorage.CoreApp;
+import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
@@ -27,7 +28,7 @@ public class MyApp extends CoreApp {
 	ExecutorService fixedThreadPool = Executors.newFixedThreadPool(10);
 	File[] folderfiles;
 	static public Set<String> fileSet;
-
+	static public  Md5FileNameGenerator md5 =new Md5FileNameGenerator();
 	public Set<String> getFileSet() {
 		return fileSet;
 	}
@@ -140,8 +141,10 @@ public class MyApp extends CoreApp {
 
 						@Override
 						public void run() {
-							saveBitmap2file(loadedImage, "cache" + filename);
-							fileSet.add(filename);
+							String md5name = md5.generate(filename);
+							saveBitmap2file(loadedImage, md5.generate(filename));
+						//	saveBitmap2file(loadedImage, "cache" + filename);
+							fileSet.add(md5name);
 						}
 					});
 

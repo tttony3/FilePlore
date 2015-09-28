@@ -183,7 +183,7 @@ public class ShowPushFileActivity extends BaseActivity implements OnItemClickLis
 				super.handleMessage(msg);
 				int key = msg.getData().getInt("key");
 				switch (key) {
-				case MyCoreDownloadProgressCB.UPDATE_DOWNLOAD_BAR:
+				case MyCoreDownloadProgressCB.UPDATE_DOWNLOAD:
 					if (!alertDialog_download.isShowing()) {
 						long total = msg.getData().getLong("total");
 						int max = (int) (total / 100);
@@ -197,7 +197,7 @@ public class ShowPushFileActivity extends BaseActivity implements OnItemClickLis
 						tv_download.setText(p + "%");
 					}
 					break;
-				case MyCoreDownloadProgressCB.DISMISS_DOWN_BAR:
+				case MyCoreDownloadProgressCB.DISMISS_DOWNLOAD:
 					if (alertDialog_download.isShowing())
 						alertDialog_download.dismiss();
 					break;

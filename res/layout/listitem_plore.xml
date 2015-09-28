@@ -3,48 +3,45 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:background="@drawable/corners_bg"
-    android:orientation="horizontal"
     android:paddingBottom="0dp"
     android:paddingTop="0dp" >
 
-    <CheckBox
-        android:id="@+id/cb"
-        android:layout_marginStart="5dp"
+    <TextView
+        android:id="@+id/tv_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:checked="false"   
-        android:visibility="gone" >
-    </CheckBox>
+        android:layout_marginStart="10dp"
+        android:text="name"
+        android:textSize="18sp" />
 
-    <ImageView
-        android:layout_toEndOf="@+id/cb"
-        android:id="@+id/fileimg"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_marginStart="5dp"
-        android:contentDescription="@string/img_description" />
+    <ProgressBar
+        android:id="@+id/download_bar"
+        style="@style/tallerBarStyle"
+        android:layout_marginTop="7dp"
+        android:layout_width="180dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_toEndOf="@+id/tv_name"
+        android:max="10000" />
 
     <TextView
-        android:id="@+id/filename"
+        android:id="@+id/tv_process"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="5dp"
-        android:layout_toEndOf="@+id/fileimg"
-        android:ellipsize="end"
-        android:ems="9"
-        android:maxLines="2"
-        android:paddingTop="3dp"
-        android:textSize="16sp" />
+        android:layout_alignBaseline="@+id/tv_name"
+        android:layout_marginStart="15dp"
+        android:layout_toEndOf="@+id/download_bar"
+        android:text="0%"
+        android:textSize="18sp" />
 
-    <TextView
-        android:id="@+id/lasttime"
-         android:layout_toEndOf="@+id/filename"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <Button
+        android:id="@+id/download_stop"
+        android:layout_width="60dp"
+        android:layout_height="30dp"
+        android:layout_alignBaseline="@+id/tv_name"       
+      android:layout_marginEnd="10dp"
         android:layout_alignParentEnd="true"
-        android:layout_marginStart="5dp"
-        android:layout_marginEnd="2dp"
-        android:paddingTop="3dp"
-        android:textSize="12sp" />
+        android:text="取消"
+        android:textSize="14sp" />
 
 </RelativeLayout>

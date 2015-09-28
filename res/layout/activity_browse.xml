@@ -347,4 +347,33 @@
             android:src="@drawable/jiantou" />
     </RelativeLayout>
 
+    <RelativeLayout
+        android:id="@+id/browse_rl_downlist"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/browse_rl_net"
+        android:layout_margin="5dp"
+        android:background="@drawable/corners_bg"
+        android:paddingBottom="10dp"
+        android:paddingTop="10dp" >
+
+        <TextView
+            android:id="@+id/tv_downlist"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:text="@string/downlist"
+            android:textSize="16sp" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/tv_downlist"
+            android:layout_alignParentEnd="true"
+            android:layout_alignTop="@+id/tv_downlist"
+            android:layout_marginEnd="5dp"
+            android:contentDescription="@string/img_description"
+            android:src="@drawable/jiantou" />
+    </RelativeLayout>
+
 </RelativeLayout>

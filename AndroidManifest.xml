@@ -92,6 +92,12 @@
                 <action android:name="com.chobit.corestorage.CoreService" />
             </intent-filter>
         </service>
+        <service android:name="com.changhong.fileplore.service.DownLoadService" 
+             android:permission="com.changhong.fileplore.service.DownLoadService" >>
+            <intent-filter>
+                <action android:name="com.changhong.fileplore.service.DownLoadService" />
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>

@@ -1,37 +1,16 @@
 package com.changhong.fileplore.adapter;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
-import com.changhong.alljoyn.simpleservice.FC_GetShareFile;
 import com.changhong.fileplore.R;
 import com.changhong.fileplore.application.MyApp;
-import com.changhong.fileplore.utils.Utils;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
-import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
-
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.Bitmap.CompressFormat;
-import android.os.AsyncTask;
-import android.os.Environment;
-import android.os.Handler;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -163,8 +142,9 @@ public class PloreListAdapter extends BaseAdapter {
 			case PHOTO:
 				final String path = file.getPath();
 				final String name = file.getName();
-				if (MyApp.fileSet.contains("cache" + name)) {
-					imageLoader.displayImage("file://" + MyApp.storagepath + "cache" + name, viewHolder.img, options);
+				String md5name =MyApp.md5.generate(name);
+				if (MyApp.fileSet.contains(md5name)) {
+					imageLoader.displayImage("file://" + MyApp.storagepath + md5name, viewHolder.img, options);
 				} else {
 
 					imageLoader.displayImage("file://" + path, viewHolder.img, options);

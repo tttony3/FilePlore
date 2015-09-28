@@ -6,6 +6,7 @@ import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -15,6 +16,8 @@ import com.changhong.fileplore.R;
 
 import com.changhong.fileplore.adapter.NetShareFileListAdapter;
 import com.changhong.fileplore.application.MyApp;
+import com.changhong.fileplore.service.DownLoadService;
+import com.changhong.fileplore.service.DownLoadService.DownLoadBinder;
 import com.changhong.fileplore.thread.SetMediaProgressBarThread;
 import com.changhong.fileplore.utils.DownloadImageTask;
 import com.changhong.fileplore.utils.MyCoreDownloadProgressCB;
@@ -30,8 +33,10 @@ import com.example.libevent2.UpdateDownloadPress;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.BitmapFactory.Options;
@@ -41,6 +46,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.IBinder;
 import android.os.Message;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -124,7 +130,8 @@ public class ShowNetFileActivity extends Activity {
 		devInfo = CoreApp.mBinder.GetDeviceList().get(position);
 		CoreApp.mBinder.setShareFileListener(shareListener);
 		CoreApp.mBinder.ConnectDeivce(devInfo);
-		CoreApp.mBinder.setDownloadCBInterface(new MyCoreDownloadProgressCB(handler, this));
+		// CoreApp.mBinder.setDownloadCBInterface(new
+		// MyCoreDownloadProgressCB(handler, this));
 		netShareFileListAdapter = new NetShareFileListAdapter(shareFileList, shareFolderList, devInfo, this);
 		myOnItemClickListener = new MyOnItemClickListener();
 
@@ -262,8 +269,6 @@ public class ShowNetFileActivity extends Activity {
 		}
 	};
 
-	
-
 	int time = 0;
 	SetMediaProgressBarThread thread;
 
@@ -348,15 +353,33 @@ public class ShowNetFileActivity extends Activity {
 						}
 						break;
 					case 1:
-						btn_stop.setOnClickListener(new OnClickListener() {
-
-							@Override
-							public void onClick(View v) {
-								CoreApp.mBinder.cancelDownload(devInfo.getM_httpserverurl() + file.getLocation());
-
-							}
-						});
-						CoreApp.mBinder.getShareFileDownload(devInfo, file.getLocation(), null);
+						// btn_stop.setOnClickListener(new OnClickListener() {
+						//
+						// @Override
+						// public void onClick(View v) {
+						// CoreApp.mBinder.cancelDownload(devInfo.getM_httpserverurl()
+						// + file.getLocation());
+						//
+						// }
+						// });
+						ArrayList<String> downlist = new ArrayList<String>();
+						downlist.add(devInfo.getM_httpserverurl() + file.getLocation());
+						Intent intent = new Intent(ShowNetFileActivity.this, DownLoadService.class);
+						intent.putStringArrayListExtra("downloadlist", downlist);
+						startService(intent);
+						Toast.makeText(ShowNetFileActivity.this, "已加入下载列表", Toast.LENGTH_SHORT).show();
+						// bindService(new
+						// Intent("com.changhong.fileplore.DownLoadService"),
+						// conn, BIND_AUTO_CREATE);
+						// Log.e("long", "" +
+						// binder.getDownStatus(devInfo.getM_httpserverurl() +
+						// file.getLocation())
+						// .getTotalPart());
+						// CoreApp.mBinder.DownloadHttpFile("client",
+						// devInfo.getM_httpserverurl() + file.getLocation(),
+						// null);
+						// CoreApp.mBinder.getShareFileDownload(devInfo,
+						// file.getLocation(), null);
 						break;
 					default:
 						break;
@@ -365,6 +388,23 @@ public class ShowNetFileActivity extends Activity {
 			}).show();
 		}
 	}
+
+	DownLoadBinder binder;
+	private ServiceConnection conn = new ServiceConnection() {
+		/** 获取服务对象时的操作 */
+		public void onServiceConnected(ComponentName name, IBinder service) {
+			// TODO Auto-generated method stub
+			binder = (DownLoadService.DownLoadBinder) service;
+
+		}
+
+		/** 无法获取到服务对象时的操作 */
+		public void onServiceDisconnected(ComponentName name) {
+			// TODO Auto-generated method stub
+			binder = null;
+		}
+
+	};
 
 	private void showPreviewDialog(String path) {
 		Message msg = new Message();
@@ -512,7 +552,7 @@ public class ShowNetFileActivity extends Activity {
 					alertDialog_preview.show();
 					break;
 				case SetMediaProgressBarThread.UPDATE_BAR:
-					
+
 					pb_media.setProgress(msg.getData().getInt("value"));
 					curtime = curtime + 1;
 					tv_curtime.setText(curtime / 60 + ":" + (curtime - (curtime / 60) * 60));
@@ -527,7 +567,7 @@ public class ShowNetFileActivity extends Activity {
 				case SET_TOTALTIME:
 					tv_totaltime.setText(time / 60 + ":" + (time - (time / 60) * 60));
 					break;
-				case MyCoreDownloadProgressCB.UPDATE_DOWNLOAD_BAR:
+				case MyCoreDownloadProgressCB.UPDATE_DOWNLOAD:
 					if (!alertDialog_download.isShowing()) {
 						long total = msg.getData().getLong("total");
 						int max = (int) (total / 100);
@@ -541,7 +581,7 @@ public class ShowNetFileActivity extends Activity {
 						tv_download.setText(p + "%");
 					}
 					break;
-				case MyCoreDownloadProgressCB.DISMISS_DOWN_BAR:
+				case MyCoreDownloadProgressCB.DISMISS_DOWNLOAD:
 					if (alertDialog_download.isShowing())
 						alertDialog_download.dismiss();
 					break;

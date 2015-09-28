@@ -72,11 +72,11 @@ public class PhotoGirdAdapter extends BaseAdapter {
 		// viewHolder.image, options);
 		final String path = results.get(position).getDir();
 		final String name = results.get(position).getTitle();
-
-		if (MyApp.fileSet.contains("cache" + name)) {
-			Log.e("contains", "contains");
-			imageLoader.displayImage("file://" + MyApp.storagepath + "cache" + name, viewHolder.image, options);
+		String md5name =MyApp.md5.generate(name);
+		if (MyApp.fileSet.contains(md5name)) {
+			imageLoader.displayImage("file://" + MyApp.storagepath + md5name, viewHolder.image, options);
 		} else {
+
 			imageLoader.displayImage("file://" + path, viewHolder.image, options);
 
 		}

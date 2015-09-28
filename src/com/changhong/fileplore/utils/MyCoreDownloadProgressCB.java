@@ -14,8 +14,8 @@ import android.util.Log;
 import android.widget.Toast;
 
 public class MyCoreDownloadProgressCB implements CoreDownloadProgressCB {
-	static public final int UPDATE_DOWNLOAD_BAR = 10;
-	static public final int DISMISS_DOWN_BAR = 12;
+	static public final int UPDATE_DOWNLOAD = 10;
+	static public final int DISMISS_DOWNLOAD= 12;
 	Handler handler;
 	Context context;
 	public MyCoreDownloadProgressCB(Handler handler,Context context) {
@@ -38,7 +38,7 @@ public class MyCoreDownloadProgressCB implements CoreDownloadProgressCB {
 	public void onDowloadProgress(UpdateDownloadPress press) {
 		Message msg = new Message();
 		Bundle bundle = new Bundle();
-		bundle.putInt("key", UPDATE_DOWNLOAD_BAR);
+		bundle.putInt("key", UPDATE_DOWNLOAD);
 		bundle.putLong("part", press.part);
 		bundle.putLong("total", press.total);
 		msg.setData(bundle);
@@ -57,7 +57,7 @@ public class MyCoreDownloadProgressCB implements CoreDownloadProgressCB {
 	private void dismissDownDialog() {
 		Message msg = new Message();
 		Bundle bundle = new Bundle();
-		bundle.putInt("key", DISMISS_DOWN_BAR);
+		bundle.putInt("key", DISMISS_DOWNLOAD);
 		msg.setData(bundle);
 		handler.sendMessage(msg);
 
