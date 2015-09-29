@@ -2,6 +2,7 @@ package com.changhong.fileplore.activities;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.changhong.fileplore.R;
@@ -141,15 +142,24 @@ public class ShowPushFileActivity extends BaseActivity implements OnItemClickLis
 					}
 					break;
 				case 1:
-					btn_stop.setOnClickListener(new OnClickListener() {
-
-						@Override
-						public void onClick(View v) {
-							CoreApp.mBinder.cancelDownload(fileLocation);
-
-						}
-					});
-					CoreApp.mBinder.DownloadHttpFile("client", fileLocation, null);
+					ArrayList<String> downlist = new ArrayList<String>();
+					downlist.add(fileLocation);
+					Intent intent = new Intent("com.changhong.fileplore.service.DownLoadService");
+					intent.putStringArrayListExtra("downloadlist", downlist);
+					 startService(intent);
+				//	bindService(intent, conn, BIND_AUTO_CREATE);
+					Toast.makeText(ShowPushFileActivity.this, "已加入下载列表", Toast.LENGTH_SHORT).show();
+					
+					
+//					btn_stop.setOnClickListener(new OnClickListener() {
+//
+//						@Override
+//						public void onClick(View v) {
+//							CoreApp.mBinder.cancelDownload(fileLocation);
+//
+//						}
+//					});
+//					CoreApp.mBinder.DownloadHttpFile("client", fileLocation, null);
 					break;
 				default:
 					break;
@@ -204,7 +214,7 @@ public class ShowPushFileActivity extends BaseActivity implements OnItemClickLis
 				case SHOW_PREVIEW_DIALOG:
 					iv_preview.setImageResource(R.drawable.picload);
 					String path = msg.getData().getString("path");
-					new DownloadImageTask(iv_preview).execute(path);
+					new DownloadImageTask(iv_preview,4).execute(path);
 					alertDialog_preview.show();
 					break;
 				case SetMediaProgressBarThread.UPDATE_BAR:

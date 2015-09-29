@@ -364,17 +364,16 @@ public class ShowNetFileActivity extends Activity {
 						// });
 						ArrayList<String> downlist = new ArrayList<String>();
 						downlist.add(devInfo.getM_httpserverurl() + file.getLocation());
-						Intent intent = new Intent(ShowNetFileActivity.this, DownLoadService.class);
+						Intent intent = new Intent("com.changhong.fileplore.service.DownLoadService");
 						intent.putStringArrayListExtra("downloadlist", downlist);
-						startService(intent);
+						 startService(intent);
+					//	bindService(intent, conn, BIND_AUTO_CREATE);
 						Toast.makeText(ShowNetFileActivity.this, "已加入下载列表", Toast.LENGTH_SHORT).show();
 						// bindService(new
 						// Intent("com.changhong.fileplore.DownLoadService"),
 						// conn, BIND_AUTO_CREATE);
-						// Log.e("long", "" +
-						// binder.getDownStatus(devInfo.getM_httpserverurl() +
-						// file.getLocation())
-						// .getTotalPart());
+//						Log.e("long", "" + downLoadService.getDownStatus(devInfo.getM_httpserverurl() + file.getLocation())
+//								.getTotalPart());
 						// CoreApp.mBinder.DownloadHttpFile("client",
 						// devInfo.getM_httpserverurl() + file.getLocation(),
 						// null);
@@ -389,18 +388,19 @@ public class ShowNetFileActivity extends Activity {
 		}
 	}
 
+	DownLoadService downLoadService;
 	DownLoadBinder binder;
 	private ServiceConnection conn = new ServiceConnection() {
 		/** 获取服务对象时的操作 */
 		public void onServiceConnected(ComponentName name, IBinder service) {
-			// TODO Auto-generated method stub
-			binder = (DownLoadService.DownLoadBinder) service;
+			Log.e("call", "call");
+			downLoadService = ((DownLoadBinder) service).getService();
 
 		}
 
 		/** 无法获取到服务对象时的操作 */
 		public void onServiceDisconnected(ComponentName name) {
-			// TODO Auto-generated method stub
+			Log.e("callnull", "callnull");
 			binder = null;
 		}
 
@@ -548,7 +548,7 @@ public class ShowNetFileActivity extends Activity {
 				case SHOW_PREVIEW_DIALOG:
 					iv_preview.setImageResource(R.drawable.picload);
 					String path = msg.getData().getString("path");
-					new DownloadImageTask(iv_preview).execute(devInfo.getM_httpserverurl() + path);
+					new DownloadImageTask(iv_preview,4).execute(devInfo.getM_httpserverurl() + path);
 					alertDialog_preview.show();
 					break;
 				case SetMediaProgressBarThread.UPDATE_BAR:

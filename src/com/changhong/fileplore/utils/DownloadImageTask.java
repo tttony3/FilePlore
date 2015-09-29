@@ -14,9 +14,10 @@ import android.widget.ImageView;
 
 public class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
 	ImageView im;
-
-	public DownloadImageTask(ImageView im) {
+	int opInt;
+	public DownloadImageTask(ImageView im,int op) {
 		this.im = im;
+		this.opInt=op;
 	}
 
 	protected Bitmap doInBackground(String... urls) {
@@ -35,7 +36,7 @@ public class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
 			InputStream inputStream = conn.getInputStream(); // 通过输入流获得图片数据
 			byte[] data = StreamTool.readInputStream(inputStream);
 			Options op = new Options();
-			op.inSampleSize = 4;
+			op.inSampleSize = opInt;
 			bitmap = BitmapFactory.decodeByteArray(data, 0, data.length, op);
 		} catch (MalformedURLException e) {
 

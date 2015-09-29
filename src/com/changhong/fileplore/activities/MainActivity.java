@@ -65,6 +65,7 @@ public class MainActivity extends SlidingFragmentActivity implements android.vie
 	TextView t1, t2;
 	TableLayout tl_brwloc;
 	RelativeLayout rl_brwnet;
+	RelativeLayout rl_showdown;
 	MainViewPagerAdapter myPagerAdapter;
 	private int offset = 0;// 动画图片偏移量
 	private int currIndex = 0;// 当前页卡编号
@@ -171,8 +172,10 @@ public class MainActivity extends SlidingFragmentActivity implements android.vie
 
 		tl_brwloc = (TableLayout) list.get(0).findViewById(R.id.browse_tab_2);
 		rl_brwnet = (RelativeLayout) list.get(0).findViewById(R.id.browse_rl_net);
+		rl_showdown = (RelativeLayout) list.get(0).findViewById(R.id.browse_rl_downlist);
 		tl_brwloc.setOnClickListener(new MyOnClickListener(1));
 		rl_brwnet.setOnClickListener(this);
+		rl_showdown.setOnClickListener(this);
 		iv_apk = (ImageView) list.get(0).findViewById(R.id.img_apk);
 		iv_movie = (ImageView) list.get(0).findViewById(R.id.img_movie);
 		iv_music = (ImageView) list.get(0).findViewById(R.id.img_music);
@@ -449,6 +452,7 @@ public class MainActivity extends SlidingFragmentActivity implements android.vie
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
+		stopService(new Intent("com.changhong.fileplore.service.DownLoadService"));
 		System.exit(0);
 
 	}
@@ -497,6 +501,11 @@ public class MainActivity extends SlidingFragmentActivity implements android.vie
 		case R.id.browse_rl_net:
 			intent.setClass(MainActivity.this, ShowNetDevActivity.class);
 			startActivity(intent);
+			break;
+		case R.id.browse_rl_downlist:
+			intent.setClass(MainActivity.this, ShowDownFileActivity.class);
+			startActivity(intent);
+			break;
 		default:
 			break;
 		}

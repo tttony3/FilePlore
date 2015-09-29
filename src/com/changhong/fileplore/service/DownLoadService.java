@@ -1,10 +1,8 @@
 package com.changhong.fileplore.service;
 
-import java.nio.channels.FileChannel.MapMode;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -21,20 +19,20 @@ import android.content.Intent;
 import android.os.Binder;
 import android.os.Environment;
 import android.os.IBinder;
-import android.os.Looper;
 import android.util.Log;
 import android.widget.Toast;
 
-public class DownLoadService extends Service {
-	static final public int MAX_THREAD = 3;
+public class DownLoadService extends Service implements DownStatusInterface {
+	static final public int MAX_THREAD = 2;
 	private ExecutorService pool;
-	DownLoadBinder mBinder;
+	private IBinder mBinder;
 	HashMap<String, DownData> downMap;
+	boolean setDownCB = true;
 
 	@Override
 	public IBinder onBind(Intent intent) {
-
 		return mBinder;
+
 	}
 
 	@Override
@@ -43,7 +41,11 @@ public class DownLoadService extends Service {
 		mBinder = new DownLoadBinder();
 		downMap = new HashMap<String, DownData>();
 		pool = Executors.newFixedThreadPool(MAX_THREAD);
-		CoreApp.mBinder.setDownloadCBInterface(new ServiceDownloadProgressCB());
+		Log.e("ononCreate", "ononCreate");
+		if (setDownCB) {
+			setDownCB = false;
+			CoreApp.mBinder.setDownloadCBInterface(new ServiceDownloadProgressCB());
+		}
 	}
 
 	@Override
@@ -63,16 +65,22 @@ public class DownLoadService extends Service {
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
-		Iterator<String> it = intent.getStringArrayListExtra("downloadlist").iterator();
-		while (it.hasNext()) {
-			DownData tmp = new DownData();
-			String uri = it.next();
-			tmp.setUri(uri).setCurPart(0).setTotalPart(0).setName(uri.substring(uri.lastIndexOf("/"), uri.length()));
-			downMap.put(uri, tmp);
-		}
-		Iterator<String> it1 = downMap.keySet().iterator();
-		while (it1.hasNext()) {
-			pool.execute(new DownRunnAble(it1.next()));
+		ArrayList<String> downloadlist = intent.getStringArrayListExtra("downloadlist");
+		if (downloadlist != null) {
+			Iterator<String> it = downloadlist.iterator();
+			while (it.hasNext()) {
+				DownData tmp = new DownData();
+				String uri = it.next();
+				tmp.setUri(uri).setCurPart(0).setTotalPart(0)
+						.setName(uri.substring(uri.lastIndexOf("/") + 1, uri.length()));
+				downMap.put(uri, tmp);
+			}
+			Iterator<String> it1 = downMap.keySet().iterator();
+			while (it1.hasNext()) {
+				pool.execute(new DownRunnAble(it1.next()));
+			}
+		} else if (downloadlist == null) {
+			Log.e("show", "show");
 		}
 		return super.onStartCommand(intent, flags, startId);
 	}
@@ -82,7 +90,7 @@ public class DownLoadService extends Service {
 		super.onRebind(intent);
 	}
 
-	public class DownLoadBinder extends Binder implements DownStatusInterface {
+	public class DownLoadBinder extends Binder {
 		/**
 		 * 获取 Service 实例
 		 * 
@@ -90,31 +98,6 @@ public class DownLoadService extends Service {
 		 */
 		public DownLoadService getService() {
 			return DownLoadService.this;
-		}
-
-		@Override
-		public HashMap<String, DownData> getAllDownStatus() {
-			return downMap;
-		}
-
-		@Override
-		public DownData getDownStatus(String uri) {
-			return downMap.get(uri);
-
-		}
-
-		@Override
-		public void stopDownload(String uri) {
-			CoreApp.mBinder.cancelDownload(uri);
-
-		}
-
-		@Override
-		public void stopAllDownload() {
-			Iterator<String> it = downMap.keySet().iterator();
-			while (it.hasNext()) {
-				CoreApp.mBinder.cancelDownload(it.next());
-			}
 		}
 
 	}
@@ -137,24 +120,25 @@ public class DownLoadService extends Service {
 		public void onDowloadProgress(UpdateDownloadPress press) {
 			DownData mDownData = downMap.get(press.uriString);
 			mDownData.setCurPart(press.part).setTotalPart(press.total);
-			Log.e("part", press.part + "  " + press.total);
+			mDownData.setCancel(false);
 		}
 
 		@Override
 		public void onDowloaStop(String fileuri) {
-			// TODO Auto-generated method stub
 
 		}
 
 		@Override
 		public void onDowloaCancel(String fileuri) {
-			// TODO Auto-generated method stub
+			DownData mDownData = downMap.get(fileuri);
+			mDownData.setCancel(true);
 
 		}
 
 		@Override
 		public void onDowloaFailt(String fileuri) {
-			// TODO Auto-generated method stub
+			DownData mDownData = downMap.get(fileuri);
+			mDownData.setCancel(true);
 
 		}
 
@@ -170,10 +154,43 @@ public class DownLoadService extends Service {
 
 		@Override
 		public void onConnectError(String fileuri) {
-			// TODO Auto-generated method stub
+			
 
 		}
 
 	}
+
+	@Override
+	public HashMap<String, DownData> getAllDownStatus() {
+		return downMap;
+	}
+
+	@Override
+	public DownData getDownStatus(String uri) {
+		return downMap.get(uri);
+
+	}
+
+	@Override
+	public void stopDownload(String uri) {
+		CoreApp.mBinder.cancelDownload(uri);
+
+	}
+
+	@Override
+	public void stopAllDownload() {
+		Iterator<String> it = downMap.keySet().iterator();
+		while (it.hasNext()) {
+			CoreApp.mBinder.cancelDownload(it.next());
+		}
+	}
+
+	public void addDownloadFile(String uri) {
+		DownData tmp = new DownData();
+		tmp.setUri(uri).setCurPart(0).setTotalPart(0).setName(uri.substring(uri.lastIndexOf("/") + 1, uri.length()));
+		downMap.put(uri, tmp);
+		pool.execute(new DownRunnAble(uri));
+	}
+	
 
 }

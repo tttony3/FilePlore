@@ -4,6 +4,7 @@
     android:versionCode="1"
     android:versionName="1.0" >
 
+    <uses-permission android:name="android.permission.GET_TASKS" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" >
     </uses-permission>
     <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
@@ -82,7 +83,11 @@
         </activity>
         <activity
             android:name="com.changhong.fileplore.activities.ShowPushFileActivity"
-            android:label="VideoActivity" >
+            android:label="ShowPushFileActivity" >
+        </activity>
+        <activity
+            android:name="com.changhong.fileplore.activities.ShowDownFileActivity"
+            android:label="ShowDownFileActivity" >
         </activity>
 
         <service
@@ -92,8 +97,9 @@
                 <action android:name="com.chobit.corestorage.CoreService" />
             </intent-filter>
         </service>
-        <service android:name="com.changhong.fileplore.service.DownLoadService" 
-             android:permission="com.changhong.fileplore.service.DownLoadService" >>
+        <service
+            android:name="com.changhong.fileplore.service.DownLoadService"
+            android:permission="com.changhong.fileplore.service.DownLoadService" >
             <intent-filter>
                 <action android:name="com.changhong.fileplore.service.DownLoadService" />
             </intent-filter>

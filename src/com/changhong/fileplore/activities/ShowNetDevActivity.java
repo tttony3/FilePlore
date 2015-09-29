@@ -14,6 +14,7 @@ import com.changhong.fileplore.R;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -140,18 +141,22 @@ public class ShowNetDevActivity extends Activity {
 
 		@Override
 		public void stopWaiting() {
-
+			if(getTopActivity(ShowNetDevActivity.this).equals(".activities.ShowNetDevActivity")){
 			if (alertDialog.isShowing()) {
 				mProgressView.stopAnim();
 				alertDialog.dismiss();
+			}
 			}
 		}
 
 		@Override
 		public void startWaiting() {
 			// dialog.show();
+			if(getTopActivity(ShowNetDevActivity.this).equals(".activities.ShowNetDevActivity")){
+			Log.e("activity",getTopActivity(ShowNetDevActivity.this));
 			mProgressView.startAnim();
 			alertDialog.show();
+			}
 
 		}
 
@@ -175,5 +180,14 @@ public class ShowNetDevActivity extends Activity {
 		myapp.setContext(this);
 		super.onResume();
 	}
-
+	  String getTopActivity(Activity context)
+	  {
+	       ActivityManager manager = (ActivityManager)context.getSystemService(ACTIVITY_SERVICE) ;
+	       List<ActivityManager.RunningTaskInfo> runningTaskInfos = manager.getRunningTasks(1) ;
+	           
+	       if(runningTaskInfos != null)
+	         return (runningTaskInfos.get(0).topActivity).getShortClassName() ;
+	            else
+	         return null ;
+	  }
 }
