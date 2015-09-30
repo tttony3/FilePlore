@@ -39,7 +39,7 @@
         android:paddingEnd="5dp"
         android:paddingStart="5dp" >
 
-        <ListView
+        <com.changhong.fileplore.view.RefreshListView
             android:id="@+id/file_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

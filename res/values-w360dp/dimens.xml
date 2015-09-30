@@ -1,5 +1,8 @@
 <resources>
-
+     <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="standard_padding">8dip</dimen>
+    <dimen name="half_padding">4dip</dimen>
     <dimen name="browse_pic_width">60dp</dimen>
     <dimen name="browse_pic_hight">60dp</dimen>
     <dimen name="griditem_item">110dp</dimen>

@@ -18,6 +18,7 @@ import com.nostra13.universalimageloader.core.listener.PauseOnScrollListener;
 import com.changhong.fileplore.R;
 
 import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -26,6 +27,7 @@ import android.provider.Settings.System;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
@@ -40,7 +42,7 @@ import com.changhong.fileplore.utils.*;
 
 public class PloreActivity extends BaseActivity implements RefreshListView.IOnRefreshListener, View.OnClickListener,
 		PloreInterface, OnItemClickListener, OnItemLongClickListener {
-	protected  ImageLoader imageLoader = ImageLoader.getInstance();  
+	protected ImageLoader imageLoader = ImageLoader.getInstance();
 	protected static final String STATE_PAUSE_ON_SCROLL = "STATE_PAUSE_ON_SCROLL";
 	protected static final String STATE_PAUSE_ON_FLING = "STATE_PAUSE_ON_FLING";
 	protected boolean pauseOnScroll = false;
@@ -60,6 +62,10 @@ public class PloreActivity extends BaseActivity implements RefreshListView.IOnRe
 	public LinearLayout ll_btn;
 	public AlertDialog.Builder builder;
 	boolean isCopy = false;
+	private View layout_qr;
+	private Builder builder_qr;
+	private AlertDialog alertDialog_qr;
+	private ImageView iv_qr;
 
 	@Override
 	public void onRestoreInstanceState(Bundle savedInstanceState) {
@@ -91,6 +97,11 @@ public class PloreActivity extends BaseActivity implements RefreshListView.IOnRe
 		btn_3 = findView(R.id.plore_btn_3);
 		btn_more = findView(R.id.plore_btn_more);
 		ll_btn = findView(R.id.ll_btn);
+		
+		layout_qr = this.getLayoutInflater().inflate(R.layout.dialog_qr,null );
+		builder_qr = new AlertDialog.Builder(this).setView(layout_qr);
+		alertDialog_qr = builder_qr.create();
+		iv_qr = (ImageView) layout_qr.findViewById(R.id.iv_qr);
 	}
 
 	private void initView() {
@@ -121,7 +132,7 @@ public class PloreActivity extends BaseActivity implements RefreshListView.IOnRe
 
 			PloreData mPloreData = new PloreData();
 			List<File> files = mPloreData.lodaData(folder);
-			mFileAdpter = new PloreListAdapter(this, files, isRoot,imageLoader);
+			mFileAdpter = new PloreListAdapter(this, files, isRoot, imageLoader);
 			mListView.setAdapter(mFileAdpter);
 		}
 
@@ -222,7 +233,7 @@ public class PloreActivity extends BaseActivity implements RefreshListView.IOnRe
 
 			AlertDialog.Builder dialog = new AlertDialog.Builder(PloreActivity.this);
 			dialog.setTitle("");
-			String[] dataArray = new String[] { "复制", "删除", "共享", "推送" };
+			String[] dataArray = new String[] { "复制", "删除", "共享", "推送", "生成二维码" };
 			dialog.setItems(dataArray, new DialogInterface.OnClickListener() {
 				/***
 				 * 我们这里传递给dialog.setItems方法的参数为数组，这就导致了我们下面的
@@ -324,6 +335,31 @@ public class PloreActivity extends BaseActivity implements RefreshListView.IOnRe
 							startActivity(intent);
 
 						}
+						break;
+
+					case 4:
+						StringBuffer sb = new StringBuffer();
+						if (!mFileAdpter.isShow_cb()) {
+							mFileAdpter.setShow_cb(true);
+							mFileAdpter.notifyDataSetChanged();
+						} else {
+							Boolean[] mlist = mFileAdpter.getCheckBox_List();
+							for (int i = 0; i < mlist.length; i++) {
+								if (mlist[i]) {
+									File file = (File) mFileAdpter.getItem(i);
+									if (!file.isDirectory()) {
+										MyApp myapp = (MyApp) getApplication();
+										String ip = myapp.getIp();
+										int port = myapp.getPort();
+										sb.append("http://" + ip + ":" + port + file.getPath() + " ");
+									} else {
+										Toast.makeText(PloreActivity.this, "暂不支持文件夹", Toast.LENGTH_SHORT).show();
+									}
+								}
+							}
+						}
+						iv_qr.setImageBitmap(Utils.createImage(sb.toString(), 350, 350));
+						alertDialog_qr.show();
 						break;
 					default:
 						break;

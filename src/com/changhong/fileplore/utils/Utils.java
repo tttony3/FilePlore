@@ -8,11 +8,19 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
+
+import com.changhong.fileplore.data.DownData;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.EncodeHintType;
+import com.google.zxing.WriterException;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.QRCodeWriter;
 
 import android.app.Activity;
 import android.app.ActivityManager;
@@ -30,6 +38,7 @@ import android.os.StatFs;
 import android.provider.MediaStore;
 import android.provider.MediaStore.Images;
 import android.text.format.Formatter;
+import android.util.Log;
 
 public class Utils {
 	static ArrayList<Content> results = new ArrayList<Content>();
@@ -195,9 +204,8 @@ public class Utils {
 				results = getObject("result_doc");
 			} catch (Exception e2) {
 				reSeach("doc");
-			} 
-				return results;
-			
+			}
+			return results;
 
 		} else {
 			reSeach("doc");
@@ -490,6 +498,7 @@ public class Utils {
 	 * 
 	 * @param name
 	 *            文件名
+	 * @return content列表
 	 * 
 	 */
 	@SuppressWarnings("unchecked")
@@ -509,6 +518,23 @@ public class Utils {
 
 	}
 
+	@SuppressWarnings("unchecked")
+	public static ArrayList<DownData> getDownDataObject(String name) throws Exception {
+		ArrayList<DownData> savedArrayList = null;
+		File file = new File(Environment.getExternalStorageDirectory().toString() + File.separator + "fileplore"
+				+ File.separator + name);
+		FileInputStream fileInputStream = null;
+		ObjectInputStream objectInputStream = null;
+
+		fileInputStream = new FileInputStream(file.toString());
+		objectInputStream = new ObjectInputStream(fileInputStream);
+		savedArrayList = (ArrayList<DownData>) objectInputStream.readObject();
+		objectInputStream.close();
+		fileInputStream.close();
+		return savedArrayList;
+
+	}
+
 	/**
 	 * 
 	 * @param name
@@ -517,7 +543,7 @@ public class Utils {
 	 *            : Object
 	 * 
 	 */
-	static void saveObject(String name, Object obj) {
+	public static void saveObject(String name, Object obj) {
 		FileOutputStream fos = null;
 		ObjectOutputStream oos = null;
 		File file = new File(Environment.getExternalStorageDirectory().toString() + File.separator + "fileplore"
@@ -608,11 +634,13 @@ public class Utils {
 		}
 		return count;
 	}
-/**
- * 
- * @param name 文件名
- * @return 文件类型   one of {"audio","video","image","*"}
- */
+
+	/**
+	 * 
+	 * @param name
+	 *            文件名
+	 * @return 文件类型 one of {"audio","video","image","*"}
+	 */
 	public static String getMIMEType(String name) {
 		String type;
 		String end = name.substring(name.lastIndexOf(".") + 1, name.length()).toLowerCase();
@@ -627,7 +655,57 @@ public class Utils {
 			type = "*";
 		}
 		return type;
-		
+
 	}
-	
+
+	/**
+	 * 根据传入参数生成二维码
+	 * 
+	 * @param text
+	 *            待转化的字符串
+	 * @param width
+	 *            二维码的宽度
+	 * @param height
+	 *            二维码的高度
+	 * @return 二维码的bitmap
+	 */
+	static public Bitmap createImage(String text, int width, int height) {
+		Bitmap bitmap = null;
+		try {
+			// 需要引入core包
+			QRCodeWriter writer = new QRCodeWriter();
+
+			if (text == null || "".equals(text) || text.length() < 1) {
+				return null;
+			}
+
+			// 把输入的文本转为二维码
+			BitMatrix martix = writer.encode(text, BarcodeFormat.QR_CODE, width, height);
+
+			System.out.println("w:" + martix.getWidth() + "h:" + martix.getHeight());
+
+			Hashtable<EncodeHintType, String> hints = new Hashtable<EncodeHintType, String>();
+			hints.put(EncodeHintType.CHARACTER_SET, "utf-8");
+			BitMatrix bitMatrix = new QRCodeWriter().encode(text, BarcodeFormat.QR_CODE, width, height, hints);
+			int[] pixels = new int[width * height];
+			for (int y = 0; y < height; y++) {
+				for (int x = 0; x < width; x++) {
+					if (bitMatrix.get(x, y)) {
+						pixels[y * width + x] = 0xff000000;
+					} else {
+						pixels[y * width + x] = 0xffffffff;
+					}
+
+				}
+			}
+
+			bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+
+			bitmap.setPixels(pixels, 0, width, 0, 0, width, height);
+
+		} catch (WriterException e) {
+			e.printStackTrace();
+		}
+		return bitmap;
+	}
 }

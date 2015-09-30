@@ -12,6 +12,7 @@ import com.changhong.fileplore.base.BaseActivity;
 import com.changhong.fileplore.data.DownData;
 import com.changhong.fileplore.service.DownLoadService;
 import com.changhong.fileplore.service.DownLoadService.DownLoadBinder;
+import com.changhong.fileplore.utils.Utils;
 
 import android.content.ComponentName;
 import android.content.Intent;
@@ -32,6 +33,7 @@ public class ShowDownFileActivity extends BaseActivity implements OnClickListene
 	static private ListView lv_downlist;
 	private DownLoadService downLoadService;
 	private ArrayList<DownData> downList;
+	private ArrayList<DownData> alreadydownList;
 	private DownFileListAdapter mAdapter;
 	private MyDownHandler mHandler;
 
@@ -42,8 +44,15 @@ public class ShowDownFileActivity extends BaseActivity implements OnClickListene
 		MyApp myapp = (MyApp) getApplication();
 		myapp.setContext(this);
 		findView();
+		try {
+			alreadydownList = Utils.getDownDataObject("alreadydownlist");
+		} catch (Exception e) {
+			Log.e("ee", e.toString());
+			alreadydownList = new ArrayList<DownData>();
+		}
+		Log.e("alreadydownList", alreadydownList.toString());
 		downList = new ArrayList<DownData>();
-		mAdapter = new DownFileListAdapter(downList, this, downLoadService);
+		mAdapter = new DownFileListAdapter(downList,alreadydownList, this, downLoadService);
 		lv_downlist.setAdapter(mAdapter);
 		mHandler = new MyDownHandler(this);
 	}
@@ -51,12 +60,20 @@ public class ShowDownFileActivity extends BaseActivity implements OnClickListene
 	@Override
 	protected void onStart() {
 		this.bindService(new Intent("com.changhong.fileplore.service.DownLoadService"), conn, BIND_AUTO_CREATE);
+		try {
+			alreadydownList = Utils.getDownDataObject("alreadydownlist");
+		} catch (Exception e) {
+			alreadydownList = new ArrayList<DownData>();
+		}
 		super.onStart();
 	}
 
 	@Override
 	protected void onStop() {
+		//downLoadService.getAllDownStatus()
 		unbindService(conn);
+//		alreadydownList.addAll(downList);
+//		Utils.saveObject("alreadydownlist", alreadydownList);
 		super.onStop();
 	}
 
@@ -146,7 +163,7 @@ public class ShowDownFileActivity extends BaseActivity implements OnClickListene
 				switch (key) {
 				case UPDATE_LIST:
 					mAdapter.update(downList,downLoadService);
-					tv_num.setText(downList.size() + "项");
+					tv_num.setText(alreadydownList.size()+downList.size() + "项");
 					break;
 				}
 			}

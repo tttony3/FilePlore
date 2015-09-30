@@ -10,6 +10,7 @@ import com.changhong.alljoyn.simpleservice.FC_GetShareFile;
 import com.changhong.fileplore.application.MyApp;
 import com.changhong.fileplore.data.DownData;
 import com.changhong.fileplore.implement.DownStatusInterface;
+import com.changhong.fileplore.utils.Utils;
 import com.chobit.corestorage.CoreApp;
 import com.chobit.corestorage.CoreDownloadProgressCB;
 import com.example.libevent2.UpdateDownloadPress;
@@ -55,11 +56,35 @@ public class DownLoadService extends Service implements DownStatusInterface {
 
 	@Override
 	public void onDestroy() {
+		Log.e("onDestroy","onDestroy");
+		ArrayList<DownData> alreadydownList;
+		try {
+			alreadydownList = Utils.getDownDataObject("alreadydownlist");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			alreadydownList = new ArrayList<DownData>();
+		}
+		ArrayList<String> del = new ArrayList<String>();
+		Iterator<String> it =downMap.keySet().iterator();
+		while(it.hasNext()){
+			String key = it.next();
+			DownData  tmp =downMap.get(key);
+			if(tmp.isDone()){			
+				alreadydownList.add(tmp);
+				del.add(key);
+			}
+		}
+		for(int i =0;i<del.size();i++){
+			downMap.remove(del.get(i));
+		}
+		Utils.saveObject("alreadydownlist", alreadydownList);
 		super.onDestroy();
 	}
 
 	@Override
 	public boolean onUnbind(Intent intent) {
+		
+	
 		return super.onUnbind(intent);
 	}
 
@@ -80,7 +105,7 @@ public class DownLoadService extends Service implements DownStatusInterface {
 				pool.execute(new DownRunnAble(it1.next()));
 			}
 		} else if (downloadlist == null) {
-			Log.e("show", "show");
+		
 		}
 		return super.onStartCommand(intent, flags, startId);
 	}

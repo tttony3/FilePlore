@@ -1,6 +1,11 @@
 package com.changhong.fileplore.data;
 
-public class DownData {
+import java.io.Serializable;
+
+public class DownData implements Serializable{
+	
+
+	private static final long serialVersionUID = 2768585787632081804L;
 	String name;
 	long totalPart = 0;
 	long curPart = 0;

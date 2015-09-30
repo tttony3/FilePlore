@@ -20,7 +20,7 @@
     <uses-permission android:name="android.permission.FLASHLIGHT" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.SET_WALLPAPER" />
-
+    <uses-permission android:name="android.permission.VIBRATE" />
     <uses-sdk
         android:minSdkVersion="17"
         android:targetSdkVersion="22" />
@@ -87,6 +87,10 @@
         </activity>
         <activity
             android:name="com.changhong.fileplore.activities.ShowDownFileActivity"
+            android:label="ShowDownFileActivity" >
+        </activity>
+         <activity
+            android:name="com.changhong.fileplore.activities.CaptureActivity"
             android:label="ShowDownFileActivity" >
         </activity>
 

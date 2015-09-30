@@ -9,8 +9,10 @@ import com.changhong.fileplore.application.MyApp;
 import com.changhong.fileplore.utils.Content;
 import com.changhong.fileplore.utils.Utils;
 import com.changhong.fileplore.view.CircleProgress;
+import com.changhong.fileplore.view.RefreshListView;
 import com.chobit.corestorage.CoreApp;
 import com.changhong.fileplore.R;
+import com.changhong.fileplore.activities.PloreActivity.RefreshDataAsynTask;
 
 import android.app.ActionBar;
 import android.app.Activity;
@@ -19,6 +21,7 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.DialogInterface.OnClickListener;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -35,24 +38,24 @@ import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 
-public class ClassifyListActivity extends Activity {
+public class ClassifyListActivity extends Activity implements RefreshListView.IOnRefreshListener {
 	static private final int APK = 1;
 	static private final int DOC = 2;
 	static private final int ZIP = 3;
 	static private final int MUSIC = 4;
+	private RefreshDataAsynTask mRefreshAsynTask;
 	ArrayList<Content> results;
 	LayoutInflater inflater;
 	AlertDialog alertDialog;
 	AlertDialog.Builder builder;
 	CircleProgress mProgressView;
 	View layout;
-	ListView lv_classify;
+	RefreshListView lv_classify;
 	TextView tv_dir;
 	TextView tv_count;
 	int flg;
 	MyHandler handler;
 	ClassifyListAdapter listAdapter;
-
 
 	class MyHandler extends Handler {
 		WeakReference<ClassifyListActivity> mActivity;
@@ -145,6 +148,7 @@ public class ClassifyListActivity extends Activity {
 		default:
 			break;
 		}
+		lv_classify.setOnRefreshListener(this);
 		lv_classify.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
@@ -231,7 +235,7 @@ public class ClassifyListActivity extends Activity {
 
 	private void findView() {
 		inflater = getLayoutInflater();
-		lv_classify = (ListView) findViewById(R.id.file_list);
+		lv_classify = (RefreshListView) findViewById(R.id.file_list);
 		tv_dir = (TextView) findViewById(R.id.dir);
 		tv_count = (TextView) findViewById(R.id.item_count);
 		layout = inflater.inflate(R.layout.circle_progress, (ViewGroup) findViewById(R.id.rl_progress));
@@ -262,7 +266,7 @@ public class ClassifyListActivity extends Activity {
 
 			Message msg = new Message();
 			Bundle data = new Bundle();
-		
+
 			if (type == APK) {
 				results = Utils.getApk(ClassifyListActivity.this, reseach);
 				data.putSerializable("data", results);
@@ -275,7 +279,7 @@ public class ClassifyListActivity extends Activity {
 				results = Utils.getZip(ClassifyListActivity.this, reseach);
 				data.putSerializable("data", results);
 				data.putInt("tag", ZIP);
-			}else if(type == MUSIC){
+			} else if (type == MUSIC) {
 				results = Utils.getMusic(ClassifyListActivity.this);
 				data.putSerializable("data", results);
 				data.putInt("tag", MUSIC);
@@ -345,4 +349,52 @@ public class ClassifyListActivity extends Activity {
 		return super.onOptionsItemSelected(item);
 
 	}
+
+	class RefreshDataAsynTask extends AsyncTask<Void, Void, Void> {
+
+		@Override
+		protected Void doInBackground(Void... arg0) {
+			switch (flg) {
+
+			case R.id.img_txt:
+
+				new GetRunnable(DOC, true).run();
+
+				break;
+			case R.id.img_zip:
+
+				new GetRunnable(ZIP, true).run();
+
+				break;
+			case R.id.img_apk:
+
+				new GetRunnable(APK, true).run();
+
+				break;
+			default:
+				break;
+			}
+			return null;
+		}
+
+		@Override
+		protected void onPostExecute(Void result) {
+			if (flg == R.id.img_music) {
+				ArrayList<Content> musics = Utils.getMusic(ClassifyListActivity.this);
+				listAdapter = new ClassifyListAdapter(musics, ClassifyListActivity.this, R.id.img_music);
+				lv_classify.setAdapter(listAdapter);
+				tv_count.setText(musics.size() + " 项");
+			}
+			lv_classify.onRefreshComplete();
+		}
+
+	}
+
+	@Override
+	public void OnRefresh() {
+		mRefreshAsynTask = new RefreshDataAsynTask();
+		mRefreshAsynTask.execute();
+
+	}
+
 }

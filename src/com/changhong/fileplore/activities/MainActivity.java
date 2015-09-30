@@ -253,6 +253,11 @@ public class MainActivity extends SlidingFragmentActivity implements android.vie
 			intent.setClass(MainActivity.this, ShowNetDevActivity.class);
 			startActivity(intent);
 		}
+		else if (id == R.id.action_scanner) {
+			Intent intent = new Intent();
+			intent.setClass(MainActivity.this, CaptureActivity.class);
+			startActivity(intent);
+		}
 		return super.onOptionsItemSelected(item);
 
 	}
@@ -451,9 +456,11 @@ public class MainActivity extends SlidingFragmentActivity implements android.vie
 
 	@Override
 	protected void onDestroy() {
-		super.onDestroy();
+		stopService(new Intent("com.chobit.corestorage.CoreService"));
 		stopService(new Intent("com.changhong.fileplore.service.DownLoadService"));
-		System.exit(0);
+		super.onDestroy();
+		
+	//	System.exit(0);
 
 	}
 

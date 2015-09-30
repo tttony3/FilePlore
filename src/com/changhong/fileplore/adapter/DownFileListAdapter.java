@@ -28,37 +28,42 @@ public class DownFileListAdapter extends BaseAdapter {
 	String appname;
 	private LayoutInflater inflater;
 	ArrayList<DownData> downList;
-	ArrayList<String> historyList;
+	ArrayList<DownData> alreadydownList;
+	ArrayList<DownData> allList;
 	Context context;
 	DownLoadService downLoadService;
 
-	public DownFileListAdapter(ArrayList<DownData> downList, Context context, DownLoadService downLoadService) {
+	public DownFileListAdapter(ArrayList<DownData> downList, ArrayList<DownData> alreadydownList, Context context, DownLoadService downLoadService) {
+		allList = new ArrayList<DownData>();
 		inflater = LayoutInflater.from(context);
 		if (downList == null) {
 			downList = new ArrayList<DownData>();
 		} else
 			this.downList = downList;
-		historyList = new ArrayList<String>();
+		this.alreadydownList = alreadydownList;
 		this.context = context;
 		 download_Path = Environment.getExternalStorageDirectory().getAbsolutePath();
 		 appname = FC_GetShareFile.getApplicationName(context);
 		this.downLoadService = downLoadService;
+		
+		allList.addAll(downList);
+		allList.addAll(alreadydownList);
 	}
 
 	@Override
 	public int getCount() {
 
-		return downList.size() + historyList.size();
+		return allList.size();
 	}
 
 	@Override
 	public Object getItem(int position) {
-		return downList.get(position);
+		return allList.get(position);
 	}
 
 	@Override
 	public long getItemId(int position) {
-		return downList.get(position).getTotalPart();
+		return allList.get(position).getTotalPart();
 	}
 
 	@Override
@@ -75,7 +80,7 @@ public class DownFileListAdapter extends BaseAdapter {
 		} else {
 			viewHolder = (ViewHolder) convertView.getTag();
 		}
-		final DownData tmpdata = downList.get(position);
+		final DownData tmpdata = allList.get(position);
 		viewHolder.tv_name.setText(tmpdata.getName());
 		int max = (int) (tmpdata.getTotalPart() / 100);
 		if(max ==0)
@@ -132,6 +137,10 @@ public class DownFileListAdapter extends BaseAdapter {
 	public void update(ArrayList<DownData> downList2, DownLoadService downLoadService2) {
 		downList = downList2;
 		downLoadService=downLoadService2;
+		allList.clear();
+		
+		allList.addAll(downList);
+		allList.addAll(alreadydownList);
 		notifyDataSetChanged();
 
 	}

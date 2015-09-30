@@ -71,8 +71,6 @@ public class ShowNetDevActivity extends Activity {
 		if (CoreApp.mBinder != null) {
 			CoreApp.mBinder.setDeviceListener(deviceListener);
 			deviceListener.startWaiting();
-			Log.e("GetDeviceList",
-					CoreApp.mBinder.GetDeviceList().toString() + "list info" + ClientBusHandler.List_DeviceInfo.size());
 			setUpdateList(CoreApp.mBinder.GetDeviceList());
 
 		}
@@ -121,7 +119,7 @@ public class ShowNetDevActivity extends Activity {
 	}
 
 	private void setUpdateList(List<DeviceInfo> list) {
-		Log.e("ss", list.toString());
+		Log.e("DeviceInfo", list.toString());
 		if (list.size() > 0) {
 			deviceListener.stopWaiting();
 		}
@@ -133,8 +131,6 @@ public class ShowNetDevActivity extends Activity {
 
 		@Override
 		public void updateDeviceList(List<DeviceInfo> list) {
-			Log.e("List_DeviceInfo", ClientBusHandler.List_DeviceInfo.size() + "");
-			Log.e("DeviceInfo", list.size() + "");
 			setUpdateList(list);
 
 		}
@@ -153,7 +149,7 @@ public class ShowNetDevActivity extends Activity {
 		public void startWaiting() {
 			// dialog.show();
 			if(getTopActivity(ShowNetDevActivity.this).equals(".activities.ShowNetDevActivity")){
-			Log.e("activity",getTopActivity(ShowNetDevActivity.this));
+		
 			mProgressView.startAnim();
 			alertDialog.show();
 			}
