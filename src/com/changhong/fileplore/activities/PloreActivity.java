@@ -351,15 +351,16 @@ public class PloreActivity extends BaseActivity implements RefreshListView.IOnRe
 										MyApp myapp = (MyApp) getApplication();
 										String ip = myapp.getIp();
 										int port = myapp.getPort();
-										sb.append("http://" + ip + ":" + port + file.getPath() + " ");
+										sb.append("http://" + ip + ":" + port + file.getPath() + "|");
 									} else {
 										Toast.makeText(PloreActivity.this, "暂不支持文件夹", Toast.LENGTH_SHORT).show();
 									}
 								}
 							}
 						}
-						iv_qr.setImageBitmap(Utils.createImage(sb.toString(), 350, 350));
+						iv_qr.setImageBitmap(Utils.createImage(sb.toString(), 320, 320));
 						alertDialog_qr.show();
+						alertDialog_qr.getWindow().setLayout(370, 370);
 						break;
 					default:
 						break;
