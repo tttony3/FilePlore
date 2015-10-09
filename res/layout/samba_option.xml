@@ -8,13 +8,15 @@
        <TextView
            android:layout_width="wrap_content"
            android:layout_height="wrap_content"
-           android:text="服务器地址："> 
+           android:text="@string/server_url"> 
        </TextView>
        <EditText 
-           android:layout_marginLeft="5dp"
+           android:inputType="text"
+           android:labelFor="@+id/ip"
+           android:layout_marginStart="5dp"
            android:id="@+id/ip"
            android:layout_width="wrap_content"
-              android:ems="10"
+            android:ems="10"
         
            android:layout_height="wrap_content"          
            />
@@ -24,10 +26,12 @@
        <TextView
            android:layout_width="wrap_content"
            android:layout_height="wrap_content"
-           android:text="用户名："> 
+           android:text="@string/username"> 
        </TextView>
        <EditText 
-           android:layout_marginLeft="5dp"
+           android:inputType="text"
+             android:labelFor="@+id/user"
+           android:layout_marginStart="5dp"
            android:id="@+id/user"
            android:layout_width="wrap_content"
               android:ems="10"
@@ -40,11 +44,13 @@
        <TextView
            android:layout_width="wrap_content"
            android:layout_height="wrap_content"
-           android:text="密码："> 
+           android:text="@string/password"> 
        </TextView>
        <EditText 
-           android:layout_marginLeft="5dp"
+           android:labelFor="@+id/password"
+           android:layout_marginStart="5dp"
            android:id="@+id/password"
+           android:inputType="textPassword"
            android:layout_width="wrap_content"
               android:ems="10"
         
@@ -56,14 +62,15 @@
        <TextView
            android:layout_width="wrap_content"
            android:layout_height="wrap_content"
-           android:text="文件夹："> 
+           android:text="@string/folder"> 
        </TextView>
        <EditText 
-           android:layout_marginLeft="5dp"
+           android:inputType="text"
+           android:labelFor="@+id/dir"
+           android:layout_marginStart="5dp"
            android:id="@+id/dir"
            android:layout_width="wrap_content"
-              android:ems="10"
-        
+           android:ems="10"       
            android:layout_height="wrap_content"          
            />
                

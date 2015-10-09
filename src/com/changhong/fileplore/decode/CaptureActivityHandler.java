@@ -101,6 +101,7 @@ public final class CaptureActivityHandler extends Handler {
 		restartPreviewAndDecode();
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public void handleMessage(Message message) {
 		switch (message.what) {

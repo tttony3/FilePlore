@@ -244,12 +244,12 @@ public class ClassifyGridActivity extends Activity {
 				switch (msg.getData().getInt("tag")) {
 				case R.id.img_movie:
 					data = (ArrayList<Content>) msg.getData().get("data");
-					gridAdapter = new ClassifyGridAdapter(results, theActivity, R.id.img_movie);
+					gridAdapter = new ClassifyGridAdapter(data, theActivity, R.id.img_movie);
 					gv_classify.setAdapter(gridAdapter);
 					break;
 				case R.id.img_photo:
 					data = (ArrayList<Content>) msg.getData().get("data");
-					gridAdapter = new ClassifyGridAdapter(results, theActivity, R.id.img_movie);
+					gridAdapter = new ClassifyGridAdapter(data, theActivity, R.id.img_movie);
 					gv_classify.setAdapter(gridAdapter);
 					break;
 

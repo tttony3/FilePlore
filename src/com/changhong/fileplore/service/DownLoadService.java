@@ -49,10 +49,7 @@ public class DownLoadService extends Service implements DownStatusInterface {
 		}
 	}
 
-	@Override
-	public void onStart(Intent intent, int startId) {
-		super.onStart(intent, startId);
-	}
+	
 
 	@Override
 	public void onDestroy() {

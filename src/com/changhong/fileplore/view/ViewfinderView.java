@@ -122,6 +122,7 @@ public final class ViewfinderView extends View {
 		this.cameraManager = cameraManager;
 	}
 
+	@SuppressWarnings("deprecation")
 	@SuppressLint("DrawAllocation")
 	@Override
 	public void onDraw(Canvas canvas) {

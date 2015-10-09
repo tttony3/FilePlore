@@ -3,18 +3,13 @@ package com.changhong.fileplore.view;
 import java.util.Date;
 
 import com.changhong.fileplore.R;
-import com.changhong.fileplore.application.MyApp;
-
-import android.app.AlertDialog;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.View.OnClickListener;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.RotateAnimation;
 import android.widget.AbsListView;
@@ -22,7 +17,6 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.AbsListView.OnScrollListener;
 
 public class RefreshListView extends ListView implements OnScrollListener {

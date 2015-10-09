@@ -8,8 +8,6 @@ import com.changhong.fileplore.R;
 import com.changhong.fileplore.data.DownData;
 import com.changhong.fileplore.service.DownLoadService;
 import com.changhong.fileplore.utils.Utils;
-import com.chobit.corestorage.CoreApp;
-
 import android.content.Context;
 import android.os.Environment;
 import android.view.LayoutInflater;
@@ -18,10 +16,8 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class DownFileListAdapter extends BaseAdapter {
 	String download_Path;

@@ -1,8 +1,6 @@
 package com.changhong.fileplore.implement;
 
 import java.util.HashMap;
-import java.util.List;
-
 import com.changhong.fileplore.data.DownData;
 
 public interface DownStatusInterface {

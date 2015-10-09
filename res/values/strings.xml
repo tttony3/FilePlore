@@ -45,5 +45,8 @@
     <string name="msg_default_meta">元数据</string>
     <string name="msg_default_time">时间</string>
     <string name="msg_default_type">类型</string>
-
+ <string name="server_url">服务器地址 ：</string>
+  <string name="password">密码 ：</string>
+   <string name="username">用户名 ：</string>
+    <string name="folder">文件夹 ：</string>
 </resources>

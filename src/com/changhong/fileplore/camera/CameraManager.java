@@ -38,6 +38,7 @@ import com.google.zxing.PlanarYUVLuminanceSource;
  * 
  * @author dswitkin@google.com (Daniel Switkin)
  */
+@SuppressWarnings("deprecation")
 public final class CameraManager {
 
 	private static final String TAG = CameraManager.class.getSimpleName();

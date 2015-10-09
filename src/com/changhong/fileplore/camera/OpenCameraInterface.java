@@ -22,6 +22,7 @@ import android.util.Log;
 /**
  * 该类用于检测手机上摄像头的个数，如果有两个摄像头，则取背面的摄像头
  */
+@SuppressWarnings("deprecation")
 public final class OpenCameraInterface {
 
 	private static final String TAG = OpenCameraInterface.class.getName();

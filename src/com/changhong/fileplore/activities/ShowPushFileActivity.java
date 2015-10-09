@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.changhong.fileplore.R;
-import com.changhong.fileplore.activities.ShowNetFileActivity.MediaButtonListener;
 import com.changhong.fileplore.adapter.NetPushFileListAdapter;
 import com.changhong.fileplore.application.MyApp;
 import com.changhong.fileplore.base.BaseActivity;
@@ -14,8 +13,6 @@ import com.changhong.fileplore.thread.SetMediaProgressBarThread;
 import com.changhong.fileplore.utils.DownloadImageTask;
 import com.changhong.fileplore.utils.MyCoreDownloadProgressCB;
 import com.changhong.fileplore.utils.Utils;
-import com.changhong.fileplore.view.CircleProgress;
-import com.changhong.synergystorage.javadata.JavaFile;
 import com.chobit.corestorage.CoreApp;
 
 import android.app.ActionBar;
@@ -28,13 +25,11 @@ import android.media.MediaPlayer.OnCompletionListener;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -52,7 +47,6 @@ public class ShowPushFileActivity extends BaseActivity implements OnItemClickLis
 	int time;
 	private MediaPlayer mp = new MediaPlayer();
 	private ListView lv_pushfile;
-	private TextView tv_pushfilepath;
 	private TextView tv_pushfilenum;
 	private List<String> pushList;
 	private NetPushFileListAdapter netPushFileListAdapter;
@@ -60,14 +54,12 @@ public class ShowPushFileActivity extends BaseActivity implements OnItemClickLis
 	private View layout_download;
 	private AlertDialog alertDialog_download;
 	private AlertDialog.Builder builder_download;
-	private Button btn_stop;
+	
 	private ProgressBar pb_download;
 	private TextView tv_download;
 	private LayoutInflater inflater;
 	private View layout_progress;
 	private Builder builder_progress;
-	private AlertDialog alertDialog_progress;
-	private CircleProgress mProgressView;
 	private View layout_preview;
 	private Builder builder_preview;
 	private AlertDialog alertDialog_preview;
@@ -103,7 +95,7 @@ public class ShowPushFileActivity extends BaseActivity implements OnItemClickLis
 	@Override
 	protected void findView() {
 		lv_pushfile = findView(R.id.lv_pushfile);
-		tv_pushfilepath = findView(R.id.tv_pushfilepath);
+		findView(R.id.tv_pushfilepath);
 		tv_pushfilenum = findView(R.id.tv_pushfilenum);
 		handler = new MyPushHandler(this);
 		findAlertDialog();
@@ -329,8 +321,8 @@ public class ShowPushFileActivity extends BaseActivity implements OnItemClickLis
 		inflater = getLayoutInflater();
 		layout_progress = inflater.inflate(R.layout.circle_progress, (ViewGroup) findViewById(R.id.rl_progress));
 		builder_progress = new AlertDialog.Builder(this).setView(layout_progress);
-		alertDialog_progress = builder_progress.create();
-		mProgressView = (CircleProgress) layout_progress.findViewById(R.id.progress);
+		builder_progress.create();
+
 
 		layout_preview = inflater.inflate(R.layout.dialog_preview, (ViewGroup) findViewById(R.id.rl_preview));
 		builder_preview = new AlertDialog.Builder(this).setView(layout_preview);
@@ -349,7 +341,7 @@ public class ShowPushFileActivity extends BaseActivity implements OnItemClickLis
 		layout_download = inflater.inflate(R.layout.dialog_download, null);
 		builder_download = new AlertDialog.Builder(this).setView(layout_download);
 		alertDialog_download = builder_download.create();
-		btn_stop = (Button) layout_download.findViewById(R.id.download_stop);
+		
 		pb_download = (ProgressBar) layout_download.findViewById(R.id.download_bar);
 		tv_download = (TextView) layout_download.findViewById(R.id.tv_process);
 

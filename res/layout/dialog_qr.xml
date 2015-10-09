@@ -5,6 +5,7 @@
     android:layout_height="wrap_content" >
 
     <ImageView
+        android:contentDescription="@string/img_description"
         android:layout_centerInParent="true"
         android:id="@+id/iv_qr"
         android:layout_width="wrap_content"

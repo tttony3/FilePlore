@@ -29,6 +29,7 @@ import android.util.Log;
  * 由于对焦不是一次性完成的任务（手抖），而系统提供的对焦仅有Camera.autoFocus()方法，
  * 因此需要一个线程来不断调用Camera.autoFocus()直到用户满意按下快门为止
  */
+@SuppressWarnings("deprecation")
 final class AutoFocusManager implements Camera.AutoFocusCallback {
 
 	private static final String TAG = AutoFocusManager.class.getSimpleName();

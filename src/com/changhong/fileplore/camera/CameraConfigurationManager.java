@@ -41,6 +41,7 @@ import android.view.WindowManager;
  * 
  * 摄像头参数的设置类
  */
+@SuppressWarnings("deprecation")
 final class CameraConfigurationManager {
 
 	private static final String TAG = "CameraConfiguration";

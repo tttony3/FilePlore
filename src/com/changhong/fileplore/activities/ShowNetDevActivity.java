@@ -3,7 +3,6 @@ package com.changhong.fileplore.activities;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.changhong.alljoyn.simpleclient.ClientBusHandler;
 import com.changhong.alljoyn.simpleclient.DeviceInfo;
 import com.changhong.fileplore.adapter.NetDevListAdapter;
 import com.changhong.fileplore.application.MyApp;
@@ -25,7 +24,6 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -179,7 +177,8 @@ public class ShowNetDevActivity extends Activity {
 	  String getTopActivity(Activity context)
 	  {
 	       ActivityManager manager = (ActivityManager)context.getSystemService(ACTIVITY_SERVICE) ;
-	       List<ActivityManager.RunningTaskInfo> runningTaskInfos = manager.getRunningTasks(1) ;
+	       @SuppressWarnings("deprecation")
+		List<ActivityManager.RunningTaskInfo> runningTaskInfos = manager.getRunningTasks(1) ;
 	           
 	       if(runningTaskInfos != null)
 	         return (runningTaskInfos.get(0).topActivity).getShortClassName() ;

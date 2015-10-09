@@ -2,25 +2,16 @@ package com.changhong.fileplore.activities;
 
 import com.changhong.fileplore.R;
 import com.changhong.fileplore.application.MyApp;
-import com.changhong.fileplore.utils.Player;
-
 import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.view.SurfaceView;
 import android.view.View;
-import android.widget.Button;
 import android.widget.MediaController;
-import android.widget.SeekBar;
 import android.widget.VideoView;
 
 public class VideoActivity extends Activity  {  
-    private SurfaceView surfaceView;  
-    private Button btnPause, btnPlayUrl, btnStop;  
-    private SeekBar skbProgress;  
-    private Player player;  
     String uri;
     /** Called when the activity is first created. */  
 //    @Override  

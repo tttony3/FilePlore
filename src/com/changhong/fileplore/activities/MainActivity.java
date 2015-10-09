@@ -2,8 +2,6 @@ package com.changhong.fileplore.activities;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.LoggingMXBean;
-
 import com.chobit.corestorage.ConnectedService;
 import com.chobit.corestorage.CoreApp;
 import com.chobit.corestorage.CoreHttpServerCB;

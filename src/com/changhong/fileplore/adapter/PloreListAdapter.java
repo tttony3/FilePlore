@@ -14,7 +14,6 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -256,7 +255,7 @@ public class PloreListAdapter extends BaseAdapter {
 			switch (getMIMEType(fileName)) {
 			case MOVIE:
 				final String path1 = file.getPath();
-				final String name1 = file.getName();
+		//		final String name1 = file.getName();
 				imageLoader.displayImage("file://" + path1, viewHolder.img, options);
 				// viewHolder.img.setImageResource(R.drawable.file_icon_movie);
 				break;
@@ -331,7 +330,7 @@ public class PloreListAdapter extends BaseAdapter {
 		switch (getMIMEType(file.getName())) {
 		case MOVIE:
 			final String path1 = file.getPath();
-			final String name1 = file.getName();
+		//	final String name1 = file.getName();
 			imageLoader.displayImage("file://" + path1, iv_1, options);
 			// viewHolder.img.setImageResource(R.drawable.file_icon_movie);
 			break;

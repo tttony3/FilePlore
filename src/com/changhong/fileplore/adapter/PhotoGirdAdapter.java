@@ -2,15 +2,14 @@ package com.changhong.fileplore.adapter;
 
 import java.util.ArrayList;
 
-import com.changhong.fileplore.utils.Content;
 import com.changhong.fileplore.R;
 import com.changhong.fileplore.application.MyApp;
+import com.changhong.fileplore.utils.Content;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;

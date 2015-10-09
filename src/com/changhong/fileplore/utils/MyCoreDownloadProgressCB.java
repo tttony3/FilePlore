@@ -1,7 +1,6 @@
 package com.changhong.fileplore.utils;
 
 import com.changhong.alljoyn.simpleservice.FC_GetShareFile;
-import com.changhong.fileplore.activities.ShowNetFileActivity;
 import com.chobit.corestorage.CoreDownloadProgressCB;
 import com.example.libevent2.UpdateDownloadPress;
 

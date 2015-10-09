@@ -1,17 +1,12 @@
 package com.changhong.fileplore.activities;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.lang.ref.WeakReference;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
 import com.changhong.alljoyn.simpleclient.DeviceInfo;
-import com.changhong.alljoyn.simpleservice.FC_GetShareFile;
 import com.changhong.fileplore.R;
 
 import com.changhong.fileplore.adapter.NetShareFileListAdapter;
@@ -21,32 +16,21 @@ import com.changhong.fileplore.service.DownLoadService.DownLoadBinder;
 import com.changhong.fileplore.thread.SetMediaProgressBarThread;
 import com.changhong.fileplore.utils.DownloadImageTask;
 import com.changhong.fileplore.utils.MyCoreDownloadProgressCB;
-import com.changhong.fileplore.utils.StreamTool;
 import com.changhong.fileplore.view.CircleProgress;
 import com.changhong.synergystorage.javadata.JavaFile;
 import com.changhong.synergystorage.javadata.JavaFolder;
 import com.chobit.corestorage.CoreApp;
-import com.chobit.corestorage.CoreDownloadProgressCB;
 import com.chobit.corestorage.CoreShareFileListener;
-import com.example.libevent2.UpdateDownloadPress;
-
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.BitmapFactory.Options;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
-import android.os.IBinder;
 import android.os.Message;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -63,7 +47,6 @@ public class ShowNetFileActivity extends Activity {
 	static private final int SHOW_DIALOG = 2;
 	static private final int DISMISS_DIALOG = 3;
 	static private final int SHOW_PREVIEW_DIALOG = 4;
-	static private final int UPDATE_BAR = 5;
 	static private final int RESET_BAR = 6;
 	static private final int SET_TOTALTIME = 8;
 
@@ -99,14 +82,9 @@ public class ShowNetFileActivity extends Activity {
 	private DeviceInfo devInfo;
 	private MediaPlayer mp = new MediaPlayer();
 
-	private View layout_videoplayer;
-	private AlertDialog alertDialog_videoplayer;
-	private AlertDialog.Builder builder_videoplayer;
-	private MediaController mediaco;
 	private View layout_download;
 	private AlertDialog alertDialog_download;
 	private AlertDialog.Builder builder_download;
-	private Button btn_stop;
 	private ProgressBar pb_download;
 	private TextView tv_download;
 	private boolean isremove = false;
@@ -175,7 +153,7 @@ public class ShowNetFileActivity extends Activity {
 		layout_download = inflater.inflate(R.layout.dialog_download, null);
 		builder_download = new AlertDialog.Builder(this).setView(layout_download);
 		alertDialog_download = builder_download.create();
-		btn_stop = (Button) layout_download.findViewById(R.id.download_stop);
+	
 		pb_download = (ProgressBar) layout_download.findViewById(R.id.download_bar);
 		tv_download = (TextView) layout_download.findViewById(R.id.tv_process);
 
@@ -353,33 +331,14 @@ public class ShowNetFileActivity extends Activity {
 						}
 						break;
 					case 1:
-						// btn_stop.setOnClickListener(new OnClickListener() {
-						//
-						// @Override
-						// public void onClick(View v) {
-						// CoreApp.mBinder.cancelDownload(devInfo.getM_httpserverurl()
-						// + file.getLocation());
-						//
-						// }
-						// });
+			
 						ArrayList<String> downlist = new ArrayList<String>();
 						downlist.add(devInfo.getM_httpserverurl() + file.getLocation());
 						Intent intent = new Intent("com.changhong.fileplore.service.DownLoadService");
 						intent.putStringArrayListExtra("downloadlist", downlist);
-						 startService(intent);
-					//	bindService(intent, conn, BIND_AUTO_CREATE);
+						startService(intent);
 						Toast.makeText(ShowNetFileActivity.this, "已加入下载列表", Toast.LENGTH_SHORT).show();
-						// bindService(new
-						// Intent("com.changhong.fileplore.DownLoadService"),
-						// conn, BIND_AUTO_CREATE);
-//						Log.e("long", "" + downLoadService.getDownStatus(devInfo.getM_httpserverurl() + file.getLocation())
-//								.getTotalPart());
-						// CoreApp.mBinder.DownloadHttpFile("client",
-						// devInfo.getM_httpserverurl() + file.getLocation(),
-						// null);
-						// CoreApp.mBinder.getShareFileDownload(devInfo,
-						// file.getLocation(), null);
-						break;
+	
 					default:
 						break;
 					}
@@ -390,21 +349,7 @@ public class ShowNetFileActivity extends Activity {
 
 	DownLoadService downLoadService;
 	DownLoadBinder binder;
-	private ServiceConnection conn = new ServiceConnection() {
-		/** 获取服务对象时的操作 */
-		public void onServiceConnected(ComponentName name, IBinder service) {
-			Log.e("call", "call");
-			downLoadService = ((DownLoadBinder) service).getService();
 
-		}
-
-		/** 无法获取到服务对象时的操作 */
-		public void onServiceDisconnected(ComponentName name) {
-			Log.e("callnull", "callnull");
-			binder = null;
-		}
-
-	};
 
 	private void showPreviewDialog(String path) {
 		Message msg = new Message();
