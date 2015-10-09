@@ -20,6 +20,7 @@
 <item
         android:id="@+id/action_scanner"
         android:orderInCategory="100"
-        android:showAsAction="never"
+          android:icon="@drawable/action_qr" 
+        android:showAsAction="ifRoom"
         android:title="@string/scanner"/>
 </menu>

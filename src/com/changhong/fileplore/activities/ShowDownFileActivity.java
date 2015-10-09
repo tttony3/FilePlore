@@ -50,7 +50,7 @@ public class ShowDownFileActivity extends BaseActivity implements OnClickListene
 			Log.e("ee", e.toString());
 			alreadydownList = new ArrayList<DownData>();
 		}
-		Log.e("alreadydownList", alreadydownList.toString());
+	//	Log.e("alreadydownList", alreadydownList.toString());
 		downList = new ArrayList<DownData>();
 		mAdapter = new DownFileListAdapter(downList,alreadydownList, this, downLoadService);
 		lv_downlist.setAdapter(mAdapter);

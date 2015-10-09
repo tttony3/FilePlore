@@ -103,51 +103,6 @@ public class BrowseActivity extends Activity {
 		tv_zip.append("(" + Utils.getCount("result_zip", BrowseActivity.this) + ")");
 	}
 
-//	class MyClickListener implements OnClickListener {
-//
-//		@Override
-//		public void onClick(View v) {
-//			Intent intent = new Intent();
-//			switch (v.getId()) {
-//			case R.id.img_apk:
-//
-//				intent.setClass(BrowseActivity.this, ClassifyListActivity.class);
-//				intent.setFlags(R.id.img_apk);
-//
-//				break;
-//			case R.id.img_movie:
-//
-//				intent.setClass(BrowseActivity.this, ClassifyGridActivity.class);
-//				intent.setFlags(R.id.img_movie);
-//				break;
-//			case R.id.img_music:
-//
-//				intent.setClass(BrowseActivity.this, ClassifyListActivity.class);
-//				intent.setFlags(R.id.img_music);
-//				break;
-//			case R.id.img_photo:
-//
-//				intent.setClass(BrowseActivity.this, ClassifyGridActivity.class);
-//				intent.setFlags(R.id.img_photo);
-//				break;
-//			case R.id.img_txt:
-//
-//				intent.setClass(BrowseActivity.this, ClassifyListActivity.class);
-//				intent.setFlags(R.id.img_txt);
-//				break;
-//			case R.id.img_zip:
-//
-//				intent.setClass(BrowseActivity.this, ClassifyListActivity.class);
-//				intent.setFlags(R.id.img_zip);
-//				break;
-//			default:
-//				break;
-//			}
-//			startActivity(intent);
-//		//	getParent().overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
-//
-//		}
-//	}
 
 	long curtime = 0;
 

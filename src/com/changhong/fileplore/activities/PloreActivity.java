@@ -344,6 +344,7 @@ public class PloreActivity extends BaseActivity implements RefreshListView.IOnRe
 							mFileAdpter.notifyDataSetChanged();
 						} else {
 							Boolean[] mlist = mFileAdpter.getCheckBox_List();
+							sb.append("fileplore|");
 							for (int i = 0; i < mlist.length; i++) {
 								if (mlist[i]) {
 									File file = (File) mFileAdpter.getItem(i);
@@ -412,6 +413,7 @@ public class PloreActivity extends BaseActivity implements RefreshListView.IOnRe
 	public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
 		switch (parent.getId()) {
 		case R.id.file_list:
+			if(!(view instanceof ImageView))
 			if (!mFileAdpter.isShow_cb()) {
 				mFileAdpter.setShow_cb(true);
 				ll_btn.setVisibility(View.VISIBLE);

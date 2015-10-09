@@ -43,6 +43,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class CaptureActivity extends Activity implements SurfaceHolder.Callback {
 	private static final String TAG = CaptureActivity.class.getSimpleName();
@@ -291,17 +292,24 @@ public class CaptureActivity extends Activity implements SurfaceHolder.Callback 
 			}
 		}
 		String[]  r =rawResult.getText().split("\\|");
-		ArrayList<String> qrlist = new ArrayList<String>();
-		for(int i =0;i<r.length;i++){
-			
-			qrlist.add(r[i]);
-			Log.e("resultString", r[i]);
+		if(r[0].equals("fileplore")){
+			ArrayList<String> qrlist = new ArrayList<String>();
+			for(int i =1;i<r.length;i++){
+				
+				qrlist.add(r[i]);
+				Log.e("resultString", r[i]);
+			}
+			Intent intent = new Intent();
+			intent.putStringArrayListExtra("pushList", qrlist);
+			intent.setClass(CaptureActivity.this, ShowPushFileActivity.class);
+			startActivity(intent);
+			finish();
 		}
-		Intent intent = new Intent();
-		intent.putStringArrayListExtra("pushList", qrlist);
-		intent.setClass(CaptureActivity.this, ShowPushFileActivity.class);
-		startActivity(intent);
-		finish();
+		else{
+			Toast.makeText(CaptureActivity.this, "不支持此二维码", Toast.LENGTH_SHORT).show();
+			finish();
+		}
+		
 
 
 	}

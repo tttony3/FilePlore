@@ -33,7 +33,7 @@ public class MyApp extends CoreApp {
 		return fileSet;
 	}
 
-	Context context;
+	static public Context context;
 	Context mainContext;
 	String ip;
 	int port;

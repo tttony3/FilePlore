@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content" >
+
+    <TableRow
+        android:paddingStart="2dp"
+        android:paddingTop="2dp">
+
+        <ImageView
+            android:contentDescription="@string/img_description"
+            android:id="@+id/iv_filepreview_1"
+            android:layout_width="40dp"
+            android:layout_height="40dp" />
+
+        <TextView
+            android:paddingTop="5dp"
+            android:id="@+id/tv_filepreview_1"
+            android:layout_width="170dp"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            
+            android:maxLines="2"
+            android:textSize="12sp" />
+    </TableRow>
+
+    <TableRow
+        android:paddingStart="2dp"
+        android:paddingTop="2dp">
+          <ImageView
+                 android:contentDescription="@string/img_description"
+            android:id="@+id/iv_filepreview_2"
+            android:layout_width="40dp"
+            android:layout_height="40dp" />
+
+        <TextView
+            android:paddingTop="5dp"
+            android:id="@+id/tv_filepreview_2"
+            android:layout_width="170dp"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            
+            android:maxLines="2"
+            android:textSize="12sp" />
+    </TableRow>
+
+    <TableRow
+        android:paddingStart="2dp"
+        android:paddingTop="2dp">
+          <ImageView
+                 android:contentDescription="@string/img_description"
+            android:id="@+id/iv_filepreview_3"
+            android:layout_width="40dp"
+            android:layout_height="40dp" />
+
+        <TextView
+            android:paddingTop="5dp"
+            android:id="@+id/tv_filepreview_3"
+            android:layout_width="170dp"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            
+            android:maxLines="2"
+            android:textSize="12sp" />
+    </TableRow>
+
+    <TableRow
+        android:paddingStart="2dp"
+        android:paddingTop="2dp">
+          <ImageView
+                 android:contentDescription="@string/img_description"
+            android:id="@+id/iv_filepreview_4"
+            android:layout_width="40dp"
+            android:layout_height="40dp" />
+
+        <TextView
+            android:paddingTop="5dp"
+            android:id="@+id/tv_filepreview_4"
+            android:layout_width="170dp"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+           
+            android:maxLines="2"
+            android:textSize="12sp" />
+    </TableRow>
+
+</TableLayout>

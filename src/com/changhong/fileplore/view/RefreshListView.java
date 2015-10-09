@@ -3,10 +3,13 @@ package com.changhong.fileplore.view;
 import java.util.Date;
 
 import com.changhong.fileplore.R;
+import com.changhong.fileplore.application.MyApp;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -19,9 +22,10 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.AbsListView.OnScrollListener;
 
-public class RefreshListView extends ListView implements OnScrollListener, OnClickListener {
+public class RefreshListView extends ListView implements OnScrollListener {
 
 	public interface IListViewState {
 		int LVS_NORMAL = 0; // 普通状态
@@ -31,7 +35,7 @@ public class RefreshListView extends ListView implements OnScrollListener, OnCli
 	}
 
 	public interface IOnRefreshListener {
-		
+
 		/**
 		 * 下拉刷新时的动作
 		 */
@@ -351,24 +355,6 @@ public class RefreshListView extends ListView implements OnScrollListener, OnCli
 	}
 
 	public void setOnLoadMoreListener(IOnLoadMoreListener listener) {
-	}
-
-	@Override
-	public void onClick(View v) {
-		// TODO Auto-generated method stub
-		// switch(v.getId())
-		// {
-		// case R.id.load_more_view:
-		// {
-		// if (mLoadMoreListener != null && mLoadMoreState ==
-		// IListViewState.LVS_NORMAL)
-		// {
-		// updateLoadMoreViewState(ILoadMoreViewState.LMVS_LOADING);
-		// mLoadMoreListener.OnLoadMore();
-		// }
-		// }
-		// break;
-		// }
 	}
 
 	// flag 数据是否已全部加载完毕

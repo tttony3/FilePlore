@@ -2,6 +2,7 @@ package com.changhong.fileplore.activities;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.LoggingMXBean;
 
 import com.chobit.corestorage.ConnectedService;
 import com.chobit.corestorage.CoreApp;
@@ -36,6 +37,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 
 import android.view.animation.Animation;
@@ -49,7 +51,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 @SuppressWarnings("deprecation")
-public class MainActivity extends SlidingFragmentActivity implements android.view.View.OnClickListener {
+public class MainActivity extends SlidingFragmentActivity implements android.view.View.OnClickListener ,OnLongClickListener{
 	ImageView iv_apk;
 	ImageView iv_movie;
 	ImageView iv_music;
@@ -188,11 +190,17 @@ public class MainActivity extends SlidingFragmentActivity implements android.vie
 		pager.setOnPageChangeListener(new MyOnPageChangeListener());
 
 		iv_apk.setOnClickListener(this);
+		iv_apk.setOnLongClickListener(this);
 		iv_movie.setOnClickListener(this);
+		iv_movie.setOnLongClickListener(this);
 		iv_music.setOnClickListener(this);
+		iv_music.setOnLongClickListener(this);
 		iv_photo.setOnClickListener(this);
+		iv_photo.setOnLongClickListener(this);
 		iv_txt.setOnClickListener(this);
+		iv_txt.setOnLongClickListener(this);
 		iv_zip.setOnClickListener(this);
+		iv_zip.setOnLongClickListener(this);
 	}
 
 	/**
@@ -517,6 +525,38 @@ public class MainActivity extends SlidingFragmentActivity implements android.vie
 			break;
 		}
 
+	}
+
+	@Override
+	public boolean onLongClick(View v) {
+		switch (v.getId()) {
+		case R.id.img_apk:
+
+			break;
+		case R.id.img_movie:
+			break;
+		case R.id.img_music:
+
+			break;
+		case R.id.img_photo:
+
+			break;
+		case R.id.img_txt:
+
+			break;
+		case R.id.img_zip:
+
+			break;
+		case R.id.browse_rl_net:
+			
+			break;
+		case R.id.browse_rl_downlist:
+			
+			break;
+		default:
+			break;
+		}
+		return true;
 	}
 
 }
