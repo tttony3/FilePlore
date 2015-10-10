@@ -77,11 +77,38 @@ public class ShowNetDevActivity extends Activity {
 
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+				if(pushList!=null){
 
+					final DeviceInfo info = (DeviceInfo) parent.getItemAtPosition(position);
+					AlertDialog.Builder dialog = new AlertDialog.Builder(ShowNetDevActivity.this);
+					dialog.setTitle("");
+					String[] dataArray = new String[] { "推送到此设备" };
+					dialog.setItems(dataArray, new DialogInterface.OnClickListener() {
+
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							switch (which) {
+							case 0:
+								if (pushList != null && pushList.size() != 0) {
+									CoreApp.mBinder.PushResourceToDevice(info, pushList);
+								} else {
+									Toast.makeText(ShowNetDevActivity.this, "未选择推送文件", Toast.LENGTH_SHORT).show();
+								}
+								break;
+							default:
+								break;
+							}
+
+						}
+					}).create().show();
+				
+				
+					
+				}else{
 				Intent intent = new Intent();
 				intent.setClass(ShowNetDevActivity.this, ShowNetFileActivity.class);
 				intent.setFlags(position);
-				startActivity(intent);
+				startActivity(intent);}
 			}
 		});
 		netList.setOnItemLongClickListener(new OnItemLongClickListener() {

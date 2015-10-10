@@ -47,7 +47,7 @@ public class ShowDownFileActivity extends BaseActivity implements OnClickListene
 		try {
 			alreadydownList = Utils.getDownDataObject("alreadydownlist");
 		} catch (Exception e) {
-			Log.e("ee", e.toString());
+			//Log.e("ee", e.toString());
 			alreadydownList = new ArrayList<DownData>();
 		}
 	//	Log.e("alreadydownList", alreadydownList.toString());

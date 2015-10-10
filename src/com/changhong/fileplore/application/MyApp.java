@@ -11,6 +11,7 @@ import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import com.changhong.fileplore.utils.Utils;
 import com.chobit.corestorage.CoreApp;
 import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -20,11 +21,10 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.os.Environment;
+import android.util.Log;
 import android.view.View;
 
 public class MyApp extends CoreApp {
-	static String download_Path = Environment.getExternalStorageDirectory().getAbsolutePath();
-	static public String storagepath = download_Path + "/FilePlore/cache/";
 	ExecutorService fixedThreadPool = Executors.newFixedThreadPool(10);
 	File[] folderfiles;
 	static public Set<String> fileSet;
@@ -32,7 +32,7 @@ public class MyApp extends CoreApp {
 	public Set<String> getFileSet() {
 		return fileSet;
 	}
-
+	
 	static public Context context;
 	Context mainContext;
 	String ip;
@@ -108,7 +108,8 @@ public class MyApp extends CoreApp {
 
 	public void onCreate() {
 		super.onCreate();
-		File folder = new File(storagepath);
+		File folder = new File(Utils.getPath(this, "cache"));
+		Log.e("11", Utils.getPath(this, "cache"));
 		if (!folder.exists())
 			folder.mkdir();
 
@@ -167,7 +168,7 @@ public class MyApp extends CoreApp {
 		int quality = 20;
 		OutputStream stream = null;
 		try {
-			stream = new FileOutputStream(storagepath + filename);
+			stream = new FileOutputStream(Utils.getPath(this, "cache") + filename);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}

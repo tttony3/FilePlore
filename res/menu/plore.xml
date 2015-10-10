@@ -17,6 +17,11 @@
         android:orderInCategory="100"
         android:showAsAction="never"
         android:title="@string/sambafile"/>
+ <item
+        android:id="@+id/action_sharefile"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        android:title="@string/sharefile"/>
 <item
         android:id="@+id/action_scanner"
         android:orderInCategory="100"

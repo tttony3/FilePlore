@@ -1,5 +1,6 @@
 package com.changhong.fileplore.activities;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import com.chobit.corestorage.ConnectedService;
@@ -8,9 +9,13 @@ import com.chobit.corestorage.CoreHttpServerCB;
 import com.chobit.corestorage.CoreService.CoreServiceBinder;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.jeremyfeinstein.slidingmenu.lib.app.SlidingFragmentActivity;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 import com.changhong.fileplore.R;
 import com.changhong.fileplore.adapter.MainViewPagerAdapter;
 import com.changhong.fileplore.application.MyApp;
+import com.changhong.fileplore.utils.Utils;
 
 import android.os.Binder;
 import android.os.Bundle;
@@ -23,6 +28,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
@@ -49,14 +55,27 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 @SuppressWarnings("deprecation")
-public class MainActivity extends SlidingFragmentActivity implements android.view.View.OnClickListener ,OnLongClickListener{
+public class MainActivity extends SlidingFragmentActivity
+		implements android.view.View.OnClickListener, OnLongClickListener {
+	DisplayImageOptions options = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.file_icon_photo)
+			.showImageForEmptyUri(R.drawable.file_icon_photo).showImageOnFail(R.drawable.file_icon_photo)
+			.cacheInMemory(true).cacheOnDisk(false).bitmapConfig(Bitmap.Config.RGB_565)
+			.displayer(new RoundedBitmapDisplayer(10)) // 设置图片的解码类型
+			.build();
+	ImageLoader imageLoader = ImageLoader.getInstance();
 	ImageView iv_apk;
 	ImageView iv_movie;
 	ImageView iv_music;
 	ImageView iv_photo;
 	ImageView iv_txt;
 	ImageView iv_zip;
-
+	MyApp myapp;
+	static final private int DOC = 1;
+	static final private int MUSIC = 2;
+	static final private int PHOTO = 3;
+	static final private int ZIP = 4;
+	static final private int MOVIE = 5;
+	static final private int UNKNOW = 6;
 	final ArrayList<View> list = new ArrayList<View>();
 	Context context = null;
 	LocalActivityManager manager = null;
@@ -79,7 +98,7 @@ public class MainActivity extends SlidingFragmentActivity implements android.vie
 		super.onCreate(savedInstanceState);
 
 		setContentView(R.layout.activity_main);
-		MyApp myapp = (MyApp) getApplication();
+		myapp = (MyApp) getApplication();
 		myapp.setContext(this);
 		myapp.setMainContext(this);
 		//
@@ -167,9 +186,10 @@ public class MainActivity extends SlidingFragmentActivity implements android.vie
 
 		Intent intent1 = new Intent(context, BrowseActivity.class);
 		list.add(0, getView("A", intent1));
+		
 		Intent intent2 = new Intent(context, PloreActivity.class);
 		list.add(1, getView("B", intent2));
-
+		
 		tl_brwloc = (TableLayout) list.get(0).findViewById(R.id.browse_tab_2);
 		rl_brwnet = (RelativeLayout) list.get(0).findViewById(R.id.browse_rl_net);
 		rl_showdown = (RelativeLayout) list.get(0).findViewById(R.id.browse_rl_downlist);
@@ -258,10 +278,14 @@ public class MainActivity extends SlidingFragmentActivity implements android.vie
 			Intent intent = new Intent();
 			intent.setClass(MainActivity.this, ShowNetDevActivity.class);
 			startActivity(intent);
-		}
-		else if (id == R.id.action_scanner) {
+		} else if (id == R.id.action_scanner) {
 			Intent intent = new Intent();
 			intent.setClass(MainActivity.this, CaptureActivity.class);
+			startActivity(intent);
+		}
+		else if (id == R.id.action_sharefile) {
+			Intent intent = new Intent();
+			intent.setClass(MainActivity.this, ShowSharefileActivity.class);
 			startActivity(intent);
 		}
 		return super.onOptionsItemSelected(item);
@@ -385,7 +409,7 @@ public class MainActivity extends SlidingFragmentActivity implements android.vie
 				} else
 					finish();
 			} else if (currIndex == 1) {
-
+				
 				TextView tv = (TextView) myPagerAdapter.getView(1).findViewById(R.id.path);
 				String str = tv.getText().toString();
 				if (str.lastIndexOf("/") == 0) {
@@ -455,8 +479,9 @@ public class MainActivity extends SlidingFragmentActivity implements android.vie
 
 	@Override
 	protected void onResume() {
-		MyApp myapp = (MyApp) getApplication();
+		 myapp = (MyApp) getApplication();
 		myapp.setContext(this);
+		((BrowseActivity)list.get(0).getContext()).callupdate();
 		super.onResume();
 	}
 
@@ -465,8 +490,8 @@ public class MainActivity extends SlidingFragmentActivity implements android.vie
 		stopService(new Intent("com.chobit.corestorage.CoreService"));
 		stopService(new Intent("com.changhong.fileplore.service.DownLoadService"));
 		super.onDestroy();
-		
-	//	System.exit(0);
+
+		// System.exit(0);
 
 	}
 
@@ -532,12 +557,13 @@ public class MainActivity extends SlidingFragmentActivity implements android.vie
 
 			break;
 		case R.id.img_movie:
+			onLongClick("/Movies","/DCIM/Camera", "video/*");
 			break;
 		case R.id.img_music:
-
+			onLongClick("/Music", null,"audio/*");
 			break;
 		case R.id.img_photo:
-
+			onLongClick("/DCIM/Camera","/Pictures/Saved Pictures", "image/*");
 			break;
 		case R.id.img_txt:
 
@@ -546,15 +572,218 @@ public class MainActivity extends SlidingFragmentActivity implements android.vie
 
 			break;
 		case R.id.browse_rl_net:
-			
+
 			break;
 		case R.id.browse_rl_downlist:
-			
+
 			break;
 		default:
 			break;
 		}
 		return true;
+	}
+
+	private void onLongClick(String foldername1, String foldername2, String type) {
+		ArrayList<File> filelist = new ArrayList<File>();
+		if (null != foldername1) {
+			File file1 = new File("/storage/sdcard1" + foldername1);
+			File file2 = new File("/storage/sdcard0" + foldername1);
+			if (file1.exists() && file1.canRead() && file1.isDirectory()) {
+				File[] files = file1.listFiles();
+				for (int i = 0; i < files.length; i++) {
+					if (Utils.getMIMEType(files[i]).equals(type))
+						filelist.add(files[i]);
+				}
+			}
+			if (file2.exists() && file2.canRead() && file2.isDirectory()) {
+				File[] files = file2.listFiles();
+				for (int i = 0; i < files.length; i++)
+					if (Utils.getMIMEType(files[i]).equals(type))
+						filelist.add(files[i]);
+			}
+
+		}
+		if (null != foldername2) {
+			File file3 = new File("/storage/sdcard1" + foldername2);
+			File file4 = new File("/storage/sdcard0" + foldername2);
+			if (file3.exists() && file3.canRead() && file3.isDirectory()) {
+				File[] files = file3.listFiles();
+				for (int i = 0; i < files.length; i++)
+					if (Utils.getMIMEType(files[i]).equals(type))
+						filelist.add(files[i]);
+			}
+			if (file4.exists() && file4.canRead() && file4.isDirectory()) {
+				File[] files = file4.listFiles();
+				for (int i = 0; i < files.length; i++)
+					if (Utils.getMIMEType(files[i]).equals(type))
+						filelist.add(files[i]);
+			}
+		}
+
+		final File[] files1 = filelist.toArray(new File[filelist.size()]);
+		for (int i = 0; i < 4 && i < files1.length - 1; ++i) {
+			for (int j = i + 1; j < files1.length; ++j) {
+				if (files1[i].lastModified() < files1[j].lastModified()) {
+					File tmp = files1[j];
+					files1[j] = files1[i];
+					files1[i] = tmp;
+				}
+			}
+		}
+
+		LayoutInflater inflater = LayoutInflater.from(context);
+		View layout = inflater.inflate(R.layout.dialog_filepreview, null);
+		TextView tv_1 = (TextView) layout.findViewById(R.id.tv_filepreview_1);
+		TextView tv_2 = (TextView) layout.findViewById(R.id.tv_filepreview_2);
+		TextView tv_3 = (TextView) layout.findViewById(R.id.tv_filepreview_3);
+		TextView tv_4 = (TextView) layout.findViewById(R.id.tv_filepreview_4);
+		ImageView iv_1 = (ImageView) layout.findViewById(R.id.iv_filepreview_1);
+		ImageView iv_2 = (ImageView) layout.findViewById(R.id.iv_filepreview_2);
+		ImageView iv_3 = (ImageView) layout.findViewById(R.id.iv_filepreview_3);
+		ImageView iv_4 = (ImageView) layout.findViewById(R.id.iv_filepreview_4);
+		AlertDialog.Builder builder = new AlertDialog.Builder(context).setView(layout);
+		if (files1.length > 1 && files1[0] != null) {
+			tv_1.setText(files1[0].getName());
+			setImage(iv_1, files1[0]);
+			tv_1.setOnClickListener(new View.OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+					context.startActivity(Utils.openFile(files1[0]));
+
+				}
+			});
+			iv_1.setOnClickListener(new View.OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+					context.startActivity(Utils.openFile(files1[0]));
+
+				}
+			});
+		}
+		if (files1.length > 2 && files1[1] != null) {
+			tv_2.setText(files1[1].getName());
+			setImage(iv_2, files1[1]);
+			iv_2.setOnClickListener(new View.OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+					context.startActivity(Utils.openFile(files1[1]));
+
+				}
+			});
+			tv_2.setOnClickListener(new View.OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+					context.startActivity(Utils.openFile(files1[1]));
+
+				}
+			});
+		}
+		if (files1.length > 3 && files1[2] != null) {
+			tv_3.setText(files1[2].getName());
+			setImage(iv_3, files1[2]);
+			iv_3.setOnClickListener(new View.OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+					context.startActivity(Utils.openFile(files1[2]));
+
+				}
+			});
+			tv_3.setOnClickListener(new View.OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+					context.startActivity(Utils.openFile(files1[2]));
+
+				}
+			});
+		}
+		if (files1.length > 4 && files1[3] != null) {
+			tv_4.setText(files1[3].getName());
+			setImage(iv_4, files1[3]);
+			iv_4.setOnClickListener(new View.OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+					context.startActivity(Utils.openFile(files1[3]));
+
+				}
+			});
+			tv_4.setOnClickListener(new View.OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+					context.startActivity(Utils.openFile(files1[3]));
+
+				}
+			});
+		}
+
+		AlertDialog dia = builder.create();
+		dia.show();
+		float scale = context.getResources().getDisplayMetrics().density;
+		dia.getWindow().setLayout((int) (250 * scale + 0.5f), -2);
+
+	}
+
+	private void setImage(ImageView iv_1, File file) {
+		switch (getMIMEType(file.getName())) {
+		case MOVIE:
+			final String path1 = file.getPath();
+			imageLoader.displayImage("file://" + path1, iv_1, options);
+			break;
+		case MUSIC:
+			iv_1.setImageResource(R.drawable.file_icon_music);
+			break;
+		case PHOTO:
+			final String path = file.getPath();
+			final String name = file.getName();
+			String md5name = MyApp.md5.generate(name);
+			if (MyApp.fileSet.contains(md5name)) {
+				imageLoader.displayImage("file://" + Utils.getPath(this, "cache") + md5name, iv_1, options);
+			} else {
+
+				imageLoader.displayImage("file://" + path, iv_1, options);
+
+			}
+
+			break;
+		case DOC:
+			iv_1.setImageResource(R.drawable.file_icon_txt);
+			break;
+		case UNKNOW:
+			iv_1.setImageResource(R.drawable.file_icon_unknown);
+			break;
+		case ZIP:
+			iv_1.setImageResource(R.drawable.file_icon_zip);
+			break;
+
+		default:
+			break;
+		}
+	}
+
+	private int getMIMEType(String name) {
+
+		String end = name.substring(name.lastIndexOf(".") + 1, name.length()).toLowerCase();
+		if (end.equals("m4a") || end.equals("mp3") || end.equals("wav")) {
+			return MUSIC;
+		} else if (end.equals("mp4") || end.equals("3gp")) {
+			return MOVIE;
+		} else if (end.equals("jpg") || end.equals("png") || end.equals("jpeg") || end.equals("bmp")
+				|| end.equals("gif")) {
+			return PHOTO;
+		} else if (end.equals("zip") || end.equals("rar")) {
+			return ZIP;
+		} else if (end.equals("doc") || end.equals("docx") || end.equals("txt")) {
+			return DOC;
+		}
+		return UNKNOW;
+
 	}
 
 }

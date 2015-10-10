@@ -1,11 +1,17 @@
 package com.changhong.fileplore.activities;
 
 import com.changhong.fileplore.utils.Utils;
+
+import java.util.HashMap;
+import java.util.Map;
+
 import com.changhong.fileplore.R;
 import com.changhong.fileplore.application.MyApp;
 
 import android.app.Activity;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -41,19 +47,20 @@ public class BrowseActivity extends Activity {
 		myapp.setContext(this);
 		findView();
 		setView();
-		setOnClickListener();
 
 	}
 
-	private void setOnClickListener() {
-//		MyClickListener myclick = new MyClickListener();
-//		iv_apk.setOnClickListener(myclick);
-//		iv_movie.setOnClickListener(myclick);
-//		iv_music.setOnClickListener(myclick);
-//		iv_photo.setOnClickListener(myclick);
-//		iv_txt.setOnClickListener(myclick);
-//		iv_zip.setOnClickListener(myclick);
+	public void callupdate() {
+		new MyAsyncTask().execute();
+		new ProgressAsyncTask().execute();
+	}
 
+	@Override
+	protected void onResume() {
+		Log.e("onResume", "browse");
+		new MyAsyncTask().execute();
+		new ProgressAsyncTask().execute();
+		super.onResume();
 	}
 
 	void findView() {
@@ -82,23 +89,9 @@ public class BrowseActivity extends Activity {
 	}
 
 	void setView() {
-		String[] phoneSpace = Utils.getPhoneSpace(this);
-		String[] sdSpace = Utils.getSdSpace(this);
-		tv_phoneTotal.setText(phoneSpace[0]);
-		tv_phoneNotUse.setText(phoneSpace[1]);
-		tv_sdTotal.setText(sdSpace[0]);
-		tv_sdNotUse.setText(sdSpace[1]);
-	
-		pb_sd.setProgress(100 - Integer.parseInt(sdSpace[2].substring(0, (sdSpace[2].indexOf(".")==-1)?2:sdSpace[2].indexOf("."))));
-		pb_phone.setProgress(100 - Integer.parseInt(phoneSpace[2].substring(0, (phoneSpace[2].indexOf(".")==-1)?2:phoneSpace[2].indexOf("."))));
-		tv_apk.append("(" + Utils.getCount("result_apk", BrowseActivity.this) + ")");
-		tv_movie.append("(" + Utils.getCount("result_movie", BrowseActivity.this) + ")");
-		tv_music.append("(" + Utils.getCount("result_music", BrowseActivity.this) + ")");
-		tv_photo.append("(" + Utils.getCount("result_photo", BrowseActivity.this) + ")");
-		tv_doc.append("(" + Utils.getCount("result_doc", BrowseActivity.this) + ")");
-		tv_zip.append("(" + Utils.getCount("result_zip", BrowseActivity.this) + ")");
+		new MyAsyncTask().execute();
+		new ProgressAsyncTask().execute();
 	}
-
 
 	long curtime = 0;
 
@@ -116,5 +109,63 @@ public class BrowseActivity extends Activity {
 
 		}
 		return super.onKeyDown(keyCode, event);
+	}
+
+	public class MyAsyncTask extends AsyncTask<Void, Void, Map<String, Integer>> {
+
+		@Override
+		protected void onPostExecute(Map<String, Integer> result) {
+			tv_apk.setText("安装包(" + result.get("result_apk") + ")");
+			tv_movie.setText("视频(" + result.get("result_movie") + ")");
+			tv_music.setText("音乐(" + result.get("result_music") + ")");
+			tv_photo.setText("照片(" + result.get("result_photo") + ")");
+			tv_doc.setText("文档(" + result.get("result_doc") + ")");
+			tv_zip.setText("压缩包(" + result.get("result_zip") + ")");
+			super.onPostExecute(result);
+		}
+
+		@Override
+		protected Map<String, Integer> doInBackground(Void... params) {
+			Map<String, Integer> map = new HashMap<String, Integer>();
+			map.put("result_apk", Utils.getCount("result_apk", BrowseActivity.this));
+			map.put("result_music", Utils.getCount("result_music", BrowseActivity.this));
+			map.put("result_photo", Utils.getCount("result_photo", BrowseActivity.this));
+			map.put("result_movie", Utils.getCount("result_movie", BrowseActivity.this));
+			map.put("result_zip", Utils.getCount("result_zip", BrowseActivity.this));
+			map.put("result_doc", Utils.getCount("result_doc", BrowseActivity.this));
+			return map;
+		}
+
+	}
+
+	public class ProgressAsyncTask extends AsyncTask<Void, Void, Map<String, String[]>> {
+		@Override
+		protected void onPostExecute(Map<String, String[]> result) {
+			String[] phoneSpace = result.get("phoneSpace");
+			String[] sdSpace = result.get("sdSpace");
+
+			tv_phoneTotal.setText(phoneSpace[0]);
+			tv_phoneNotUse.setText(phoneSpace[1]);
+			tv_sdTotal.setText(sdSpace[0]);
+			tv_sdNotUse.setText(sdSpace[1]);
+
+			pb_sd.setProgress(100 - Integer
+					.parseInt(sdSpace[2].substring(0, (sdSpace[2].indexOf(".") == -1) ? 2 : sdSpace[2].indexOf("."))));
+			pb_phone.setProgress(100 - Integer.parseInt(
+					phoneSpace[2].substring(0, (phoneSpace[2].indexOf(".") == -1) ? 2 : phoneSpace[2].indexOf("."))));
+
+			super.onPostExecute(result);
+		}
+
+		@Override
+		protected Map<String, String[]> doInBackground(Void... params) {
+			Map<String, String[]> map = new HashMap<String, String[]>();
+			String[] phoneSpace = Utils.getPhoneSpace(BrowseActivity.this);
+			String[] sdSpace = Utils.getSdSpace(BrowseActivity.this);
+			map.put("phoneSpace", phoneSpace);
+			map.put("sdSpace", sdSpace);
+			return map;
+		}
+
 	}
 }

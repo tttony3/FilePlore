@@ -114,7 +114,7 @@ public class ClassifyListActivity extends Activity implements RefreshListView.IO
 		initView(flg);
 	}
 
-	private void initView(int flg) {
+	private void initView(final int flg) {
 
 		switch (flg) {
 		case R.id.img_music:
@@ -182,6 +182,14 @@ public class ClassifyListActivity extends Activity implements RefreshListView.IO
 									listAdapter.updateList(results);
 									Toast.makeText(ClassifyListActivity.this, "删除成功", Toast.LENGTH_SHORT).show();
 									// initView();
+									if (flg==R.id.img_txt) {
+										Utils.saveObject("result_doc", results);
+									} else if (flg==R.id.img_zip) {
+										Utils.saveObject("result_zip", results);
+									}
+									else if (flg==R.id.img_apk) {
+										Utils.saveObject("result_apk", results);
+									}
 								} else {
 									Toast.makeText(ClassifyListActivity.this, "删除失败", Toast.LENGTH_SHORT).show();
 								}

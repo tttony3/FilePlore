@@ -15,6 +15,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
 
+import com.changhong.fileplore.application.MyApp;
 import com.changhong.fileplore.data.DownData;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
@@ -247,7 +248,7 @@ public class Utils {
 		} else if (type.equals("zip")) {
 			saveObject("result_zip", results);
 		}
-		if (type.equals("apk")) {
+		else if (type.equals("apk")) {
 			saveObject("result_apk", results);
 		}
 
@@ -501,8 +502,7 @@ public class Utils {
 	@SuppressWarnings("unchecked")
 	static ArrayList<Content> getObject(String name) throws Exception {
 		ArrayList<Content> savedArrayList = null;
-		File file = new File(Environment.getExternalStorageDirectory().toString() + File.separator + "fileplore"
-				+ File.separator + name);
+		File file = new File(getPath(MyApp.context, name));
 		FileInputStream fileInputStream = null;
 		ObjectInputStream objectInputStream = null;
 
@@ -518,8 +518,7 @@ public class Utils {
 	@SuppressWarnings("unchecked")
 	public static ArrayList<DownData> getDownDataObject(String name) throws Exception {
 		ArrayList<DownData> savedArrayList = null;
-		File file = new File(Environment.getExternalStorageDirectory().toString() + File.separator + "fileplore"
-				+ File.separator + name);
+		File file = new File(getPath(MyApp.context, name));
 		FileInputStream fileInputStream = null;
 		ObjectInputStream objectInputStream = null;
 
@@ -543,8 +542,7 @@ public class Utils {
 	public static void saveObject(String name, Object obj) {
 		FileOutputStream fos = null;
 		ObjectOutputStream oos = null;
-		File file = new File(Environment.getExternalStorageDirectory().toString() + File.separator + "fileplore"
-				+ File.separator + name);
+		File file = new File(getPath(MyApp.context, name));
 		if (!file.getParentFile().exists()) {
 			file.getParentFile().mkdirs();
 		}
@@ -705,4 +703,16 @@ public class Utils {
 		}
 		return bitmap;
 	}
+	 static public String getPath(Context context,String name){ 
+			String cachePath;
+			if (Environment.MEDIA_MOUNTED.equals(Environment
+					.getExternalStorageState())
+					|| !Environment.isExternalStorageRemovable()) {
+				cachePath = context.getExternalCacheDir().getPath();
+			} else {
+				cachePath = context.getCacheDir().getPath();
+			}
+			return cachePath+"/"+name+"/";
+		
+		}
 }

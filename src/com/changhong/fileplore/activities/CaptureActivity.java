@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Vector;
 
 import com.changhong.fileplore.R;
+import com.changhong.fileplore.application.MyApp;
 import com.changhong.fileplore.camera.BeepManager;
 import com.changhong.fileplore.camera.CameraManager;
 import com.changhong.fileplore.decode.CaptureActivityHandler;
@@ -75,6 +76,8 @@ public class CaptureActivity extends Activity implements SurfaceHolder.Callback 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		MyApp myapp = (MyApp) getApplication();
+		myapp.setContext(this);
 		initSetting();
 		setContentView(R.layout.activity_capture);
 		initComponent();

@@ -267,7 +267,7 @@ public class PloreListAdapter extends BaseAdapter {
 				final String name = file.getName();
 				String md5name = MyApp.md5.generate(name);
 				if (MyApp.fileSet.contains(md5name)) {
-					imageLoader.displayImage("file://" + MyApp.storagepath + md5name, viewHolder.img, options);
+					imageLoader.displayImage("file://" + Utils.getPath(MyApp.context, "cache") + md5name, viewHolder.img, options);
 				} else {
 
 					imageLoader.displayImage("file://" + path, viewHolder.img, options);
@@ -342,7 +342,7 @@ public class PloreListAdapter extends BaseAdapter {
 			final String name = file.getName();
 			String md5name = MyApp.md5.generate(name);
 			if (MyApp.fileSet.contains(md5name)) {
-				imageLoader.displayImage("file://" + MyApp.storagepath + md5name, iv_1, options);
+				imageLoader.displayImage("file://" + Utils.getPath(MyApp.context, "cache") + md5name, iv_1, options);
 			} else {
 
 				imageLoader.displayImage("file://" + path, iv_1, options);
