@@ -95,8 +95,8 @@ public class PloreActivity extends BaseActivity implements RefreshListView.IOnRe
 		btn_3 = findView(R.id.plore_btn_3);
 		btn_more = findView(R.id.plore_btn_more);
 		ll_btn = findView(R.id.ll_btn);
-		
-		layout_qr = this.getLayoutInflater().inflate(R.layout.dialog_qr,null );
+
+		layout_qr = this.getLayoutInflater().inflate(R.layout.dialog_qr, null);
 		builder_qr = new AlertDialog.Builder(this).setView(layout_qr);
 		alertDialog_qr = builder_qr.create();
 		iv_qr = (ImageView) layout_qr.findViewById(R.id.iv_qr);
@@ -325,12 +325,14 @@ public class PloreActivity extends BaseActivity implements RefreshListView.IOnRe
 									}
 								}
 							}
-							Intent intent = new Intent();
-							Bundle b = new Bundle();
-							b.putStringArrayList("pushList", pushList);
-							intent.putExtra("pushList", b);
-							intent.setClass(PloreActivity.this, ShowNetDevActivity.class);
-							startActivity(intent);
+							if (pushList.size() > 0) {
+								Intent intent = new Intent();
+								Bundle b = new Bundle();
+								b.putStringArrayList("pushList", pushList);
+								intent.putExtra("pushList", b);
+								intent.setClass(PloreActivity.this, ShowNetDevActivity.class);
+								startActivity(intent);
+							}
 
 						}
 						break;
@@ -411,13 +413,13 @@ public class PloreActivity extends BaseActivity implements RefreshListView.IOnRe
 	public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
 		switch (parent.getId()) {
 		case R.id.file_list:
-			if(!(view instanceof ImageView))
-			if (!mFileAdpter.isShow_cb()) {
-				mFileAdpter.setShow_cb(true);
-				ll_btn.setVisibility(View.VISIBLE);
-				mFileAdpter.notifyDataSetChanged();
-			} else {
-			}
+			if (!(view instanceof ImageView))
+				if (!mFileAdpter.isShow_cb()) {
+					mFileAdpter.setShow_cb(true);
+					ll_btn.setVisibility(View.VISIBLE);
+					mFileAdpter.notifyDataSetChanged();
+				} else {
+				}
 			return true;
 
 		default:

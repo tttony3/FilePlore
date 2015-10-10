@@ -20,7 +20,6 @@ import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
-import android.os.Environment;
 import android.util.Log;
 import android.view.View;
 
