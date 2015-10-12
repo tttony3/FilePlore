@@ -602,6 +602,7 @@ public class Utils {
 					MediaStore.Video.Media.DEFAULT_SORT_ORDER);
 			cursor.moveToFirst();
 			count = cursor.getCount();
+			cursor.close();
 		} else if (type.equals("result_music")) {
 			results = new ArrayList<Content>();
 			ContentResolver contentResolver = context.getContentResolver();
@@ -609,6 +610,7 @@ public class Utils {
 					MediaStore.Video.Media.DEFAULT_SORT_ORDER);
 			cursor.moveToFirst();
 			count = cursor.getCount();
+			cursor.close();
 		} else if (type.equals("result_photo")) {
 			results = new ArrayList<Content>();
 			ContentResolver contentResolver = context.getContentResolver();
@@ -616,6 +618,7 @@ public class Utils {
 					MediaStore.Video.Media.DEFAULT_SORT_ORDER);
 			cursor.moveToFirst();
 			count = cursor.getCount();
+			cursor.close();
 		}
 
 		else {

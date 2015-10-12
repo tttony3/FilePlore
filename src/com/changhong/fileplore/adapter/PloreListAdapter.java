@@ -126,8 +126,8 @@ public class PloreListAdapter extends BaseAdapter {
 			}
 		});
 		if (file.isDirectory()) {
-
-			viewHolder.time.setVisibility(View.GONE);
+			viewHolder.time.setText(new SimpleDateFormat("yyyy/MM/dd HH:mm").format(((File) file).lastModified()));
+		//	viewHolder.time.setVisibility(View.GONE);
 			viewHolder.img.setImageResource(R.drawable.file_icon_folder);
 			viewHolder.img.setOnClickListener(new OnClickListener() {
 				
@@ -249,7 +249,14 @@ public class PloreListAdapter extends BaseAdapter {
 			});
 
 		} else {
-
+			viewHolder.img.setOnClickListener(new OnClickListener() {
+				
+				@Override
+				public void onClick(View v) {
+					viewHolder.name.callOnClick();
+					
+				}
+			});
 			viewHolder.time.setText(new SimpleDateFormat("yyyy/MM/dd HH:mm").format(((File) file).lastModified()));
 
 			switch (getMIMEType(fileName)) {

@@ -39,6 +39,7 @@ public class MainViewPagerAdapter extends PagerAdapter {
 	@Override
 	public Object instantiateItem(View arg0, int arg1) {
 		ViewPager pViewPager = ((ViewPager) arg0);
+	
 		pViewPager.addView(list.get(arg1));
 		return list.get(arg1);
 	}

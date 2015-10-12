@@ -96,17 +96,18 @@ public class MenuFragment extends Fragment {
 				break;
 			case R.id.rl_menu_music:
 				intent.setClass(getActivity(), ClassifyListActivity.class);
-				intent.setFlags(R.id.img_music);
+				
+				intent.putExtra("key", R.id.img_music);
 				startActivity(intent);
 				break;
 			case R.id.rl_menu_movie:
 				intent.setClass(getActivity(), ClassifyGridActivity.class);
-				intent.setFlags(R.id.img_movie);
+				intent.putExtra("key",R.id.img_movie);
 				startActivity(intent);
 				break;
 			case R.id.rl_menu_photo:
 				intent.setClass(getActivity(), ClassifyGridActivity.class);
-				intent.setFlags(R.id.img_photo);
+				intent.putExtra("key",R.id.img_photo);
 				startActivity(intent);
 				break;
 			default:

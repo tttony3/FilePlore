@@ -7,6 +7,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import com.changhong.alljoyn.simpleservice.FC_GetShareFile;
+import com.changhong.fileplore.R;
+import com.changhong.fileplore.activities.MainActivity;
+import com.changhong.fileplore.activities.ShowDownFileActivity;
 import com.changhong.fileplore.application.MyApp;
 import com.changhong.fileplore.data.DownData;
 import com.changhong.fileplore.implement.DownStatusInterface;
@@ -15,7 +18,11 @@ import com.chobit.corestorage.CoreApp;
 import com.chobit.corestorage.CoreDownloadProgressCB;
 import com.example.libevent2.UpdateDownloadPress;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.Environment;
@@ -24,12 +31,13 @@ import android.util.Log;
 import android.widget.Toast;
 
 public class DownLoadService extends Service implements DownStatusInterface {
+	private static final int NOTIFICATION_FLAG = 1;
 	static final public int MAX_THREAD = 2;
 	private ExecutorService pool;
 	private IBinder mBinder;
 	HashMap<String, DownData> downMap;
 	boolean setDownCB = true;
-
+	
 	@Override
 	public IBinder onBind(Intent intent) {
 		return mBinder;
@@ -166,11 +174,13 @@ public class DownLoadService extends Service implements DownStatusInterface {
 
 		@Override
 		public void onDownloadOK(String fileuri) {
+			
 			downMap.get(fileuri).setDone(true);
 			String download_Path = Environment.getExternalStorageDirectory().getAbsolutePath();
 			String appname = FC_GetShareFile.getApplicationName(getApplicationContext());
 			Toast.makeText(((MyApp) getApplication()).getContext(),
 					"下载成功,保存在" + download_Path + "/" + appname + "/download/ 目录下", Toast.LENGTH_SHORT).show();
+			showNotification();
 
 		}
 
@@ -214,5 +224,40 @@ public class DownLoadService extends Service implements DownStatusInterface {
 		pool.execute(new DownRunnAble(uri));
 	}
 	
-
+	private void showNotification(){
+        // 创建一个NotificationManager的引用   
+        NotificationManager notificationManager = (NotificationManager)    
+            this.getSystemService(android.content.Context.NOTIFICATION_SERVICE);   
+          
+        // 定义Notification的各种属性   
+        Notification notification =new Notification(R.drawable.file_icon_download,   
+                "下载成功", System.currentTimeMillis()); 
+        //FLAG_AUTO_CANCEL   该通知能被状态栏的清除按钮给清除掉
+        //FLAG_NO_CLEAR      该通知不能被状态栏的清除按钮给清除掉
+        //FLAG_ONGOING_EVENT 通知放置在正在运行
+        //FLAG_INSISTENT     是否一直进行，比如音乐一直播放，知道用户响应
+      //  notification.flags |= Notification.FLAG_ONGOING_EVENT; // 将此通知放到通知栏的"Ongoing"即"正在运行"组中   
+        notification.flags |= Notification.FLAG_AUTO_CANCEL; // 表明在点击了通知栏中的"清除通知"后，此通知不清除，经常与FLAG_ONGOING_EVENT一起使用   
+        notification.flags |= Notification.FLAG_SHOW_LIGHTS;   
+        //DEFAULT_ALL     使用所有默认值，比如声音，震动，闪屏等等
+        //DEFAULT_LIGHTS  使用默认闪光提示
+        //DEFAULT_SOUNDS  使用默认提示声音
+        //DEFAULT_VIBRATE 使用默认手机震动，需加上<uses-permission android:name="android.permission.VIBRATE" />权限
+        notification.defaults = Notification.DEFAULT_LIGHTS; 
+        //叠加效果常量
+        //notification.defaults=Notification.DEFAULT_LIGHTS|Notification.DEFAULT_SOUND;
+      
+        notification.ledOnMS =5000; //闪光时间，毫秒
+          
+        // 设置通知的事件消息   
+        CharSequence contentTitle ="FilePlore"; // 通知栏标题   
+        CharSequence contentText ="下载成功，点击查看"; // 通知栏内容   
+        Intent notificationIntent =new Intent(this, ShowDownFileActivity.class); // 点击该通知后要跳转的Activity  
+        notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_NEW_TASK);
+        PendingIntent contentItent = PendingIntent.getActivity(this, 0, notificationIntent, 0);   
+        notification.setLatestEventInfo(this, contentTitle, contentText, contentItent);   
+          
+        // 把Notification传递给NotificationManager   
+        notificationManager.notify(0, notification);   
+    }
 }

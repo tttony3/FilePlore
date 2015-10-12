@@ -34,7 +34,7 @@
             android:layout_marginTop="2dp"
             android:layout_toEndOf="@+id/iv_back"
             android:background="@drawable/corners_bg"
-            android:maxEms="12"
+            android:maxEms="20"
             android:paddingEnd="2dp"
             android:paddingStart="2dp"
             android:text="@string/default_path"

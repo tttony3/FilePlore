@@ -87,6 +87,8 @@ public class DownFileListAdapter extends BaseAdapter {
 		int p = (int) (part / max);
 		viewHolder.tv_process.setText(p + "%");
 		if (tmpdata.isDone()) {
+			viewHolder.pb.setProgress(viewHolder.pb.getMax());
+			viewHolder.tv_process.setText("100%");
 			viewHolder.btn.setText("打开");
 			viewHolder.btn.setOnClickListener(new OnClickListener() {
 

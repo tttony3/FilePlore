@@ -9,7 +9,7 @@
     <dimen name="griditem_item_textsize">10sp</dimen>
     <dimen name="griditem_img">110dp</dimen>
     <dimen name="browse_txtcapacity_size">10sp</dimen>
-    <dimen name="top_textsize">20sp</dimen>
+    <dimen name="top_textsize">10sp</dimen>
     <dimen name="slidingmenu_offset">180dp</dimen>
     <dimen name="list_padding">10dp</dimen>
     <dimen name="shadow_width">15dp</dimen>

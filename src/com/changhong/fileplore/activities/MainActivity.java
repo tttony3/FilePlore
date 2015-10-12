@@ -90,6 +90,7 @@ public class MainActivity extends SlidingFragmentActivity
 	private int currIndex = 0;// 当前页卡编号
 	private int bmpW;// 动画图片宽度
 	private ImageView cursor1;// 动画图片
+	public int isshow;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -321,6 +322,7 @@ public class MainActivity extends SlidingFragmentActivity
 			Animation animation2 = null;
 			switch (arg0) {
 			case 0:
+				
 				getSlidingMenu().removeIgnoredView(pager);
 				t1.setTextColor(getResources().getColor(R.color.green));
 				t2.setTextColor(getResources().getColor(R.color.black));
@@ -332,6 +334,8 @@ public class MainActivity extends SlidingFragmentActivity
 				}
 				break;
 			case 1:
+				isshow=0;
+				Log.e("page","change");
 				getSlidingMenu().addIgnoredView(pager);
 				t2.setTextColor(getResources().getColor(R.color.green));
 				t1.setTextColor(getResources().getColor(R.color.black));
@@ -342,13 +346,8 @@ public class MainActivity extends SlidingFragmentActivity
 					animation1 = new TranslateAnimation(two, one, 0, 0);
 				}
 				break;
-			// case 2:
-			// if (currIndex == 0) {
-			// animation = new TranslateAnimation(offset, two, 0, 0);
-			// } else if (currIndex == 1) {
-			// animation = new TranslateAnimation(one, two, 0, 0);
-			// }
-			// break;
+			
+			
 			}
 			currIndex = arg0;
 			animation1.setFillAfter(true);// True:图片停在动画结束位置
@@ -363,12 +362,12 @@ public class MainActivity extends SlidingFragmentActivity
 
 		@Override
 		public void onPageScrollStateChanged(int arg0) {
-
+			
 		}
 
 		@Override
 		public void onPageScrolled(int arg0, float arg1, int arg2) {
-
+				
 		}
 	}
 
