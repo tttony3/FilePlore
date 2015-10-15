@@ -90,7 +90,7 @@ public class MainActivity extends SlidingFragmentActivity
 	private int currIndex = 0;// 当前页卡编号
 	private int bmpW;// 动画图片宽度
 	private ImageView cursor1;// 动画图片
-	public int isshow;
+	
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -334,8 +334,7 @@ public class MainActivity extends SlidingFragmentActivity
 				}
 				break;
 			case 1:
-				isshow=0;
-				Log.e("page","change");
+
 				getSlidingMenu().addIgnoredView(pager);
 				t2.setTextColor(getResources().getColor(R.color.green));
 				t1.setTextColor(getResources().getColor(R.color.black));

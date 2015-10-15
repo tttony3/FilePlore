@@ -185,24 +185,7 @@ public class ShowPushFileActivity extends BaseActivity implements OnItemClickLis
 				super.handleMessage(msg);
 				int key = msg.getData().getInt("key");
 				switch (key) {
-				case MyCoreDownloadProgressCB.UPDATE_DOWNLOAD:
-					if (!alertDialog_download.isShowing()) {
-						long total = msg.getData().getLong("total");
-						int max = (int) (total / 100);
-						pb_download.setMax(max);
-						tv_download.setText("0%");
-						alertDialog_download.show();
-					} else {
-						long part = msg.getData().getLong("part");
-						pb_download.setProgress((int) (part / 100));
-						int p = (int) (part / pb_download.getMax());
-						tv_download.setText(p + "%");
-					}
-					break;
-				case MyCoreDownloadProgressCB.DISMISS_DOWNLOAD:
-					if (alertDialog_download.isShowing())
-						alertDialog_download.dismiss();
-					break;
+			
 				case SHOW_PREVIEW_DIALOG:
 					iv_preview.setImageResource(R.drawable.picload);
 					String path = msg.getData().getString("path");

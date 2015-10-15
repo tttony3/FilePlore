@@ -15,6 +15,8 @@ import com.changhong.fileplore.camera.CameraManager;
 import com.changhong.fileplore.decode.CaptureActivityHandler;
 import com.changhong.fileplore.decode.FinishListener;
 import com.changhong.fileplore.decode.InactivityTimer;
+import com.changhong.fileplore.utils.WifiAutoConnectManager;
+import com.changhong.fileplore.utils.WifiAutoConnectManager.WifiCipherType;
 import com.changhong.fileplore.view.ViewfinderView;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.Result;
@@ -23,12 +25,16 @@ import com.google.zxing.ResultPoint;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.net.wifi.WifiConfiguration;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
@@ -54,9 +60,8 @@ public class CaptureActivity extends Activity implements SurfaceHolder.Callback 
 	private SurfaceView surfaceView;
 	private SurfaceHolder surfaceHolder;
 	private TextView statusView;
-//	private TextView scanTextView;
-//	private View resultView;
-
+	// private TextView scanTextView;
+	// private View resultView;
 
 	/**
 	 * 活动监控器，用于省电，如果手机没有连接电源线，那么当相机开启后如果一直处于不被使用状态则该服务会将当前activity关闭。
@@ -67,11 +72,9 @@ public class CaptureActivity extends Activity implements SurfaceHolder.Callback 
 	private Vector<BarcodeFormat> decodeFormats;// 编码格式
 	private CaptureActivityHandler mHandler;// 解码线程
 
-	private static final Collection<ResultMetadataType> DISPLAYABLE_METADATA_TYPES = EnumSet
-			.of(ResultMetadataType.ISSUE_NUMBER,
-					ResultMetadataType.SUGGESTED_PRICE,
-					ResultMetadataType.ERROR_CORRECTION_LEVEL,
-					ResultMetadataType.POSSIBLE_COUNTRY);
+	private static final Collection<ResultMetadataType> DISPLAYABLE_METADATA_TYPES = EnumSet.of(
+			ResultMetadataType.ISSUE_NUMBER, ResultMetadataType.SUGGESTED_PRICE,
+			ResultMetadataType.ERROR_CORRECTION_LEVEL, ResultMetadataType.POSSIBLE_COUNTRY);
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -91,7 +94,7 @@ public class CaptureActivity extends Activity implements SurfaceHolder.Callback 
 		Window window = getWindow();
 		window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON); // 保持屏幕处于点亮状态
 		// window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN); // 全屏
-	//	requestWindowFeature(Window.FEATURE_NO_TITLE); // 隐藏标题栏
+		// requestWindowFeature(Window.FEATURE_NO_TITLE); // 隐藏标题栏
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT); // 竖屏
 	}
 
@@ -102,10 +105,8 @@ public class CaptureActivity extends Activity implements SurfaceHolder.Callback 
 		hasSurface = false;
 		inactivityTimer = new InactivityTimer(this);
 		beepManager = new BeepManager(this);
-		mSharedPreferences = PreferenceManager
-				.getDefaultSharedPreferences(this);
-		currentState = this.mSharedPreferences.getString("currentState",
-				"qrcode");
+		mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+		currentState = this.mSharedPreferences.getString("currentState", "qrcode");
 		cameraManager = new CameraManager(getApplication());
 	}
 
@@ -115,8 +116,8 @@ public class CaptureActivity extends Activity implements SurfaceHolder.Callback 
 	private void initView() {
 
 		surfaceView = (SurfaceView) findViewById(R.id.preview_view);
-	//	resultView = findViewById(R.id.result_view);
-	//	scanTextView = (TextView) findViewById(R.id.mtextview_title);
+		// resultView = findViewById(R.id.result_view);
+		// scanTextView = (TextView) findViewById(R.id.mtextview_title);
 		statusView = (TextView) findViewById(R.id.status_view);
 
 	}
@@ -158,7 +159,7 @@ public class CaptureActivity extends Activity implements SurfaceHolder.Callback 
 	 * 展示状态视图和扫描窗口，隐藏结果视图
 	 */
 	private void resetStatusView() {
-	//	resultView.setVisibility(View.GONE);
+		// resultView.setVisibility(View.GONE);
 		statusView.setVisibility(View.GONE);
 		viewfinderView.setVisibility(View.VISIBLE);
 	}
@@ -177,8 +178,7 @@ public class CaptureActivity extends Activity implements SurfaceHolder.Callback 
 			throw new IllegalStateException("No SurfaceHolder provided");
 		}
 		if (cameraManager.isOpen()) {
-			Log.w(TAG,
-					"initCamera() while already open -- late SurfaceView callback?");
+			Log.w(TAG, "initCamera() while already open -- late SurfaceView callback?");
 			return;
 		}
 		try {
@@ -186,8 +186,7 @@ public class CaptureActivity extends Activity implements SurfaceHolder.Callback 
 			// Creating the mHandler starts the preview, which can also throw a
 			// RuntimeException.
 			if (mHandler == null) {
-				mHandler = new CaptureActivityHandler(this, decodeFormats,
-						characterSet, cameraManager);
+				mHandler = new CaptureActivityHandler(this, decodeFormats, characterSet, cameraManager);
 			}
 			// decodeOrStoreSavedBitmap(null, null);
 		} catch (IOException ioe) {
@@ -273,14 +272,11 @@ public class CaptureActivity extends Activity implements SurfaceHolder.Callback 
 			beepManager.playBeepSoundAndVibrate();
 			drawResultPoints(barcode, scaleFactor, rawResult);
 		}
-		DateFormat.getDateTimeInstance(DateFormat.SHORT,
-				DateFormat.SHORT);
-		Map<ResultMetadataType, Object> metadata = rawResult
-				.getResultMetadata();
+		DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT);
+		Map<ResultMetadataType, Object> metadata = rawResult.getResultMetadata();
 		StringBuilder metadataText = new StringBuilder(20);
 		if (metadata != null) {
-			for (Map.Entry<ResultMetadataType, Object> entry : metadata
-					.entrySet()) {
+			for (Map.Entry<ResultMetadataType, Object> entry : metadata.entrySet()) {
 				if (DISPLAYABLE_METADATA_TYPES.contains(entry.getKey())) {
 					metadataText.append(entry.getValue()).append('\n');
 				}
@@ -289,26 +285,104 @@ public class CaptureActivity extends Activity implements SurfaceHolder.Callback 
 				metadataText.setLength(metadataText.length() - 1);
 			}
 		}
-		String[]  r =rawResult.getText().split("\\|");
-		if(r[0].equals("fileplore")){
-			ArrayList<String> qrlist = new ArrayList<String>();
-			for(int i =1;i<r.length;i++){
+		String[] r = rawResult.getText().split("\\|");
+		if (r[0].equals("fileplore")) {
+			
+			WifiManager wifiManager = (WifiManager) CaptureActivity.this.getSystemService(Context.WIFI_SERVICE);
+			WifiInfo info = wifiManager.getConnectionInfo();
+			if (info != null) {
+				Log.e("ssid", info.getSSID());
+				if (info.getSSID().equals(r[1]) || info.getSSID().equals('"' + r[1] + '"')) {
+					ArrayList<String> qrlist = new ArrayList<String>();
+					for (int i = 2; i < r.length; i++) {
+
+						qrlist.add(r[i]);
+						Log.e("resultString", r[i]);
+					}
+					Intent intent = new Intent();
+					intent.putStringArrayListExtra("pushList", qrlist);
+					intent.setClass(CaptureActivity.this, ShowPushFileActivity.class);
+					startActivity(intent);
+					finish();
+				}
+
+				else if (info.getSSID().equals("<unknown ssid>") || info.getSSID().equals("0x")) {
+					if (r[1].equals("fileplore")) {
+						Log.e("<unknown ssid>", "<unknown ssid>");
+						WifiAutoConnectManager wificonnect = new WifiAutoConnectManager(wifiManager);
+						wificonnect.connect("fileplore", "12345678", WifiCipherType.WIFICIPHER_WPA);
+						int j =0;
+						while (j<50){
+							++j;
+							try {
+								Thread.sleep(300);
+								if(wifiManager.getConnectionInfo().getSSID().equals('"' + "fileplore" + '"')){
+									ArrayList<String> qrlist = new ArrayList<String>();
+									for (int i = 2; i < r.length; i++) {
+
+										qrlist.add(r[i]);
+										Log.e("resultString "+i, r[i]);
+									}
+									Intent intent = new Intent();
+									intent.putStringArrayListExtra("pushList", qrlist);
+									intent.setClass(CaptureActivity.this, ShowPushFileActivity.class);
+									startActivity(intent);
+									finish();
+									break;
+								}
+							} catch (InterruptedException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+							
+							
+						}
+							
+						
+					}
+					else {
+						Toast.makeText(CaptureActivity.this, "不在同一局域网", Toast.LENGTH_SHORT).show();
+					}
+
+				}
+			} else if (r[1].equals("fileplore")) {
+				Log.e("null", "null");
+				WifiAutoConnectManager wificonnect = new WifiAutoConnectManager(wifiManager);
+				wificonnect.connect("fileplore", "12345678", WifiCipherType.WIFICIPHER_WPA);
+				int j =0;
+				while (j<50){
+					++j;
+					try {
+						Thread.sleep(300);
+						if(wifiManager.getConnectionInfo().getSSID().equals('"' + "fileplore" + '"')){
+							ArrayList<String> qrlist = new ArrayList<String>();
+							for (int i = 2; i < r.length; i++) {
+
+								qrlist.add(r[i]);
+								Log.e("resultString", r[i]);
+							}
+							Intent intent = new Intent();
+							intent.putStringArrayListExtra("pushList", qrlist);
+							intent.setClass(CaptureActivity.this, ShowPushFileActivity.class);
+							startActivity(intent);
+							finish();
+							break;
+						}
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					
+					
+				}
+					
 				
-				qrlist.add(r[i]);
-				Log.e("resultString", r[i]);
 			}
-			Intent intent = new Intent();
-			intent.putStringArrayListExtra("pushList", qrlist);
-			intent.setClass(CaptureActivity.this, ShowPushFileActivity.class);
-			startActivity(intent);
-			finish();
-		}
-		else{
+
+		} else {
 			Toast.makeText(CaptureActivity.this, "不支持此二维码", Toast.LENGTH_SHORT).show();
 			finish();
 		}
-		
-
 
 	}
 
@@ -319,8 +393,7 @@ public class CaptureActivity extends Activity implements SurfaceHolder.Callback 
 	 * @param scaleFactor
 	 * @param rawResult
 	 */
-	private void drawResultPoints(Bitmap barcode, float scaleFactor,
-			Result rawResult) {
+	private void drawResultPoints(Bitmap barcode, float scaleFactor, Result rawResult) {
 		ResultPoint[] points = rawResult.getResultPoints();
 		if (points != null && points.length > 0) {
 			Canvas canvas = new Canvas(barcode);
@@ -329,17 +402,15 @@ public class CaptureActivity extends Activity implements SurfaceHolder.Callback 
 			if (points.length == 2) {
 				paint.setStrokeWidth(4.0f);
 				drawLine(canvas, paint, points[0], points[1], scaleFactor);
-			} else if (points.length == 4
-					&& (rawResult.getBarcodeFormat() == BarcodeFormat.UPC_A || rawResult
-							.getBarcodeFormat() == BarcodeFormat.EAN_13)) {
+			} else if (points.length == 4 && (rawResult.getBarcodeFormat() == BarcodeFormat.UPC_A
+					|| rawResult.getBarcodeFormat() == BarcodeFormat.EAN_13)) {
 				drawLine(canvas, paint, points[0], points[1], scaleFactor);
 				drawLine(canvas, paint, points[2], points[3], scaleFactor);
 			} else {
 				paint.setStrokeWidth(10.0f);
 				for (ResultPoint point : points) {
 					if (point != null) {
-						canvas.drawPoint(scaleFactor * point.getX(),
-								scaleFactor * point.getY(), paint);
+						canvas.drawPoint(scaleFactor * point.getX(), scaleFactor * point.getY(), paint);
 					}
 				}
 			}
@@ -355,17 +426,12 @@ public class CaptureActivity extends Activity implements SurfaceHolder.Callback 
 	 * @param b
 	 * @param scaleFactor
 	 */
-	private static void drawLine(Canvas canvas, Paint paint, ResultPoint a,
-			ResultPoint b, float scaleFactor) {
+	private static void drawLine(Canvas canvas, Paint paint, ResultPoint a, ResultPoint b, float scaleFactor) {
 		if (a != null && b != null) {
-			canvas.drawLine(scaleFactor * a.getX(), scaleFactor * a.getY(),
-					scaleFactor * b.getX(), scaleFactor * b.getY(), paint);
+			canvas.drawLine(scaleFactor * a.getX(), scaleFactor * a.getY(), scaleFactor * b.getX(),
+					scaleFactor * b.getY(), paint);
 		}
 	}
-
-	
-
-
 
 	/**
 	 * 点击响应二维码扫描
@@ -376,7 +442,7 @@ public class CaptureActivity extends Activity implements SurfaceHolder.Callback 
 		decodeFormats.clear();
 		decodeFormats.add(BarcodeFormat.QR_CODE);
 		decodeFormats.add(BarcodeFormat.DATA_MATRIX);
-	//	scanTextView.setText(R.string.scan_qr);
+		// scanTextView.setText(R.string.scan_qr);
 		if (null != mHandler) {
 			mHandler.setDecodeFormats(decodeFormats);
 		}
@@ -389,8 +455,7 @@ public class CaptureActivity extends Activity implements SurfaceHolder.Callback 
 	@Override
 	public void surfaceCreated(SurfaceHolder holder) {
 		if (holder == null) {
-			Log.e(TAG,
-					"*** WARNING *** surfaceCreated() gave us a null surface!");
+			Log.e(TAG, "*** WARNING *** surfaceCreated() gave us a null surface!");
 		}
 		if (!hasSurface) {
 			hasSurface = true;
@@ -399,8 +464,7 @@ public class CaptureActivity extends Activity implements SurfaceHolder.Callback 
 	}
 
 	@Override
-	public void surfaceChanged(SurfaceHolder holder, int format, int width,
-			int height) {
+	public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
 
 	}
 
@@ -435,15 +499,15 @@ public class CaptureActivity extends Activity implements SurfaceHolder.Callback 
 		}
 		resetStatusView();
 	}
-//
-//	public boolean onKeyDown(int keyCode, KeyEvent event) {
-//		switch (keyCode) {
-//		case KeyEvent.KEYCODE_BACK: // 拦截返回键
-//
-//			restartPreviewAfterDelay(0L);
-//			return true;
-//		}
-//		return super.onKeyDown(keyCode, event);
-//	}
+	//
+	// public boolean onKeyDown(int keyCode, KeyEvent event) {
+	// switch (keyCode) {
+	// case KeyEvent.KEYCODE_BACK: // 拦截返回键
+	//
+	// restartPreviewAfterDelay(0L);
+	// return true;
+	// }
+	// return super.onKeyDown(keyCode, event);
+	// }
 
 }

@@ -8,7 +8,6 @@ import java.util.concurrent.Executors;
 
 import com.changhong.alljoyn.simpleservice.FC_GetShareFile;
 import com.changhong.fileplore.R;
-import com.changhong.fileplore.activities.MainActivity;
 import com.changhong.fileplore.activities.ShowDownFileActivity;
 import com.changhong.fileplore.application.MyApp;
 import com.changhong.fileplore.data.DownData;
@@ -22,7 +21,6 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.Environment;
@@ -31,7 +29,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 public class DownLoadService extends Service implements DownStatusInterface {
-	private static final int NOTIFICATION_FLAG = 1;
+
 	static final public int MAX_THREAD = 2;
 	private ExecutorService pool;
 	private IBinder mBinder;
@@ -224,6 +222,7 @@ public class DownLoadService extends Service implements DownStatusInterface {
 		pool.execute(new DownRunnAble(uri));
 	}
 	
+	@SuppressWarnings("deprecation")
 	private void showNotification(){
         // 创建一个NotificationManager的引用   
         NotificationManager notificationManager = (NotificationManager)    

@@ -11,18 +11,31 @@ import com.changhong.fileplore.base.BaseActivity;
 import com.changhong.fileplore.data.PloreData;
 import com.changhong.fileplore.implement.PloreInterface;
 import com.changhong.fileplore.view.RefreshListView;
+import com.chobit.corestorage.ConnectedService;
 import com.chobit.corestorage.CoreApp;
+import com.chobit.corestorage.CoreHttpServerCB;
+import com.chobit.corestorage.CoreService.CoreServiceBinder;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.listener.PauseOnScrollListener;
+
 import com.changhong.fileplore.R;
 
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.ServiceConnection;
+import android.content.DialogInterface.OnClickListener;
+import android.net.wifi.WifiConfiguration;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
+import android.os.Binder;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -338,13 +351,80 @@ public class PloreActivity extends BaseActivity implements RefreshListView.IOnRe
 						break;
 
 					case 4:
+						String ssid = "~";
+						WifiManager wifiManager = (WifiManager) PloreActivity.this
+								.getSystemService(Context.WIFI_SERVICE);
+						if (wifiManager.isWifiEnabled()) {
+							WifiInfo info=wifiManager.getConnectionInfo();
+							if(info!=null){
+								ssid =info.getSSID();
+							}
+							else{
+								HPaConnector hpc = HPaConnector.getInstance(PloreActivity.this);
+
+								try {
+									// hpc.setupWifiAp("hipa2014");
+
+									WifiConfiguration wificonf = hpc.setupWifiAp("fileplore", "12345678");
+									ssid = wificonf.SSID;
+									Thread.sleep(500);
+									MyApp app = (MyApp) PloreActivity.this.getApplicationContext();
+									app.unbindService(new ServiceConnection() {
+										
+										@Override
+										public void onServiceDisconnected(ComponentName name) {
+											// TODO Auto-generated method stub
+											
+										}
+										
+										@Override
+										public void onServiceConnected(ComponentName name, IBinder service) {
+											// TODO Auto-generated method stub
+											
+										}
+									});
+									app.setConnectedService(new ConnectedService() {
+
+										@Override
+										public void onConnected(Binder b) {
+											CoreServiceBinder binder = (CoreServiceBinder) b;
+											binder.init();
+											binder.setCoreHttpServerCBFunction(httpServerCB);
+											binder.StartHttpServer("/", MyApp.context);
+										}
+									});
+									// hpc.me();
+								} catch (Exception e) {
+									e.printStackTrace();
+									Log.e("eee11", e.getMessage());
+									Toast.makeText(PloreActivity.this, "开启wifi热点失败", Toast.LENGTH_LONG).show();
+								}
+							}
+						} else {
+							HPaConnector hpc = HPaConnector.getInstance(PloreActivity.this);
+
+							try {
+
+								WifiConfiguration wificonf = hpc.setupWifiAp("fileplore", "12345678");
+								ssid = wificonf.SSID;
+								Thread.sleep(500);
+								final CoreApp app = (CoreApp) getApplicationContext();
+								app.mBinder.deinit();
+								app.mBinder.init();
+								
+							} catch (Exception e) {
+								e.printStackTrace();
+								Log.e("eee22", e.getMessage());
+								Toast.makeText(PloreActivity.this, "开启wifi热点失败", Toast.LENGTH_LONG).show();
+							}
+						}
 						StringBuffer sb = new StringBuffer();
 						if (!mFileAdpter.isShow_cb()) {
 							mFileAdpter.setShow_cb(true);
 							mFileAdpter.notifyDataSetChanged();
 						} else {
 							Boolean[] mlist = mFileAdpter.getCheckBox_List();
-							sb.append("fileplore|");
+							sb.append("fileplore|"+ssid+"|");
 							for (int i = 0; i < mlist.length; i++) {
 								if (mlist[i]) {
 									File file = (File) mFileAdpter.getItem(i);
@@ -507,4 +587,55 @@ public class PloreActivity extends BaseActivity implements RefreshListView.IOnRe
 		super.onResume();
 		applyScrollListener();
 	}
+	
+	private CoreHttpServerCB httpServerCB = new CoreHttpServerCB() {
+
+		@Override
+		public void onTransportUpdata(String arg0, String arg1, long arg2, long arg3, long arg4) {
+			Log.e("onTransportUpdata",
+					"agr0 " + arg0 + " arg1 " + arg1 + " arg2 " + arg2 + " arg3 " + arg3 + " arg4  " + arg4);
+
+		}
+
+		@Override
+		public void onHttpServerStop() {
+
+		}
+
+		@Override
+		public void onHttpServerStart(String ip, int port) {
+			MyApp myapp = (MyApp) getApplication();
+			myapp.setIp(ip);
+			myapp.setPort(port);
+			// Log.i("tl", ip + "port" + port);
+
+		}
+
+		@Override
+		public String onGetRealFullPath(String arg0) {
+			Log.e("onGetRealFullPath", arg0);
+			return null;
+		}
+
+		@Override
+		public void recivePushResources(List<String> pushlist) {
+			final MyApp myapp = (MyApp) getApplication();
+			final List<String> list = pushlist;
+			AlertDialog.Builder dialog = new AlertDialog.Builder(myapp.getContext());
+
+			AlertDialog alert = dialog.setTitle("有推送文件，是否接收").setNegativeButton("查看", new OnClickListener() {
+
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					Intent intent = new Intent();
+					Log.e("a", myapp.getContext() + "");
+					intent.setClass(myapp.getContext(), ShowPushFileActivity.class);
+					intent.putStringArrayListExtra("pushList", (ArrayList<String>) list);
+					startActivity(intent);
+				}
+			}).setPositiveButton("取消", null).create();
+			alert.show();
+
+		}
+	};
 }
