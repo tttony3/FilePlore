@@ -69,6 +69,9 @@ public class MainActivity extends SlidingFragmentActivity
 	ImageView iv_photo;
 	ImageView iv_txt;
 	ImageView iv_zip;
+	ImageView iv_qq;
+	ImageView iv_wechat;
+	ImageView iv_app;
 	MyApp myapp;
 	static final private int DOC = 1;
 	static final private int MUSIC = 2;
@@ -203,6 +206,9 @@ public class MainActivity extends SlidingFragmentActivity
 		iv_photo = (ImageView) list.get(0).findViewById(R.id.img_photo);
 		iv_txt = (ImageView) list.get(0).findViewById(R.id.img_txt);
 		iv_zip = (ImageView) list.get(0).findViewById(R.id.img_zip);
+		iv_app = (ImageView) list.get(0).findViewById(R.id.img_app);
+		iv_qq = (ImageView) list.get(0).findViewById(R.id.img_qq);
+		iv_wechat = (ImageView) list.get(0).findViewById(R.id.img_wechat);
 		myPagerAdapter = new MainViewPagerAdapter(list);
 		pager.setAdapter(myPagerAdapter);
 		pager.setCurrentItem(0);
@@ -220,6 +226,8 @@ public class MainActivity extends SlidingFragmentActivity
 		iv_txt.setOnLongClickListener(this);
 		iv_zip.setOnClickListener(this);
 		iv_zip.setOnLongClickListener(this);
+		iv_qq.setOnClickListener(this);
+		iv_wechat.setOnClickListener(this);
 	}
 
 	/**
@@ -541,6 +549,21 @@ public class MainActivity extends SlidingFragmentActivity
 		case R.id.browse_rl_downlist:
 			intent.setClass(MainActivity.this, ShowDownFileActivity.class);
 			startActivity(intent);
+			break;
+			
+		case R.id.img_qq:
+
+			intent.setClass(MainActivity.this, QQListActivity.class);
+			intent.setFlags(R.id.img_qq);
+			startActivity(intent);
+
+			break;
+		case R.id.img_wechat:
+
+			intent.setClass(MainActivity.this, QQListActivity.class);
+			intent.setFlags(R.id.img_wechat);
+			startActivity(intent);
+
 			break;
 		default:
 			break;

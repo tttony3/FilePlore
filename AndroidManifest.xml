@@ -97,6 +97,10 @@
             android:name="com.changhong.fileplore.activities.ShowSharefileActivity"
             android:label="SharefileActivity" >
         </activity>
+         <activity
+            android:name="com.changhong.fileplore.activities.QQListActivity"
+            android:label="QQListActivity" >
+        </activity>
 
         <service
             android:name="com.chobit.corestorage.CoreService"

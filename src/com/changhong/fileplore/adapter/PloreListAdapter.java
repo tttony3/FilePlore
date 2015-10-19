@@ -56,9 +56,9 @@ public class PloreListAdapter extends BaseAdapter {
 
 	public PloreListAdapter(Context context, List<File> files, boolean isRoot, ImageLoader imageLoader) {
 
-		this.imageLoader = imageLoader;
-		this.files = files;
+		this.imageLoader = imageLoader;		
 		this.context = context;
+		this.files = files;
 		checkbox_list = new Boolean[files.size()];
 		for (int i = 0; i < checkbox_list.length; i++) {
 			checkbox_list[i] = false;
@@ -393,5 +393,12 @@ public class PloreListAdapter extends BaseAdapter {
 		return files1;
 	}
 	
-
+	public void updateList(List<File> files){
+		this.files = files;
+		checkbox_list = new Boolean[files.size()];
+		for (int i = 0; i < checkbox_list.length; i++) {
+			checkbox_list[i] = false;
+		}
+		notifyDataSetChanged();
+	}
 }

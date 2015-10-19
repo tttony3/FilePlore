@@ -50,5 +50,8 @@
     <string name="password">密码 ：</string>
     <string name="username">用户名 ：</string>
     <string name="folder">文件夹 ：</string>
+    <string name="wechat_vedio">微信小视频</string>
+     <string name="qq_file">QQ文件</string>
+      <string name="app">应用</string>
 
 </resources>
