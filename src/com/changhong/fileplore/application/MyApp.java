@@ -13,25 +13,25 @@ import java.util.concurrent.Executors;
 
 import com.changhong.fileplore.utils.Utils;
 import com.chobit.corestorage.CoreApp;
+import com.nostra13.universalimageloader.cache.disc.impl.UnlimitedDiskCache;
 import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
+import com.nostra13.universalimageloader.cache.memory.impl.UsingFreqLimitedMemoryCache;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.FailReason;
+import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
+import com.nostra13.universalimageloader.core.download.BaseImageDownloader;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
+import com.nostra13.universalimageloader.core.process.BitmapProcessor;
+
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.util.Log;
 import android.view.View;
 
-public class MyApp extends CoreApp {
-	ExecutorService fixedThreadPool = Executors.newFixedThreadPool(10);
-	File[] folderfiles;
-	static public Set<String> fileSet;
-	static public  Md5FileNameGenerator md5 =new Md5FileNameGenerator();
-	public Set<String> getFileSet() {
-		return fileSet;
-	}
-	
+public class MyApp extends CoreApp {	
 	static public Context context;
 	Context mainContext;
 	String ip;
@@ -108,71 +108,28 @@ public class MyApp extends CoreApp {
 	public void onCreate() {
 		super.onCreate();
 		File folder = new File(Utils.getPath(this, "cache"));
-		Log.e("11", Utils.getPath(this, "cache"));
 		if (!folder.exists())
 			folder.mkdir();
-
-		folderfiles = folder.listFiles();
-		//fileSet = new HashSet<String>();
-		fileSet =Collections.synchronizedSet(new HashSet<String>());
-		for (int i = 0; i < folderfiles.length; i++) {
-			fileSet.add(folderfiles[i].getName());
-		}
-		ImageLoader imageLoader = ImageLoader.getInstance();
-		imageLoader.setDefaultLoadingListener(new ImageLoadingListener() {
-
-			@Override
-			public void onLoadingStarted(String imageUri, View view) {
-				// TODO Auto-generated method stub
-
-			}
-
-			@Override
-			public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
-				// TODO Auto-generated method stub
-
-			}
-
-			@Override
-			public void onLoadingComplete(String imageUri, View view, final Bitmap loadedImage) {
-				if (loadedImage != null) {
-
-					final String filename = imageUri.substring(imageUri.lastIndexOf("/") + 1, imageUri.length());
-					fixedThreadPool.execute(new Runnable() {
-
-						@Override
-						public void run() {
-							String md5name = md5.generate(filename);
-							saveBitmap2file(loadedImage, md5.generate(filename));
-						//	saveBitmap2file(loadedImage, "cache" + filename);
-							fileSet.add(md5name);
-						}
-					});
-
-				}
-
-			}
-
-			@Override
-			public void onLoadingCancelled(String imageUri, View view) {
-				// TODO Auto-generated method stub
-
-			}
-		});
-
+		ImageLoaderConfiguration config = new ImageLoaderConfiguration  
+			    .Builder(this)  
+			    .memoryCacheExtraOptions(100, 100) // max width, max height，即保存的每个缓存文件的最大长宽  
+			    .diskCacheExtraOptions(100, 100, null) // Can slow ImageLoader, use it carefully (Better don't use it)/设置缓存的详细信息，最好不要设置这个  
+			    .threadPoolSize(3)//线程池内加载的数量  
+			    .threadPriority(Thread.NORM_PRIORITY - 2)  
+			    .denyCacheImageMultipleSizesInMemory()  
+			    .memoryCache(new UsingFreqLimitedMemoryCache(2 * 1024 * 1024)) // You can pass your own memory cache implementation/你可以通过自己的内存缓存实现  
+			    .memoryCacheSize(2 * 1024 * 1024)    
+			    .diskCacheSize(50 * 1024 * 1024)    
+			    .diskCacheFileNameGenerator(new Md5FileNameGenerator())//将保存的时候的URI名称用MD5 加密  
+			    .tasksProcessingOrder(QueueProcessingType.LIFO)  
+			    .diskCacheFileCount(300) //缓存的文件数量  
+			    .diskCache(new UnlimitedDiskCache(folder))//自定义缓存路径  
+			    .defaultDisplayImageOptions(DisplayImageOptions.createSimple())  
+			    .imageDownloader(new BaseImageDownloader(this, 5 * 1000, 30 * 1000)) // connectTimeout (5 s), readTimeout (30 s)超时时间  
+			    .writeDebugLogs() // Remove for release app  
+			    .build();//开始构建  
+		ImageLoader.getInstance().init(config);
 	}
 
-	boolean saveBitmap2file(Bitmap bmp, String filename) {
-		CompressFormat format = Bitmap.CompressFormat.JPEG;
-		int quality = 20;
-		OutputStream stream = null;
-		try {
-			stream = new FileOutputStream(Utils.getPath(this, "cache") + filename);
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-
-		return bmp.compress(format, quality, stream);
-	}
 
 }

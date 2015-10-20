@@ -59,7 +59,7 @@ public class MainActivity extends SlidingFragmentActivity
 		implements android.view.View.OnClickListener, OnLongClickListener {
 	DisplayImageOptions options = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.file_icon_photo)
 			.showImageForEmptyUri(R.drawable.file_icon_photo).showImageOnFail(R.drawable.file_icon_photo)
-			.cacheInMemory(true).cacheOnDisk(false).bitmapConfig(Bitmap.Config.RGB_565)
+			.cacheInMemory(true).cacheOnDisk(true).bitmapConfig(Bitmap.Config.RGB_565)
 			.displayer(new RoundedBitmapDisplayer(10)) // 设置图片的解码类型
 			.build();
 	ImageLoader imageLoader = ImageLoader.getInstance();
@@ -193,22 +193,22 @@ public class MainActivity extends SlidingFragmentActivity
 		
 		Intent intent2 = new Intent(context, PloreActivity.class);
 		list.add(1, getView("B", intent2));
-		
-		tl_brwloc = (TableLayout) list.get(0).findViewById(R.id.browse_tab_2);
-		rl_brwnet = (RelativeLayout) list.get(0).findViewById(R.id.browse_rl_net);
-		rl_showdown = (RelativeLayout) list.get(0).findViewById(R.id.browse_rl_downlist);
+		View view0 = list.get(0);
+		tl_brwloc = (TableLayout) view0.findViewById(R.id.browse_tab_2);
+		rl_brwnet = (RelativeLayout) view0.findViewById(R.id.browse_rl_net);
+		rl_showdown = (RelativeLayout) view0.findViewById(R.id.browse_rl_downlist);
 		tl_brwloc.setOnClickListener(new MyOnClickListener(1));
 		rl_brwnet.setOnClickListener(this);
 		rl_showdown.setOnClickListener(this);
-		iv_apk = (ImageView) list.get(0).findViewById(R.id.img_apk);
-		iv_movie = (ImageView) list.get(0).findViewById(R.id.img_movie);
-		iv_music = (ImageView) list.get(0).findViewById(R.id.img_music);
-		iv_photo = (ImageView) list.get(0).findViewById(R.id.img_photo);
-		iv_txt = (ImageView) list.get(0).findViewById(R.id.img_txt);
-		iv_zip = (ImageView) list.get(0).findViewById(R.id.img_zip);
-		iv_app = (ImageView) list.get(0).findViewById(R.id.img_app);
-		iv_qq = (ImageView) list.get(0).findViewById(R.id.img_qq);
-		iv_wechat = (ImageView) list.get(0).findViewById(R.id.img_wechat);
+		iv_apk = (ImageView) view0.findViewById(R.id.img_apk);
+		iv_movie = (ImageView) view0.findViewById(R.id.img_movie);
+		iv_music = (ImageView) view0.findViewById(R.id.img_music);
+		iv_photo = (ImageView) view0.findViewById(R.id.img_photo);
+		iv_txt = (ImageView) view0.findViewById(R.id.img_txt);
+		iv_zip = (ImageView) view0.findViewById(R.id.img_zip);
+		iv_app = (ImageView) view0.findViewById(R.id.img_app);
+		iv_qq = (ImageView) view0.findViewById(R.id.img_qq);
+		iv_wechat = (ImageView) view0.findViewById(R.id.img_wechat);
 		myPagerAdapter = new MainViewPagerAdapter(list);
 		pager.setAdapter(myPagerAdapter);
 		pager.setCurrentItem(0);
@@ -228,6 +228,7 @@ public class MainActivity extends SlidingFragmentActivity
 		iv_zip.setOnLongClickListener(this);
 		iv_qq.setOnClickListener(this);
 		iv_wechat.setOnClickListener(this);
+		iv_app.setOnClickListener(this);
 	}
 
 	/**
@@ -496,9 +497,6 @@ public class MainActivity extends SlidingFragmentActivity
 		stopService(new Intent("com.chobit.corestorage.CoreService"));
 		stopService(new Intent("com.changhong.fileplore.service.DownLoadService"));
 		super.onDestroy();
-
-		// System.exit(0);
-
 	}
 
 	@Override
@@ -554,14 +552,21 @@ public class MainActivity extends SlidingFragmentActivity
 		case R.id.img_qq:
 
 			intent.setClass(MainActivity.this, QQListActivity.class);
-			intent.setFlags(R.id.img_qq);
+			intent.putExtra("key", R.id.img_qq);
 			startActivity(intent);
 
 			break;
 		case R.id.img_wechat:
 
 			intent.setClass(MainActivity.this, QQListActivity.class);
-			intent.setFlags(R.id.img_wechat);
+			intent.putExtra("key", R.id.img_wechat);
+			startActivity(intent);
+
+			break;
+		case R.id.img_app:
+
+			intent.setClass(MainActivity.this, QQListActivity.class);
+			intent.putExtra("key", R.id.img_app);
 			startActivity(intent);
 
 			break;
@@ -763,15 +768,7 @@ public class MainActivity extends SlidingFragmentActivity
 		case PHOTO:
 			final String path = file.getPath();
 			final String name = file.getName();
-			String md5name = MyApp.md5.generate(name);
-			if (MyApp.fileSet.contains(md5name)) {
-				imageLoader.displayImage("file://" + Utils.getPath(this, "cache") + md5name, iv_1, options);
-			} else {
-
-				imageLoader.displayImage("file://" + path, iv_1, options);
-
-			}
-
+			imageLoader.displayImage("file://" + path, iv_1, options);
 			break;
 		case DOC:
 			iv_1.setImageResource(R.drawable.file_icon_txt);

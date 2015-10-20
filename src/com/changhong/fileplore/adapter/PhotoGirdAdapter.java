@@ -21,7 +21,7 @@ import android.widget.TextView;
 public class PhotoGirdAdapter extends BaseAdapter {
 	DisplayImageOptions options = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.file_icon_photo)
 			.showImageForEmptyUri(R.drawable.file_icon_photo).showImageOnFail(R.drawable.file_icon_photo)
-			.cacheInMemory(true).cacheOnDisk(false).bitmapConfig(Bitmap.Config.RGB_565) // 设置图片的解码类型
+			.cacheInMemory(true).cacheOnDisk(true).bitmapConfig(Bitmap.Config.RGB_565) // 设置图片的解码类型
 			.build();
 	ArrayList<Content> results;
 	private LayoutInflater inflater;
@@ -72,14 +72,11 @@ public class PhotoGirdAdapter extends BaseAdapter {
 		// viewHolder.image, options);
 		final String path = results.get(position).getDir();
 		final String name = results.get(position).getTitle();
-		String md5name =MyApp.md5.generate(name);
-		if (MyApp.fileSet.contains(md5name)) {
-			imageLoader.displayImage("file://" + Utils.getPath(MyApp.context, "cache") + md5name, viewHolder.image, options);
-		} else {
-
+		
+		
 			imageLoader.displayImage("file://" + path, viewHolder.image, options);
 
-		}
+		
 		return convertView;
 	}
 }

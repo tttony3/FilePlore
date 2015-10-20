@@ -28,8 +28,8 @@ public class PloreListAdapter extends BaseAdapter {
 
 	DisplayImageOptions options = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.file_icon_photo)
 			.showImageForEmptyUri(R.drawable.file_icon_photo).showImageOnFail(R.drawable.file_icon_photo)
-			.cacheInMemory(true).cacheOnDisk(false).bitmapConfig(Bitmap.Config.RGB_565)
-			.displayer(new RoundedBitmapDisplayer(10)) // 设置图片的解码类型
+			.cacheInMemory(true).cacheOnDisk(true).bitmapConfig(Bitmap.Config.RGB_565)
+			.displayer(new RoundedBitmapDisplayer(20)) // 设置图片的解码类型
 			.build();
 	ImageLoader imageLoader;
 	static final private int DOC = 1;
@@ -272,15 +272,9 @@ public class PloreListAdapter extends BaseAdapter {
 			case PHOTO:
 				final String path = file.getPath();
 				final String name = file.getName();
-				String md5name = MyApp.md5.generate(name);
-				if (MyApp.fileSet.contains(md5name)) {
-					imageLoader.displayImage("file://" + Utils.getPath(MyApp.context, "cache") + md5name, viewHolder.img, options);
-				} else {
+				imageLoader.displayImage("file://" + path, viewHolder.img, options);
 
-					imageLoader.displayImage("file://" + path, viewHolder.img, options);
-
-				}
-
+				
 				break;
 			case DOC:
 				viewHolder.img.setImageResource(R.drawable.file_icon_txt);
@@ -347,14 +341,9 @@ public class PloreListAdapter extends BaseAdapter {
 		case PHOTO:
 			final String path = file.getPath();
 			final String name = file.getName();
-			String md5name = MyApp.md5.generate(name);
-			if (MyApp.fileSet.contains(md5name)) {
-				imageLoader.displayImage("file://" + Utils.getPath(MyApp.context, "cache") + md5name, iv_1, options);
-			} else {
+			imageLoader.displayImage("file://" + path, iv_1, options);
 
-				imageLoader.displayImage("file://" + path, iv_1, options);
-
-			}
+			
 
 			break;
 		case DOC:

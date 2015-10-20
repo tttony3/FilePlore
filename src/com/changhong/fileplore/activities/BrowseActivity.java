@@ -2,13 +2,18 @@ package com.changhong.fileplore.activities;
 
 import com.changhong.fileplore.utils.Utils;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.changhong.fileplore.R;
 import com.changhong.fileplore.application.MyApp;
+import com.changhong.fileplore.data.AppInfo;
 
 import android.app.Activity;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -38,6 +43,9 @@ public class BrowseActivity extends Activity {
 	TextView tv_photo;
 	TextView tv_doc;
 	TextView tv_zip;
+	TextView tv_app;
+	TextView tv_wechat;
+	TextView tv_qq;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -53,13 +61,15 @@ public class BrowseActivity extends Activity {
 	public void callupdate() {
 		new MyAsyncTask().execute();
 		new ProgressAsyncTask().execute();
+		new AppAsyncTask().execute();
 	}
 
 	@Override
 	protected void onResume() {
-		Log.e("onResume", "browse");
+		
 		new MyAsyncTask().execute();
 		new ProgressAsyncTask().execute();
+		new AppAsyncTask().execute();
 		super.onResume();
 	}
 
@@ -78,7 +88,9 @@ public class BrowseActivity extends Activity {
 		tv_photo = (TextView) findViewById(R.id.tv_photo);
 		tv_doc = (TextView) findViewById(R.id.tv_doc);
 		tv_zip = (TextView) findViewById(R.id.tv_zip);
-
+		tv_app= (TextView) findViewById(R.id.tv_app);
+		tv_wechat= (TextView) findViewById(R.id.tv_wechat);
+		tv_qq= (TextView) findViewById(R.id.tv_qq);
 		pb_phone = (ProgressBar) findViewById(R.id.browse_phone);
 		pb_sd = (ProgressBar) findViewById(R.id.browse_sd);
 
@@ -91,6 +103,7 @@ public class BrowseActivity extends Activity {
 	void setView() {
 		new MyAsyncTask().execute();
 		new ProgressAsyncTask().execute();
+		new AppAsyncTask().execute();
 	}
 
 	long curtime = 0;
@@ -121,6 +134,9 @@ public class BrowseActivity extends Activity {
 			tv_photo.setText("照片(" + result.get("result_photo") + ")");
 			tv_doc.setText("文档(" + result.get("result_doc") + ")");
 			tv_zip.setText("压缩包(" + result.get("result_zip") + ")");
+	//		tv_app.setText("应用(" + result.get("result_app") + ")");
+			tv_wechat.setText("微信视频(" + result.get("result_wechat") + ")");
+			tv_qq.setText("QQ文件(" + result.get("result_qq") + ")");
 			super.onPostExecute(result);
 		}
 
@@ -133,6 +149,9 @@ public class BrowseActivity extends Activity {
 			map.put("result_movie", Utils.getCount("result_movie", BrowseActivity.this));
 			map.put("result_zip", Utils.getCount("result_zip", BrowseActivity.this));
 			map.put("result_doc", Utils.getCount("result_doc", BrowseActivity.this));
+	//		map.put("result_app", Utils.getCount("result_doc", BrowseActivity.this));
+			map.put("result_wechat", Utils.getCount("result_wechat", BrowseActivity.this));
+			map.put("result_qq", Utils.getCount("result_qq", BrowseActivity.this));
 			return map;
 		}
 
@@ -164,6 +183,43 @@ public class BrowseActivity extends Activity {
 			String[] sdSpace = Utils.getSdSpace(BrowseActivity.this);
 			map.put("phoneSpace", phoneSpace);
 			map.put("sdSpace", sdSpace);
+			return map;
+		}
+
+	}
+	
+	public class AppAsyncTask extends AsyncTask<Void, Void, Map<String, Integer>> {
+
+		@Override
+		protected void onPostExecute(Map<String, Integer> result) {
+			
+			tv_app.setText("应用(" + result.get("result_app") + ")");
+		
+			super.onPostExecute(result);
+		}
+
+		@Override
+		protected Map<String, Integer> doInBackground(Void... params) {
+			Map<String, Integer> map = new HashMap<String, Integer>();
+			List<PackageInfo> packages = getPackageManager().getInstalledPackages(0);
+			ArrayList<AppInfo> appList = new ArrayList<AppInfo>();
+			for (int i = 0; i < packages.size(); i++) {
+				PackageInfo packageInfo = packages.get(i);
+				AppInfo tmpInfo = new AppInfo();
+				tmpInfo.appName = packageInfo.applicationInfo.loadLabel(getPackageManager()).toString();
+				tmpInfo.packageName = packageInfo.packageName;
+				tmpInfo.versionName = packageInfo.versionName;
+				tmpInfo.versionCode = packageInfo.versionCode;
+				tmpInfo.appIcon = packageInfo.applicationInfo.loadIcon(getPackageManager());
+				// Only display the non-system app info
+				if ((packageInfo.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) == 0) {
+					
+					appList.add(tmpInfo);// 如果非系统应用，则添加至appList
+				}
+
+			}
+			map.put("result_app", appList.size());
+			
 			return map;
 		}
 

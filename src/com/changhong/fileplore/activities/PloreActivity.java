@@ -87,7 +87,7 @@ public class PloreActivity extends BaseActivity implements RefreshListView.IOnRe
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		imageLoader.init(ImageLoaderConfiguration.createDefault(this));
+	//	imageLoader.init(ImageLoaderConfiguration.createDefault(this));
 		setContentView(R.layout.activity_plore);
 		MyApp myapp = (MyApp) getApplication();
 		myapp.setContext(myapp.getMainContext());

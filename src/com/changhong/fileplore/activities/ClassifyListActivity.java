@@ -3,18 +3,13 @@ package com.changhong.fileplore.activities;
 import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-import java.util.List;
-
 import com.changhong.fileplore.adapter.ClassifyListAdapter;
-import com.changhong.fileplore.adapter.PloreListAdapter;
 import com.changhong.fileplore.application.MyApp;
-import com.changhong.fileplore.data.PloreData;
 import com.changhong.fileplore.utils.Content;
 import com.changhong.fileplore.utils.Utils;
 import com.changhong.fileplore.view.CircleProgress;
 import com.changhong.fileplore.view.RefreshListView;
 import com.chobit.corestorage.CoreApp;
-import com.nostra13.universalimageloader.core.ImageLoader;
 import com.changhong.fileplore.R;
 import android.app.ActionBar;
 import android.app.Activity;
@@ -43,9 +38,6 @@ public class ClassifyListActivity extends Activity implements RefreshListView.IO
 	static private final int DOC = 2;
 	static private final int ZIP = 3;
 	static private final int MUSIC = 4;
-	static private final int APP = 5;
-	static private final int QQFILE = 6;
-	static private final int WECHAT = 7;
 	private RefreshDataAsynTask mRefreshAsynTask;
 	ArrayList<Content> results;
 	LayoutInflater inflater;

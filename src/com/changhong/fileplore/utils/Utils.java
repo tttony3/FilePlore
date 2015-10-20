@@ -17,6 +17,7 @@ import java.util.concurrent.TimeUnit;
 
 import com.changhong.fileplore.application.MyApp;
 import com.changhong.fileplore.data.DownData;
+import com.changhong.fileplore.data.PloreData;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
 import com.google.zxing.WriterException;
@@ -37,6 +38,7 @@ import android.os.StatFs;
 import android.provider.MediaStore;
 import android.provider.MediaStore.Images;
 import android.text.format.Formatter;
+import android.util.Log;
 
 public class Utils {
 	static ArrayList<Content> results = new ArrayList<Content>();
@@ -247,8 +249,7 @@ public class Utils {
 			saveObject("result_doc", results);
 		} else if (type.equals("zip")) {
 			saveObject("result_zip", results);
-		}
-		else if (type.equals("apk")) {
+		} else if (type.equals("apk")) {
 			saveObject("result_apk", results);
 		}
 
@@ -594,6 +595,7 @@ public class Utils {
 	 */
 	public static int getCount(String type, Context context) {
 		ArrayList<Content> results = null;
+		ArrayList<File> files = new ArrayList<File>();
 		int count;
 		if (type.equals("result_movie")) {
 			results = new ArrayList<Content>();
@@ -619,7 +621,61 @@ public class Utils {
 			cursor.moveToFirst();
 			count = cursor.getCount();
 			cursor.close();
-		}
+		} else if (type.equals("result_qq")) {
+			File file = new File("/storage/sdcard0/tencent/QQfile_recv");
+			File sdfile = new File("/storage/sdcard1/tencent/QQfile_recv");
+			PloreData mPloreData = new PloreData();
+
+			if (file.exists() && file.isDirectory()) {
+				files.addAll(mPloreData.lodaData(file));
+			}
+			if (sdfile.exists() && sdfile.isDirectory()) {
+				files.addAll(mPloreData.lodaData(sdfile));
+			}
+			for (int i = 0; i < files.size(); i++) {
+				if (files.get(i).getName().startsWith(".")) {
+					files.remove(i);
+					i--;
+				}
+			}
+			return files.size();
+		} else if (type.equals("result_wechat")) {
+			ArrayList<File> wcfiles = new ArrayList<File>();
+		
+			File file = new File("/storage/sdcard0/tencent/MicroMsg");
+			File sdfile = new File("/storage/sdcard1/tencent/MicroMsg");
+			if (file.exists()) {
+				File[] mfils1 = file.listFiles();
+				for (int i = 0; i < mfils1.length; i++) {
+					if (mfils1[i].getName().length() > 25 && mfils1[i].isDirectory())
+						wcfiles.add(mfils1[i]);
+
+				}
+			}
+			if (sdfile.exists()) {
+				File[] mfils2 = sdfile.listFiles();
+				for (int i = 0; i < mfils2.length; i++) {
+					if (mfils2[i].getName().length() > 25 && mfils2[i].isDirectory())
+						wcfiles.add(mfils2[i]);
+
+				}
+			}
+			for (int i = 0; i < wcfiles.size(); i++) {
+
+				file = new File(wcfiles.get(i).getPath() + "/video");
+				Log.e("filespath", file.getPath());
+				files.addAll(new PloreData().lodaData(file));
+			}
+			for (int i = 0; i < files.size(); i++) {
+				if (files.get(i).getName().startsWith(".") || !Utils.getMIMEType(files.get(i)).equals("video/*")) {
+					files.remove(i);
+					i--;
+				}
+
+			}
+			return files.size();
+
+		} 
 
 		else {
 			try {
@@ -706,16 +762,16 @@ public class Utils {
 		}
 		return bitmap;
 	}
-	 static public String getPath(Context context,String name){ 
-			String cachePath;
-			if (Environment.MEDIA_MOUNTED.equals(Environment
-					.getExternalStorageState())
-					|| !Environment.isExternalStorageRemovable()) {
-				cachePath = context.getExternalCacheDir().getPath();
-			} else {
-				cachePath = context.getCacheDir().getPath();
-			}
-			return cachePath+"/"+name+"/";
-		
+
+	static public String getPath(Context context, String name) {
+		String cachePath;
+		if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())
+				|| !Environment.isExternalStorageRemovable()) {
+			cachePath = context.getExternalCacheDir().getPath();
+		} else {
+			cachePath = context.getCacheDir().getPath();
 		}
+		return cachePath + "/" + name + "/";
+
+	}
 }
