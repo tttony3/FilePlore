@@ -22,6 +22,8 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Binder;
 import android.os.Environment;
 import android.os.IBinder;
@@ -35,7 +37,7 @@ public class DownLoadService extends Service implements DownStatusInterface {
 	private IBinder mBinder;
 	HashMap<String, DownData> downMap;
 	boolean setDownCB = true;
-	
+
 	@Override
 	public IBinder onBind(Intent intent) {
 		return mBinder;
@@ -55,11 +57,9 @@ public class DownLoadService extends Service implements DownStatusInterface {
 		}
 	}
 
-	
-
 	@Override
 	public void onDestroy() {
-		Log.e("onDestroy","onDestroy");
+		Log.e("onDestroy", "onDestroy");
 		ArrayList<DownData> alreadydownList;
 		try {
 			alreadydownList = Utils.getDownDataObject("alreadydownlist");
@@ -68,16 +68,16 @@ public class DownLoadService extends Service implements DownStatusInterface {
 			alreadydownList = new ArrayList<DownData>();
 		}
 		ArrayList<String> del = new ArrayList<String>();
-		Iterator<String> it =downMap.keySet().iterator();
-		while(it.hasNext()){
+		Iterator<String> it = downMap.keySet().iterator();
+		while (it.hasNext()) {
 			String key = it.next();
-			DownData  tmp =downMap.get(key);
-			if(tmp.isDone()){			
+			DownData tmp = downMap.get(key);
+			if (tmp.isDone()) {
 				alreadydownList.add(tmp);
 				del.add(key);
 			}
 		}
-		for(int i =0;i<del.size();i++){
+		for (int i = 0; i < del.size(); i++) {
 			downMap.remove(del.get(i));
 		}
 		Utils.saveObject("alreadydownlist", alreadydownList);
@@ -86,8 +86,7 @@ public class DownLoadService extends Service implements DownStatusInterface {
 
 	@Override
 	public boolean onUnbind(Intent intent) {
-		
-	
+
 		return super.onUnbind(intent);
 	}
 
@@ -108,7 +107,7 @@ public class DownLoadService extends Service implements DownStatusInterface {
 				pool.execute(new DownRunnAble(it1.next()));
 			}
 		} else if (downloadlist == null) {
-		
+
 		}
 		return super.onStartCommand(intent, flags, startId);
 	}
@@ -172,7 +171,7 @@ public class DownLoadService extends Service implements DownStatusInterface {
 
 		@Override
 		public void onDownloadOK(String fileuri) {
-			
+
 			downMap.get(fileuri).setDone(true);
 			String download_Path = Environment.getExternalStorageDirectory().getAbsolutePath();
 			String appname = FC_GetShareFile.getApplicationName(getApplicationContext());
@@ -184,7 +183,6 @@ public class DownLoadService extends Service implements DownStatusInterface {
 
 		@Override
 		public void onConnectError(String fileuri) {
-			
 
 		}
 
@@ -221,42 +219,57 @@ public class DownLoadService extends Service implements DownStatusInterface {
 		downMap.put(uri, tmp);
 		pool.execute(new DownRunnAble(uri));
 	}
-	
+
 	@SuppressWarnings("deprecation")
-	private void showNotification(){
-        // 创建一个NotificationManager的引用   
-        NotificationManager notificationManager = (NotificationManager)    
-            this.getSystemService(android.content.Context.NOTIFICATION_SERVICE);   
-          
-        // 定义Notification的各种属性   
-        Notification notification =new Notification(R.drawable.file_icon_download,   
-                "下载成功", System.currentTimeMillis()); 
-        //FLAG_AUTO_CANCEL   该通知能被状态栏的清除按钮给清除掉
-        //FLAG_NO_CLEAR      该通知不能被状态栏的清除按钮给清除掉
-        //FLAG_ONGOING_EVENT 通知放置在正在运行
-        //FLAG_INSISTENT     是否一直进行，比如音乐一直播放，知道用户响应
-      //  notification.flags |= Notification.FLAG_ONGOING_EVENT; // 将此通知放到通知栏的"Ongoing"即"正在运行"组中   
-        notification.flags |= Notification.FLAG_AUTO_CANCEL; // 表明在点击了通知栏中的"清除通知"后，此通知不清除，经常与FLAG_ONGOING_EVENT一起使用   
-        notification.flags |= Notification.FLAG_SHOW_LIGHTS;   
-        //DEFAULT_ALL     使用所有默认值，比如声音，震动，闪屏等等
-        //DEFAULT_LIGHTS  使用默认闪光提示
-        //DEFAULT_SOUNDS  使用默认提示声音
-        //DEFAULT_VIBRATE 使用默认手机震动，需加上<uses-permission android:name="android.permission.VIBRATE" />权限
-        notification.defaults = Notification.DEFAULT_LIGHTS; 
-        //叠加效果常量
-        //notification.defaults=Notification.DEFAULT_LIGHTS|Notification.DEFAULT_SOUND;
-      
-        notification.ledOnMS =5000; //闪光时间，毫秒
-          
-        // 设置通知的事件消息   
-        CharSequence contentTitle ="FilePlore"; // 通知栏标题   
-        CharSequence contentText ="下载成功，点击查看"; // 通知栏内容   
-        Intent notificationIntent =new Intent(this, ShowDownFileActivity.class); // 点击该通知后要跳转的Activity  
-        notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_NEW_TASK);
-        PendingIntent contentItent = PendingIntent.getActivity(this, 0, notificationIntent, 0);   
-        notification.setLatestEventInfo(this, contentTitle, contentText, contentItent);   
-          
-        // 把Notification传递给NotificationManager   
-        notificationManager.notify(0, notification);   
-    }
+	private void showNotification() {
+		// 创建一个NotificationManager的引用
+		NotificationManager notificationManager = (NotificationManager) this
+				.getSystemService(android.content.Context.NOTIFICATION_SERVICE);
+
+		// 定义Notification的各种属性
+		// Notification notification =new
+		// Notification(R.drawable.file_icon_download,
+		// "下载成功", System.currentTimeMillis());
+		// FLAG_AUTO_CANCEL 该通知能被状态栏的清除按钮给清除掉
+		// FLAG_NO_CLEAR 该通知不能被状态栏的清除按钮给清除掉
+		// FLAG_ONGOING_EVENT 通知放置在正在运行
+		// FLAG_INSISTENT 是否一直进行，比如音乐一直播放，知道用户响应
+		// notification.flags |= Notification.FLAG_ONGOING_EVENT; //
+		// 将此通知放到通知栏的"Ongoing"即"正在运行"组中
+		// notification.flags |= Notification.FLAG_AUTO_CANCEL; //
+		// 表明在点击了通知栏中的"清除通知"后，此通知不清除，经常与FLAG_ONGOING_EVENT一起使用
+		// notification.flags |= Notification.FLAG_SHOW_LIGHTS;
+		// DEFAULT_ALL 使用所有默认值，比如声音，震动，闪屏等等
+		// DEFAULT_LIGHTS 使用默认闪光提示
+		// DEFAULT_SOUNDS 使用默认提示声音
+		// DEFAULT_VIBRATE 使用默认手机震动，需加上<uses-permission
+		// android:name="android.permission.VIBRATE" />权限
+		// notification.defaults = Notification.DEFAULT_LIGHTS;
+		// 叠加效果常量
+		// notification.defaults=Notification.DEFAULT_LIGHTS|Notification.DEFAULT_SOUND;
+
+		// notification.ledOnMS =5000; //闪光时间，毫秒
+
+		// 设置通知的事件消息
+		CharSequence contentTitle = "FilePlore"; // 通知栏标题
+		CharSequence contentText = "下载成功，点击查看"; // 通知栏内容
+		Intent notificationIntent = new Intent(this, ShowDownFileActivity.class); // 点击该通知后要跳转的Activity
+		notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+		PendingIntent contentItent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
+		// notification.setLatestEventInfo(this, contentTitle, contentText,
+		// contentItent);
+		// notification.largeIcon=
+		// BitmapFactory.decodeResource(DownLoadService.this.getResources(),
+		// R.drawable.file_icon_download);
+		Notification notification = new Notification.Builder(this)
+				.setLargeIcon(BitmapFactory.decodeResource(DownLoadService.this.getResources(),
+						R.drawable.file_icon_download))
+				.setContentText(contentText).setContentTitle(contentTitle).setContentIntent(contentItent)
+				.setSmallIcon(R.drawable.file_icon_download).setTicker("下载成功").setWhen(System.currentTimeMillis())
+				.setDefaults(Notification.DEFAULT_LIGHTS).build();
+		notification.flags |= Notification.FLAG_AUTO_CANCEL; // 表明在点击了通知栏中的"清除通知"后，此通知不清除，经常与FLAG_ONGOING_EVENT一起使用
+		notification.flags |= Notification.FLAG_SHOW_LIGHTS;
+		// 把Notification传递给NotificationManager
+		notificationManager.notify(0, notification);
+	}
 }

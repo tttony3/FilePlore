@@ -59,6 +59,7 @@ public class QQListActivity extends BaseActivity implements OnItemClickListener,
 	private AppListAdapter appAdapter;
 	private ArrayList<AppInfo> appList = new ArrayList<AppInfo>();
 	private int flag;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -81,13 +82,12 @@ public class QQListActivity extends BaseActivity implements OnItemClickListener,
 			builder = new AlertDialog.Builder(QQListActivity.this).setView(layout);
 			alertDialog = builder.create();
 			mProgressView = (CircleProgress) layout.findViewById(R.id.progress);
-			 // 用来存储获取的应用信息数据
+			// 用来存储获取的应用信息数据
 			alertDialog.show();
 			mProgressView.startAnim();
 			mRefreshAsynTask = new RefreshDataAsynTask();
 			mRefreshAsynTask.execute();
 
-		
 		} else {
 			switch (flag) {
 
@@ -116,7 +116,7 @@ public class QQListActivity extends BaseActivity implements OnItemClickListener,
 				for (int i = 0; i < wcfiles.size(); i++) {
 
 					file = new File(wcfiles.get(i).getPath() + "/video");
-					
+
 					files.addAll(mPloreData.lodaData(file));
 				}
 				for (int i = 0; i < files.size(); i++) {
@@ -209,6 +209,7 @@ public class QQListActivity extends BaseActivity implements OnItemClickListener,
 		}
 		return super.onKeyDown(keyCode, event);
 	}
+
 	class RefreshDataAsynTask extends AsyncTask<Void, Void, Void> {
 
 		@Override
@@ -230,8 +231,8 @@ public class QQListActivity extends BaseActivity implements OnItemClickListener,
 				}
 
 			}
-		return null;
-			
+			return null;
+
 		}
 
 		@Override
@@ -240,25 +241,26 @@ public class QQListActivity extends BaseActivity implements OnItemClickListener,
 				mProgressView.stopAnim();
 				alertDialog.dismiss();
 			}
-			appAdapter=new AppListAdapter(QQListActivity.this, appList);
-			tv_count.setText(appList.size()+"项");
-			lv_classify.setAdapter(appAdapter);}
-
+			appAdapter = new AppListAdapter(QQListActivity.this, appList);
+			tv_count.setText(appList.size() + "项");
+			lv_classify.setAdapter(appAdapter);
 		}
+
+	}
+
 	@Override
-	public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {	
-		if(flag!=R.id.img_app){
-			
+	public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+		if (flag != R.id.img_app) {
+
 			final File file = (File) parent.getItemAtPosition(position);
 			String[] data = { "打开", "删除", "共享", "推送" };
-			new AlertDialog.Builder(QQListActivity.this).setTitle("选择操作")
-					.setItems(data, new OnClickListener() {
+			new AlertDialog.Builder(QQListActivity.this).setTitle("选择操作").setItems(data, new OnClickListener() {
 
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
 					switch (which) {
 					case 0:
-						if(file.isDirectory()){
+						if (file.isDirectory()) {
 							PloreData mPloreData = new PloreData();
 							files.clear();
 							files.addAll(mPloreData.lodaData(file));
@@ -269,10 +271,10 @@ public class QQListActivity extends BaseActivity implements OnItemClickListener,
 								}
 							}
 							qqAdapter.updateList(files);
-							father.add(file.getParentFile());					
-						}else{
-						Intent intent = Utils.openFile(file);
-						startActivity(intent);
+							father.add(file.getParentFile());
+						} else {
+							Intent intent = Utils.openFile(file);
+							startActivity(intent);
 						}
 						break;
 					case 1:
@@ -281,7 +283,7 @@ public class QQListActivity extends BaseActivity implements OnItemClickListener,
 								files.remove(file);
 								qqAdapter.updateList(files);
 								Toast.makeText(QQListActivity.this, "删除成功", Toast.LENGTH_SHORT).show();
-								
+
 							} else {
 								Toast.makeText(QQListActivity.this, "删除失败", Toast.LENGTH_SHORT).show();
 							}
@@ -292,8 +294,7 @@ public class QQListActivity extends BaseActivity implements OnItemClickListener,
 					case 2:
 						if (CoreApp.mBinder.isBinderAlive()) {
 							String s = CoreApp.mBinder.AddShareFile(file.getPath());
-							Toast.makeText(QQListActivity.this, "AddShareFile  " + s, Toast.LENGTH_SHORT)
-									.show();
+							Toast.makeText(QQListActivity.this, "AddShareFile  " + s, Toast.LENGTH_SHORT).show();
 						} else {
 							Toast.makeText(QQListActivity.this, "服务未开启", Toast.LENGTH_SHORT).show();
 						}
@@ -309,7 +310,7 @@ public class QQListActivity extends BaseActivity implements OnItemClickListener,
 							Toast.makeText(QQListActivity.this, "文件夹暂不支持推送", Toast.LENGTH_SHORT).show();
 						}
 
-						 Intent intent = new Intent();
+						Intent intent = new Intent();
 						Bundle b = new Bundle();
 						b.putStringArrayList("pushList", pushList);
 						intent.putExtra("pushList", b);

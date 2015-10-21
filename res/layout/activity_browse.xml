@@ -196,9 +196,9 @@
                     android:layout_height="@dimen/browse_pic_width"
                     android:layout_centerHorizontal="true"
                     android:clickable="true"
-                    android:contentDescription="@string/music"
+                    android:contentDescription="@string/img_description"
                     android:scaleType="fitXY"
-                    android:src="@drawable/icon_music_selector" >
+                    android:src="@drawable/icon_wechat_selector" >
                 </ImageView>
 
                 <TextView
@@ -224,7 +224,7 @@
                     android:clickable="true"
                     android:contentDescription="@string/zip"
                     android:scaleType="fitXY"
-                    android:src="@drawable/icon_zip_selector" >
+                    android:src="@drawable/icon_qq_selector" >
                 </ImageView>
 
                 <TextView
@@ -250,7 +250,7 @@
                     android:clickable="true"
                     android:contentDescription="@string/apk"
                     android:scaleType="fitXY"
-                    android:src="@drawable/icon_apk_selector" >
+                    android:src="@drawable/ic_launcher2" >
                 </ImageView>
 
                 <TextView

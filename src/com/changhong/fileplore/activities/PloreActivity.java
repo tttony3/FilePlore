@@ -439,9 +439,10 @@ public class PloreActivity extends BaseActivity implements RefreshListView.IOnRe
 								}
 							}
 						}
-						iv_qr.setImageBitmap(Utils.createImage(sb.toString(), 320, 320));
+						float scale = PloreActivity.this.getResources().getDisplayMetrics().density; 
+						iv_qr.setImageBitmap(Utils.createImage(sb.toString(), (int)(200 * scale + 0.5f), (int)(200 * scale + 0.5f)));
 						alertDialog_qr.show();
-						alertDialog_qr.getWindow().setLayout(370, 370);
+						alertDialog_qr.getWindow().setLayout((int)(210 * scale + 0.5f), (int)(200 * scale + 0.5f));
 						break;
 					default:
 						break;

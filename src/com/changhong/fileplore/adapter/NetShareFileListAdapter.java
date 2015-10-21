@@ -7,7 +7,13 @@ import com.changhong.alljoyn.simpleclient.DeviceInfo;
 import com.changhong.fileplore.R;
 import com.changhong.synergystorage.javadata.JavaFile;
 import com.changhong.synergystorage.javadata.JavaFolder;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
+
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,8 +25,16 @@ public class NetShareFileListAdapter extends BaseAdapter {
 	private LayoutInflater inflater;
 	private List<JavaFile> fileList;
 	private List<JavaFolder> folderList;
+	DeviceInfo devInfo;
+	DisplayImageOptions options = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.file_icon_photo)
+			.showImageForEmptyUri(R.drawable.file_icon_photo).showImageOnFail(R.drawable.file_icon_photo)
+			.cacheInMemory(true).cacheOnDisk(true).bitmapConfig(Bitmap.Config.RGB_565)
+			.displayer(new RoundedBitmapDisplayer(20)) // 设置图片的解码类型
+			.build();
+	private ImageLoader imageLoader= ImageLoader.getInstance();
 	public NetShareFileListAdapter(List<JavaFile> fileList, List<JavaFolder> folderList, DeviceInfo devInfo,
 			Context context) {
+		this.devInfo=devInfo;
 		if (null == fileList) {
 			this.fileList = new ArrayList<JavaFile>();
 		} else {
@@ -69,26 +83,21 @@ public class NetShareFileListAdapter extends BaseAdapter {
 		}
 		if (position >= folderList.size()) {
 			if (JavaFile.FileType.AUDIO == fileList.get(position - folderList.size()).getFileType())
-				viewHolder.img.setBackgroundResource(R.drawable.file_icon_music);
+				viewHolder.img.setImageResource(R.drawable.file_icon_music);
 			else if (JavaFile.FileType.IMAGE == fileList.get(position - folderList.size()).getFileType()) {
-				viewHolder.img.setBackgroundResource(R.drawable.file_icon_photo);
-//				Bitmap bm = CoreApp.mBinder.getThumbnails(devInfo,
-//						fileList.get(position - folderList.size()).getLocation());
-//				if (bm == null) {
-//					
-//				} else {
-//					viewHolder.img.setBackground(null);
-//					viewHolder.img.setImageBitmap(bm);
-//				}
+				Log.e("url", fileList.get(position - folderList.size()).getLocation());
+				imageLoader.displayImage(devInfo.getM_httpserverurl()+fileList.get(position - folderList.size()).getLocation(), viewHolder.img, options);
+			//	viewHolder.img.setBackgroundResource(R.drawable.file_icon_photo);
+
 			} else if (JavaFile.FileType.VIDEO == fileList.get(position - folderList.size()).getFileType())
-				viewHolder.img.setBackgroundResource(R.drawable.file_icon_movie);
+				viewHolder.img.setImageResource(R.drawable.file_icon_movie);
 			else if (JavaFile.FileType.OTHER == fileList.get(position - folderList.size()).getFileType())
-				viewHolder.img.setBackgroundResource(R.drawable.file_icon_unknown);
+				viewHolder.img.setImageResource(R.drawable.file_icon_unknown);
 
 			viewHolder.name.setText(fileList.get(position - folderList.size()).getFullName());
 			viewHolder.url.setText(fileList.get(position - folderList.size()).getLocation());
 		} else if (position < folderList.size()) {
-			viewHolder.img.setBackgroundResource(R.drawable.file_icon_folder);
+			viewHolder.img.setImageResource(R.drawable.file_icon_folder);
 			viewHolder.name.setText(folderList.get(position).getName());
 			viewHolder.url.setText(folderList.get(position).getLocation());
 		}

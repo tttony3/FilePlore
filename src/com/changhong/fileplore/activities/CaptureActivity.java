@@ -15,6 +15,7 @@ import com.changhong.fileplore.camera.CameraManager;
 import com.changhong.fileplore.decode.CaptureActivityHandler;
 import com.changhong.fileplore.decode.FinishListener;
 import com.changhong.fileplore.decode.InactivityTimer;
+import com.changhong.fileplore.utils.HPaConnector;
 import com.changhong.fileplore.utils.WifiAutoConnectManager;
 import com.changhong.fileplore.utils.WifiAutoConnectManager.WifiCipherType;
 import com.changhong.fileplore.view.ViewfinderView;
@@ -32,6 +33,7 @@ import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
@@ -289,9 +291,13 @@ public class CaptureActivity extends Activity implements SurfaceHolder.Callback 
 			
 			WifiManager wifiManager = (WifiManager) CaptureActivity.this.getSystemService(Context.WIFI_SERVICE);
 			WifiInfo info = wifiManager.getConnectionInfo();
+			WifiConfiguration hpc = HPaConnector.getInstance(CaptureActivity.this).getWifiApConfiguration();
 			if (info != null) {
-				Log.e("ssid", info.getSSID());
-				if (info.getSSID().equals(r[1]) || info.getSSID().equals('"' + r[1] + '"')) {
+			//	Toast.makeText(this, r[1]+" info.getSSID() "+info.getSSID()+" hpc.SSID "+hpc.SSID, Toast.LENGTH_SHORT).show();
+				//Log.e("ssid", info.SSID());
+			
+				
+				if (info.getSSID().equals(r[1]) || info.getSSID().equals('"' + r[1] + '"')||hpc.SSID.equals('"' + r[1] + '"')||r[1].equals('"' + hpc.SSID + '"')) {
 					ArrayList<String> qrlist = new ArrayList<String>();
 					for (int i = 2; i < r.length; i++) {
 

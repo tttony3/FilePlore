@@ -495,8 +495,10 @@ public class MainActivity extends SlidingFragmentActivity
 	@Override
 	protected void onDestroy() {
 		stopService(new Intent("com.chobit.corestorage.CoreService"));
+		
 		stopService(new Intent("com.changhong.fileplore.service.DownLoadService"));
 		super.onDestroy();
+		System.exit(0);
 	}
 
 	@Override

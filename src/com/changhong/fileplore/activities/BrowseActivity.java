@@ -128,15 +128,19 @@ public class BrowseActivity extends Activity {
 
 		@Override
 		protected void onPostExecute(Map<String, Integer> result) {
+			int num_doc = result.get("result_doc");
+		
+			tv_doc.setText("文档(" + num_doc + ")");
 			tv_apk.setText("安装包(" + result.get("result_apk") + ")");
 			tv_movie.setText("视频(" + result.get("result_movie") + ")");
 			tv_music.setText("音乐(" + result.get("result_music") + ")");
 			tv_photo.setText("照片(" + result.get("result_photo") + ")");
-			tv_doc.setText("文档(" + result.get("result_doc") + ")");
+			
 			tv_zip.setText("压缩包(" + result.get("result_zip") + ")");
-	//		tv_app.setText("应用(" + result.get("result_app") + ")");
+	
 			tv_wechat.setText("微信视频(" + result.get("result_wechat") + ")");
 			tv_qq.setText("QQ文件(" + result.get("result_qq") + ")");
+			
 			super.onPostExecute(result);
 		}
 

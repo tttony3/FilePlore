@@ -736,7 +736,7 @@ public class Utils {
 			// 把输入的文本转为二维码
 			BitMatrix martix = writer.encode(text, BarcodeFormat.QR_CODE, width, height);
 
-			System.out.println("w:" + martix.getWidth() + "h:" + martix.getHeight());
+		//	System.out.println("w:" + martix.getWidth() + "h:" + martix.getHeight());
 
 			Hashtable<EncodeHintType, String> hints = new Hashtable<EncodeHintType, String>();
 			hints.put(EncodeHintType.CHARACTER_SET, "utf-8");

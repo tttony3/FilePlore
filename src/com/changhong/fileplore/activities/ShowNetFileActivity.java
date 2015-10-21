@@ -51,6 +51,7 @@ public class ShowNetFileActivity extends Activity {
 	static private final int SET_TOTALTIME = 8;
 
 	private JavaFile file;
+	private JavaFolder curfile=null;
 	private List<JavaFile> shareFileList;
 	private List<JavaFolder> shareFolderList;
 	static private ListView lv_sharepath;
@@ -87,10 +88,7 @@ public class ShowNetFileActivity extends Activity {
 	private AlertDialog.Builder builder_download;
 	private ProgressBar pb_download;
 	private TextView tv_download;
-	private boolean isremove = false;
-	private boolean isadd = true;
-	private boolean isexit = false;
-	private JavaFolder lastremove;
+	
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -162,24 +160,13 @@ public class ShowNetFileActivity extends Activity {
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
-			isadd = false;
-			if (isremove && fatherList.size() != 1) {
+		
 
-				Log.e("remove", fatherList.removeLast().getLocation());
-				isremove = false;
-			}
-
-			if (fatherList.size() >= 1 && !isexit) {
-				JavaFolder folder;
-				if (fatherList.size() == 1) {
-					folder = fatherList.getLast();
-					isexit = true;
-				} else {
-					folder = fatherList.removeLast();
-					Log.e("remove", folder.getLocation());
-					lastremove = folder;
-				}
+			if (fatherList.size() >= 1 ) {
+				JavaFolder folder = fatherList.pollLast();
+				
 				showDialog();
+				curfile = null;
 				CoreApp.mBinder.getFolderChildren(devInfo, folder, folder);
 
 			} else {
@@ -195,22 +182,35 @@ public class ShowNetFileActivity extends Activity {
 		@Override
 		public void updateShareContent(JavaFolder folder) {
 			if (folder != null) {
-				tv_path.setText(folder.getLocation());
-				if (!fatherList.contains(folder) && isadd) {
-					fatherList.addLast(folder);
-					Log.e("add", folder.getLocation());
+				
+				List<JavaFile> shareFileList1 = folder.getSubFileList();
+				List<JavaFolder> shareFolderList1 = folder.getSubFolderList();
+				int n = 0;
+				if (shareFileList1 != null) {
+					n = n + shareFileList1.size();
 				}
+				if (shareFolderList1 != null) {
+					n = n + shareFolderList1.size();
+				}
+				if(n ==0){
+					Toast.makeText(ShowNetFileActivity.this, "空文件夹~", Toast.LENGTH_SHORT).show();
+					dismissDialog();
+					return;
+				}
+				shareFileList =shareFileList1;
+				shareFolderList=shareFolderList1;
+				tv_path.setText(folder.getLocation());
+				
+				if (curfile!=null &&!fatherList.contains(curfile) ) {
+					fatherList.addLast(curfile);
+					Log.e("add", curfile.getLocation());
+				}
+				curfile = folder;
+				Log.e("father", fatherList.toString());
+				
+				Log.e("curfile", curfile.toString());
 				if (null != folder.getParent()) {
 
-				}
-				shareFileList = folder.getSubFileList();
-				shareFolderList = folder.getSubFolderList();
-				int n = 0;
-				if (shareFileList != null) {
-					n = n + shareFileList.size();
-				}
-				if (shareFolderList != null) {
-					n = n + shareFolderList.size();
 				}
 				filenum.setText(n + "项");
 				if (shareFileList != null || shareFolderList != null) {
@@ -222,7 +222,7 @@ public class ShowNetFileActivity extends Activity {
 				}
 			} else {
 				Toast.makeText(ShowNetFileActivity.this, "空文件夹", Toast.LENGTH_SHORT).show();
-				;
+				
 				Log.e("null!!", "folder is null");
 			}
 
@@ -263,20 +263,9 @@ public class ShowNetFileActivity extends Activity {
 			if (shareFolderList != null) {
 				if (position < shareFolderList.size()) {
 					showDialog();
-					if (!isadd && !isexit) {
-						fatherList.addLast(lastremove);
-						isadd = true;
-					}
-					isexit = false;
-
 					folder = (JavaFolder) parent.getItemAtPosition(position);
-					// if (!fatherList.contains(folder)) {
-					// fatherList.addLast(folder);
-					// Log.e("add", folder.getLocation());
-					// }
-
 					CoreApp.mBinder.getFolderChildren(devInfo, folder, folder);
-					isremove = true;
+					
 
 				} else
 					setFileOnClick(parent, position);

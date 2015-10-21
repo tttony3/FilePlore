@@ -38,6 +38,7 @@ public class PloreListAdapter extends BaseAdapter {
 	static final private int ZIP = 4;
 	static final private int MOVIE = 5;
 	static final private int UNKNOW = 6;
+	static final private int APK = 7;
 
 	private List<File> files;
 	private Boolean[] checkbox_list;
@@ -285,6 +286,9 @@ public class PloreListAdapter extends BaseAdapter {
 			case ZIP:
 				viewHolder.img.setImageResource(R.drawable.file_icon_zip);
 				break;
+			case APK:
+				viewHolder.img.setImageResource(R.drawable.file_icon_apk);
+				break;
 
 			default:
 				break;
@@ -324,6 +328,9 @@ public class PloreListAdapter extends BaseAdapter {
 		} else if (end.equals("doc") || end.equals("docx") || end.equals("txt")) {
 			return DOC;
 		}
+		else if (end.equals("apk") ) {
+			return APK;
+		}
 		return UNKNOW;
 	}
 
@@ -355,7 +362,9 @@ public class PloreListAdapter extends BaseAdapter {
 		case ZIP:
 			iv_1.setImageResource(R.drawable.file_icon_zip);
 			break;
-
+		case APK:
+			iv_1.setImageResource(R.drawable.file_icon_apk);
+			break;
 		default:
 			break;
 		}
