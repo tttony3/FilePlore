@@ -153,7 +153,7 @@ public class BrowseActivity extends Activity {
 			map.put("result_movie", Utils.getCount("result_movie", BrowseActivity.this));
 			map.put("result_zip", Utils.getCount("result_zip", BrowseActivity.this));
 			map.put("result_doc", Utils.getCount("result_doc", BrowseActivity.this));
-	//		map.put("result_app", Utils.getCount("result_doc", BrowseActivity.this));
+			//map.put("result_app", Utils.getCount("result_doc", BrowseActivity.this));
 			map.put("result_wechat", Utils.getCount("result_wechat", BrowseActivity.this));
 			map.put("result_qq", Utils.getCount("result_qq", BrowseActivity.this));
 			return map;

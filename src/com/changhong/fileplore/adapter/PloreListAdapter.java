@@ -22,6 +22,7 @@ import android.view.View.OnLongClickListener;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.ImageView;
+import android.widget.TableRow;
 import android.widget.TextView;
 
 public class PloreListAdapter extends BaseAdapter {
@@ -149,6 +150,10 @@ public class PloreListAdapter extends BaseAdapter {
 
 					LayoutInflater inflater = LayoutInflater.from(context);
 					View layout = inflater.inflate(R.layout.dialog_filepreview, null);
+					TableRow tr_1 = (TableRow) layout.findViewById(R.id.tr_filepreview_1);
+					TableRow tr_2 = (TableRow) layout.findViewById(R.id.tr_filepreview_2);
+					TableRow tr_3 = (TableRow) layout.findViewById(R.id.tr_filepreview_3);
+					TableRow tr_4 = (TableRow) layout.findViewById(R.id.tr_filepreview_4);
 					TextView tv_1 = (TextView) layout.findViewById(R.id.tv_filepreview_1);
 					TextView tv_2 = (TextView) layout.findViewById(R.id.tv_filepreview_2);
 					TextView tv_3 = (TextView) layout.findViewById(R.id.tv_filepreview_3);
@@ -161,7 +166,7 @@ public class PloreListAdapter extends BaseAdapter {
 					if (resultfiles.length > 1 && resultfiles[0] != null) {
 						tv_1.setText(resultfiles[0].getName());
 						setImage(iv_1, resultfiles[0]);
-						tv_1.setOnClickListener(new OnClickListener() {
+						tr_1.setOnClickListener(new OnClickListener() {
 
 							@Override
 							public void onClick(View v) {
@@ -169,27 +174,13 @@ public class PloreListAdapter extends BaseAdapter {
 
 							}
 						});
-						iv_1.setOnClickListener(new OnClickListener() {
-
-							@Override
-							public void onClick(View v) {
-								context.startActivity(Utils.openFile(resultfiles[0]));
-
-							}
-						});
+						
 					}
 					if (resultfiles.length > 2 && resultfiles[1] != null) {
 						tv_2.setText(resultfiles[1].getName());
 						setImage(iv_2, resultfiles[1]);
-						iv_2.setOnClickListener(new OnClickListener() {
-
-							@Override
-							public void onClick(View v) {
-								context.startActivity(Utils.openFile(resultfiles[1]));
-
-							}
-						});
-						tv_2.setOnClickListener(new OnClickListener() {
+					
+						tr_2.setOnClickListener(new OnClickListener() {
 
 							@Override
 							public void onClick(View v) {
@@ -201,15 +192,8 @@ public class PloreListAdapter extends BaseAdapter {
 					if (resultfiles.length > 3 && resultfiles[2] != null) {
 						tv_3.setText(resultfiles[2].getName());
 						setImage(iv_3, resultfiles[2]);
-						iv_3.setOnClickListener(new OnClickListener() {
-
-							@Override
-							public void onClick(View v) {
-								context.startActivity(Utils.openFile(resultfiles[2]));
-
-							}
-						});
-						tv_3.setOnClickListener(new OnClickListener() {
+						
+						tr_3.setOnClickListener(new OnClickListener() {
 
 							@Override
 							public void onClick(View v) {
@@ -221,15 +205,8 @@ public class PloreListAdapter extends BaseAdapter {
 					if (resultfiles.length > 4 && resultfiles[3] != null) {
 						tv_4.setText(resultfiles[3].getName());
 						setImage(iv_4, resultfiles[3]);
-						iv_4.setOnClickListener(new OnClickListener() {
-
-							@Override
-							public void onClick(View v) {
-								context.startActivity(Utils.openFile(resultfiles[3]));
-
-							}
-						});
-						tv_4.setOnClickListener(new OnClickListener() {
+						
+						tr_4.setOnClickListener(new OnClickListener() {
 
 							@Override
 							public void onClick(View v) {

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical" >
+    <TableRow >
+       <TextView
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           
+           android:text="文件名     ："> 
+       </TextView>
+       <TextView 
+           android:layout_marginStart="5dp"
+           android:id="@+id/tv_detail_name"
+           android:layout_width="wrap_content"
+           android:ems="10"
+        
+           android:layout_height="wrap_content"          
+           />
+               
+    </TableRow>
+    <TableRow >
+       <TextView
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:text="文件路径 ："> 
+       </TextView>
+       <TextView 
+         
+             android:labelFor="@+id/user"
+           android:layout_marginStart="5dp"
+           android:id="@+id/tv_detail_url"
+           android:layout_width="wrap_content"
+              android:ems="10"
+        
+           android:layout_height="wrap_content"          
+           />
+               
+    </TableRow>
+    <TableRow >
+       <TextView
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:text="文件大小 ："> 
+       </TextView>
+       <TextView 
+           android:labelFor="@+id/password"
+           android:layout_marginStart="5dp"
+           android:id="@+id/tv_detail_space"
+         
+           android:layout_width="wrap_content"
+              android:ems="10"
+        
+           android:layout_height="wrap_content"          
+           />
+               
+    </TableRow>
+    <TableRow >
+       <TextView
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:text="修改时间 ："> 
+       </TextView>
+       <TextView 
+         
+           android:labelFor="@+id/dir"
+           android:layout_marginStart="5dp"
+           android:id="@+id/tv_detail_time"
+           android:layout_width="wrap_content"
+           android:ems="10"       
+           android:layout_height="wrap_content"          
+           />
+               
+    </TableRow>
+    
+
+</TableLayout>

@@ -2,9 +2,10 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:background="@drawable/corners_bg"
-    android:paddingBottom="0dp"
-    android:paddingTop="0dp" >
+    android:clickable="true"
+    android:background="@drawable/corners_selector"
+    android:layout_marginBottom="2dp"
+    android:layout_marginTop="2dp" >
 
     <TextView
         android:id="@+id/tv_name"
@@ -13,7 +14,6 @@
         android:layout_marginStart="5dp"
         android:ems="6"
         android:maxLines="2"
-        android:text="name"
         android:textSize="14sp" />
 
     <ProgressBar

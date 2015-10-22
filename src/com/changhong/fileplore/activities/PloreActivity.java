@@ -2,6 +2,7 @@ package com.changhong.fileplore.activities;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,6 +10,9 @@ import com.changhong.fileplore.adapter.PloreListAdapter;
 import com.changhong.fileplore.application.MyApp;
 import com.changhong.fileplore.base.BaseActivity;
 import com.changhong.fileplore.data.PloreData;
+import com.changhong.fileplore.fragment.DetailDialogFragment;
+import com.changhong.fileplore.fragment.MoreDialogFragment;
+import com.changhong.fileplore.fragment.MoreDialogFragment.MoreDialogClickListener;
 import com.changhong.fileplore.implement.PloreInterface;
 import com.changhong.fileplore.view.RefreshListView;
 import com.chobit.corestorage.ConnectedService;
@@ -36,6 +40,7 @@ import android.os.AsyncTask;
 import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.text.format.Formatter;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -52,7 +57,7 @@ import android.widget.Toast;
 import com.changhong.fileplore.utils.*;
 
 public class PloreActivity extends BaseActivity implements RefreshListView.IOnRefreshListener, View.OnClickListener,
-		PloreInterface, OnItemClickListener, OnItemLongClickListener {
+		PloreInterface, OnItemClickListener, OnItemLongClickListener, MoreDialogClickListener {
 	protected ImageLoader imageLoader = ImageLoader.getInstance();
 	protected static final String STATE_PAUSE_ON_SCROLL = "STATE_PAUSE_ON_SCROLL";
 	protected static final String STATE_PAUSE_ON_FLING = "STATE_PAUSE_ON_FLING";
@@ -87,7 +92,7 @@ public class PloreActivity extends BaseActivity implements RefreshListView.IOnRe
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-	//	imageLoader.init(ImageLoaderConfiguration.createDefault(this));
+		// imageLoader.init(ImageLoaderConfiguration.createDefault(this));
 		setContentView(R.layout.activity_plore);
 		MyApp myapp = (MyApp) getApplication();
 		myapp.setContext(myapp.getMainContext());
@@ -241,215 +246,9 @@ public class PloreActivity extends BaseActivity implements RefreshListView.IOnRe
 			}
 			break;
 		case R.id.plore_btn_more:
-
-			AlertDialog.Builder dialog = new AlertDialog.Builder(PloreActivity.this);
-			dialog.setTitle("");
-			String[] dataArray = new String[] { "复制", "删除", "共享", "推送", "生成二维码" };
-			dialog.setItems(dataArray, new DialogInterface.OnClickListener() {
-				/***
-				 * 我们这里传递给dialog.setItems方法的参数为数组，这就导致了我们下面的
-				 * onclick方法中的which就跟数组下标是一样的，点击hello时返回0；点击baby返回1……
-				 */
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					switch (which) {
-					case 0:
-						if (!mFileAdpter.isShow_cb()) {
-							mFileAdpter.setShow_cb(true);
-							mFileAdpter.notifyDataSetChanged();
-						} else {
-							Boolean[] mlist = mFileAdpter.getCheckBox_List();
-							fileList.clear();
-							if (mFileAdpter.isShow_cb()) {
-								for (int i = 0; i < mlist.length; i++) {
-									if (mlist[i]) {
-										File file = (File) mFileAdpter.getItem(i);
-										fileList.add(file);
-									}
-								}
-							}
-							mFileAdpter.setShow_cb(false);
-							mFileAdpter.notifyDataSetChanged();
-							isCopy = true;
-							Toast.makeText(PloreActivity.this, "复制成功", Toast.LENGTH_SHORT).show();
-						}
-						break;
-					case 1:
-						if (!mFileAdpter.isShow_cb()) {
-							mFileAdpter.setShow_cb(true);
-							mFileAdpter.notifyDataSetChanged();
-						} else {
-							Boolean[] mlist = mFileAdpter.getCheckBox_List();
-							for (int i = 0; i < mlist.length; i++) {
-								if (mlist[i]) {
-									File file = (File) mFileAdpter.getItem(i);
-									Log.e("file", file.getName());
-									if (file.delete()) {
-
-										Toast.makeText(PloreActivity.this, "删除成功", Toast.LENGTH_SHORT).show();
-									} else {
-										Toast.makeText(PloreActivity.this, "删除失败", Toast.LENGTH_SHORT).show();
-									}
-								}
-							}
-							File folder = new File(mPathView.getText().toString());
-							loadData(folder);
-						}
-						break;
-
-					case 2:
-
-						if (!mFileAdpter.isShow_cb()) {
-							mFileAdpter.setShow_cb(true);
-							mFileAdpter.notifyDataSetChanged();
-						} else {
-							Boolean[] mlist = mFileAdpter.getCheckBox_List();
-							for (int i = 0; i < mlist.length; i++) {
-								if (mlist[i]) {
-									File file = (File) mFileAdpter.getItem(i);
-
-									String s = CoreApp.mBinder.AddShareFile(file.getPath());
-									Toast.makeText(PloreActivity.this, "AddShareFile  " + s, Toast.LENGTH_SHORT).show();
-								}
-							}
-							File folder = new File(mPathView.getText().toString());
-							loadData(folder);
-
-						}
-
-						break;
-					case 3:
-						ArrayList<String> pushList = new ArrayList<String>();
-						if (!mFileAdpter.isShow_cb()) {
-							mFileAdpter.setShow_cb(true);
-							mFileAdpter.notifyDataSetChanged();
-						} else {
-							Boolean[] mlist = mFileAdpter.getCheckBox_List();
-							for (int i = 0; i < mlist.length; i++) {
-								if (mlist[i]) {
-									File file = (File) mFileAdpter.getItem(i);
-									if (!file.isDirectory()) {
-										MyApp myapp = (MyApp) getApplication();
-										String ip = myapp.getIp();
-										int port = myapp.getPort();
-										pushList.add("http://" + ip + ":" + port + file.getPath());
-									} else {
-										Toast.makeText(PloreActivity.this, "文件夹暂不支持推送", Toast.LENGTH_SHORT).show();
-									}
-								}
-							}
-							if (pushList.size() > 0) {
-								Intent intent = new Intent();
-								Bundle b = new Bundle();
-								b.putStringArrayList("pushList", pushList);
-								intent.putExtra("pushList", b);
-								intent.setClass(PloreActivity.this, ShowNetDevActivity.class);
-								startActivity(intent);
-							}
-
-						}
-						break;
-
-					case 4:
-						String ssid = "~";
-						WifiManager wifiManager = (WifiManager) PloreActivity.this
-								.getSystemService(Context.WIFI_SERVICE);
-						if (wifiManager.isWifiEnabled()) {
-							WifiInfo info=wifiManager.getConnectionInfo();
-							if(info!=null){
-								ssid =info.getSSID();
-							}
-							else{
-								HPaConnector hpc = HPaConnector.getInstance(PloreActivity.this);
-
-								try {
-									// hpc.setupWifiAp("hipa2014");
-
-									WifiConfiguration wificonf = hpc.setupWifiAp("fileplore", "12345678");
-									ssid = wificonf.SSID;
-									Thread.sleep(500);
-									MyApp app = (MyApp) PloreActivity.this.getApplicationContext();
-									app.unbindService(new ServiceConnection() {
-										
-										@Override
-										public void onServiceDisconnected(ComponentName name) {
-											// TODO Auto-generated method stub
-											
-										}
-										
-										@Override
-										public void onServiceConnected(ComponentName name, IBinder service) {
-											// TODO Auto-generated method stub
-											
-										}
-									});
-									app.setConnectedService(new ConnectedService() {
-
-										@Override
-										public void onConnected(Binder b) {
-											CoreServiceBinder binder = (CoreServiceBinder) b;
-											binder.init();
-											binder.setCoreHttpServerCBFunction(httpServerCB);
-											binder.StartHttpServer("/", MyApp.context);
-										}
-									});
-									// hpc.me();
-								} catch (Exception e) {
-									e.printStackTrace();
-									Log.e("eee11", e.getMessage());
-									Toast.makeText(PloreActivity.this, "开启wifi热点失败", Toast.LENGTH_LONG).show();
-								}
-							}
-						} else {
-							HPaConnector hpc = HPaConnector.getInstance(PloreActivity.this);
-
-							try {
-
-								WifiConfiguration wificonf = hpc.setupWifiAp("fileplore", "12345678");
-								ssid = wificonf.SSID;
-								Thread.sleep(500);
-								final CoreApp app = (CoreApp) getApplicationContext();
-								app.mBinder.deinit();
-								app.mBinder.init();
-								
-							} catch (Exception e) {
-								e.printStackTrace();
-								Log.e("eee22", e.getMessage());
-								Toast.makeText(PloreActivity.this, "开启wifi热点失败", Toast.LENGTH_LONG).show();
-							}
-						}
-						StringBuffer sb = new StringBuffer();
-						if (!mFileAdpter.isShow_cb()) {
-							mFileAdpter.setShow_cb(true);
-							mFileAdpter.notifyDataSetChanged();
-						} else {
-							Boolean[] mlist = mFileAdpter.getCheckBox_List();
-							sb.append("fileplore|"+ssid+"|");
-							for (int i = 0; i < mlist.length; i++) {
-								if (mlist[i]) {
-									File file = (File) mFileAdpter.getItem(i);
-									if (!file.isDirectory()) {
-										MyApp myapp = (MyApp) getApplication();
-										String ip = myapp.getIp();
-										int port = myapp.getPort();
-										sb.append("http://" + ip + ":" + port + file.getPath() + "|");
-									} else {
-										Toast.makeText(PloreActivity.this, "暂不支持文件夹", Toast.LENGTH_SHORT).show();
-									}
-								}
-							}
-						}
-						float scale = PloreActivity.this.getResources().getDisplayMetrics().density; 
-						iv_qr.setImageBitmap(Utils.createImage(sb.toString(), (int)(200 * scale + 0.5f), (int)(200 * scale + 0.5f)));
-						alertDialog_qr.show();
-						alertDialog_qr.getWindow().setLayout((int)(210 * scale + 0.5f), (int)(200 * scale + 0.5f));
-						break;
-					default:
-						break;
-					}
-
-				}
-			}).show();
+			
+			MoreDialogFragment moreDialog = new MoreDialogFragment();  
+			moreDialog.show(getFragmentManager(), "moreDialog"); 
 
 			break;
 		case R.id.iv_back:
@@ -588,7 +387,7 @@ public class PloreActivity extends BaseActivity implements RefreshListView.IOnRe
 		super.onResume();
 		applyScrollListener();
 	}
-	
+
 	private CoreHttpServerCB httpServerCB = new CoreHttpServerCB() {
 
 		@Override
@@ -639,4 +438,235 @@ public class PloreActivity extends BaseActivity implements RefreshListView.IOnRe
 
 		}
 	};
+
+	@Override
+	public void onMoreDialogClick(View v) {
+		switch (v.getId()) {
+		case R.id.rl_moreoption_copy:
+			if (!mFileAdpter.isShow_cb()) {
+				mFileAdpter.setShow_cb(true);
+				mFileAdpter.notifyDataSetChanged();
+			} else {
+				Boolean[] mlist = mFileAdpter.getCheckBox_List();
+				fileList.clear();
+				if (mFileAdpter.isShow_cb()) {
+					for (int i = 0; i < mlist.length; i++) {
+						if (mlist[i]) {
+							File file = (File) mFileAdpter.getItem(i);
+							fileList.add(file);
+						}
+					}
+				}
+				mFileAdpter.setShow_cb(false);
+				mFileAdpter.notifyDataSetChanged();
+				isCopy = true;
+				Toast.makeText(PloreActivity.this, "复制成功", Toast.LENGTH_SHORT).show();
+			}
+			break;
+		case R.id.rl_moreoption_delete:
+			if (!mFileAdpter.isShow_cb()) {
+				mFileAdpter.setShow_cb(true);
+				mFileAdpter.notifyDataSetChanged();
+			} else {
+				Boolean[] mlist = mFileAdpter.getCheckBox_List();
+				for (int i = 0; i < mlist.length; i++) {
+					if (mlist[i]) {
+						File file = (File) mFileAdpter.getItem(i);
+						Log.e("file", file.getName());
+						if (file.delete()) {
+
+							Toast.makeText(PloreActivity.this, "删除成功", Toast.LENGTH_SHORT).show();
+						} else {
+							Toast.makeText(PloreActivity.this, "删除失败", Toast.LENGTH_SHORT).show();
+						}
+					}
+				}
+				File folder = new File(mPathView.getText().toString());
+				loadData(folder);
+			}
+			break;
+
+		case R.id.rl_moreoption_share:
+
+			if (!mFileAdpter.isShow_cb()) {
+				mFileAdpter.setShow_cb(true);
+				mFileAdpter.notifyDataSetChanged();
+			} else {
+				Boolean[] mlist = mFileAdpter.getCheckBox_List();
+				for (int i = 0; i < mlist.length; i++) {
+					if (mlist[i]) {
+						File file = (File) mFileAdpter.getItem(i);
+
+						String s = CoreApp.mBinder.AddShareFile(file.getPath());
+						Toast.makeText(PloreActivity.this, "AddShareFile  " + s, Toast.LENGTH_SHORT).show();
+					}
+				}
+				File folder = new File(mPathView.getText().toString());
+				loadData(folder);
+
+			}
+
+			break;
+		case R.id.rl_moreoption_push:
+			ArrayList<String> pushList = new ArrayList<String>();
+			if (!mFileAdpter.isShow_cb()) {
+				mFileAdpter.setShow_cb(true);
+				mFileAdpter.notifyDataSetChanged();
+			} else {
+				Boolean[] mlist = mFileAdpter.getCheckBox_List();
+				for (int i = 0; i < mlist.length; i++) {
+					if (mlist[i]) {
+						File file = (File) mFileAdpter.getItem(i);
+						if (!file.isDirectory()) {
+							
+							MyApp myapp = (MyApp) getApplication();
+							String ip = myapp.getIp();
+							int port = myapp.getPort();
+							pushList.add("http://" + ip + ":" + port + file.getPath());
+						} else {
+							Toast.makeText(PloreActivity.this, "文件夹暂不支持推送", Toast.LENGTH_SHORT).show();
+						}
+					}
+				}
+				if (pushList.size() > 0) {
+					Intent intent = new Intent();
+					Bundle b = new Bundle();
+					b.putStringArrayList("pushList", pushList);
+					intent.putExtra("pushList", b);
+					intent.setClass(PloreActivity.this, ShowNetDevActivity.class);
+					startActivity(intent);
+				}
+
+			}
+			break;
+
+		case R.id.rl_moreoption_qr:
+			String ssid = "~";
+			WifiManager wifiManager = (WifiManager) PloreActivity.this.getSystemService(Context.WIFI_SERVICE);
+			if (wifiManager.isWifiEnabled()) {
+				WifiInfo info = wifiManager.getConnectionInfo();
+				if (info != null) {
+					ssid = info.getSSID();
+				} else {
+					HPaConnector hpc = HPaConnector.getInstance(PloreActivity.this);
+
+					try {
+						// hpc.setupWifiAp("hipa2014");
+
+						WifiConfiguration wificonf = hpc.setupWifiAp("fileplore", "12345678");
+						ssid = wificonf.SSID;
+						Thread.sleep(500);
+						MyApp app = (MyApp) PloreActivity.this.getApplicationContext();
+						app.unbindService(new ServiceConnection() {
+
+							@Override
+							public void onServiceDisconnected(ComponentName name) {
+								
+
+							}
+
+							@Override
+							public void onServiceConnected(ComponentName name, IBinder service) {
+								
+
+							}
+						});
+						app.setConnectedService(new ConnectedService() {
+
+							@Override
+							public void onConnected(Binder b) {
+								CoreServiceBinder binder = (CoreServiceBinder) b;
+								binder.init();
+								binder.setCoreHttpServerCBFunction(httpServerCB);
+								binder.StartHttpServer("/", MyApp.context);
+							}
+						});
+						// hpc.me();
+					} catch (Exception e) {
+						e.printStackTrace();
+						Log.e("eee11", e.getMessage());
+						Toast.makeText(PloreActivity.this, "开启wifi热点失败", Toast.LENGTH_LONG).show();
+					}
+				}
+			} else {
+				HPaConnector hpc = HPaConnector.getInstance(PloreActivity.this);
+
+				try {
+
+					WifiConfiguration wificonf = hpc.setupWifiAp("fileplore", "12345678");
+					ssid = wificonf.SSID;
+					Thread.sleep(500);
+					final CoreApp app = (CoreApp) getApplicationContext();
+					app.mBinder.deinit();
+					app.mBinder.init();
+
+				} catch (Exception e) {
+					e.printStackTrace();
+					Log.e("eee22", e.getMessage());
+					Toast.makeText(PloreActivity.this, "开启wifi热点失败", Toast.LENGTH_LONG).show();
+				}
+			}
+			StringBuffer sb = new StringBuffer();
+			if (!mFileAdpter.isShow_cb()) {
+				mFileAdpter.setShow_cb(true);
+				mFileAdpter.notifyDataSetChanged();
+			} else {
+				Boolean[] mlist = mFileAdpter.getCheckBox_List();
+				sb.append("fileplore|" + ssid + "|");
+				for (int i = 0; i < mlist.length; i++) {
+					if (mlist[i]) {
+						File file = (File) mFileAdpter.getItem(i);
+						if (!file.isDirectory()) {
+							MyApp myapp = (MyApp) getApplication();
+							String ip = myapp.getIp();
+							int port = myapp.getPort();
+							sb.append("http://" + ip + ":" + port + file.getPath() + "|");
+						} else {
+							Toast.makeText(PloreActivity.this, "暂不支持文件夹", Toast.LENGTH_SHORT).show();
+						}
+					}
+				}
+			}
+			float scale = PloreActivity.this.getResources().getDisplayMetrics().density;
+			iv_qr.setImageBitmap(
+					Utils.createImage(sb.toString(), (int) (200 * scale + 0.5f), (int) (200 * scale + 0.5f)));
+			alertDialog_qr.show();
+			alertDialog_qr.getWindow().setLayout((int) (210 * scale + 0.5f), (int) (200 * scale + 0.5f));
+			break;
+		case R.id.rl_moreoption_detail:
+			ArrayList<File> detailList = new ArrayList<File>();
+			if (!mFileAdpter.isShow_cb()) {
+				mFileAdpter.setShow_cb(true);
+				mFileAdpter.notifyDataSetChanged();
+			} else {
+				Boolean[] mlist = mFileAdpter.getCheckBox_List();
+				for (int i = 0; i < mlist.length; i++) {
+					if (mlist[i]) {
+						File file = (File) mFileAdpter.getItem(i);
+						if (!file.isDirectory()) {
+							detailList.add(file);
+						} else {
+							//Toast.makeText(PloreActivity.this, "文件夹暂不支持推送", Toast.LENGTH_SHORT).show();
+						}
+					}
+				}
+				if (detailList.size() == 1) {
+					File detailfile =detailList.get(0);
+					String space =Formatter.formatFileSize(PloreActivity.this, detailfile.getTotalSpace());
+					String path =detailfile.getPath();
+					String time =new SimpleDateFormat("yyyy/MM/dd HH:mm").format(detailfile.lastModified());				
+					String name =detailfile.getName();
+				
+					DetailDialogFragment detailDialog = new DetailDialogFragment(name, path, time, space);  
+					detailDialog.show(getFragmentManager(), "detailDialog"); 
+
+				}
+
+			}
+			break;
+		default:
+			break;
+		}
+
+	}
 }

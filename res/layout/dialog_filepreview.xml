@@ -3,7 +3,10 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content" >
 
-    <TableRow android:padding="2dp" >
+    <TableRow android:padding="2dp" 
+        android:clickable="true"
+        android:id="@+id/tr_filepreview_1"
+        	android:background="@drawable/corners_selector">
 
         <ImageView
             android:id="@+id/iv_filepreview_1"
@@ -12,8 +15,10 @@
             android:contentDescription="@string/img_description" />
 
         <TextView
+             android:focusable="false"
+            android:clickable="false"
             android:id="@+id/tv_filepreview_1"
-            android:layout_width="170dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:maxLines="2"
@@ -23,7 +28,10 @@
             android:textSize="12sp" />
     </TableRow>
 
-    <TableRow android:padding="2dp" >
+    <TableRow android:padding="2dp"
+        android:clickable="true"
+        android:id="@+id/tr_filepreview_2"
+        	android:background="@drawable/corners_selector" >
 
         <ImageView
             android:id="@+id/iv_filepreview_2"
@@ -32,8 +40,10 @@
             android:contentDescription="@string/img_description" />
 
         <TextView
+             android:focusable="false"
+            android:clickable="false"
             android:id="@+id/tv_filepreview_2"
-            android:layout_width="170dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:maxLines="2"
@@ -43,7 +53,10 @@
             android:textSize="12sp" />
     </TableRow>
 
-    <TableRow android:padding="2dp" >
+    <TableRow android:padding="2dp" 
+        android:clickable="true"
+        android:id="@+id/tr_filepreview_3"
+        	android:background="@drawable/corners_selector">
 
         <ImageView
             android:id="@+id/iv_filepreview_3"
@@ -52,8 +65,10 @@
             android:contentDescription="@string/img_description" />
 
         <TextView
+             android:focusable="false"
+            android:clickable="false"
             android:id="@+id/tv_filepreview_3"
-            android:layout_width="170dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:maxLines="2"
@@ -63,7 +78,10 @@
             android:textSize="12sp" />
     </TableRow>
 
-    <TableRow android:padding="2dp" >
+    <TableRow android:padding="2dp" 
+        android:clickable="true"
+        android:id="@+id/tr_filepreview_4"
+        	android:background="@drawable/corners_selector">
 
         <ImageView
             android:id="@+id/iv_filepreview_4"
@@ -72,8 +90,10 @@
             android:contentDescription="@string/img_description" />
 
         <TextView
+            android:focusable="false"
+            android:clickable="false"
             android:id="@+id/tv_filepreview_4"
-            android:layout_width="170dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:maxLines="2"

@@ -51,6 +51,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TabHost;
 import android.widget.TableLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -661,6 +662,10 @@ public class MainActivity extends SlidingFragmentActivity
 
 		LayoutInflater inflater = LayoutInflater.from(context);
 		View layout = inflater.inflate(R.layout.dialog_filepreview, null);
+		TableRow tr_1 = (TableRow) layout.findViewById(R.id.tr_filepreview_1);
+		TableRow tr_2 = (TableRow) layout.findViewById(R.id.tr_filepreview_2);
+		TableRow tr_3 = (TableRow) layout.findViewById(R.id.tr_filepreview_3);
+		TableRow tr_4 = (TableRow) layout.findViewById(R.id.tr_filepreview_4);
 		TextView tv_1 = (TextView) layout.findViewById(R.id.tv_filepreview_1);
 		TextView tv_2 = (TextView) layout.findViewById(R.id.tv_filepreview_2);
 		TextView tv_3 = (TextView) layout.findViewById(R.id.tv_filepreview_3);
@@ -673,7 +678,7 @@ public class MainActivity extends SlidingFragmentActivity
 		if (files1.length > 1 && files1[0] != null) {
 			tv_1.setText(files1[0].getName());
 			setImage(iv_1, files1[0]);
-			tv_1.setOnClickListener(new View.OnClickListener() {
+			tr_1.setOnClickListener(new View.OnClickListener() {
 
 				@Override
 				public void onClick(View v) {
@@ -681,27 +686,13 @@ public class MainActivity extends SlidingFragmentActivity
 
 				}
 			});
-			iv_1.setOnClickListener(new View.OnClickListener() {
-
-				@Override
-				public void onClick(View v) {
-					context.startActivity(Utils.openFile(files1[0]));
-
-				}
-			});
+		
 		}
 		if (files1.length > 2 && files1[1] != null) {
 			tv_2.setText(files1[1].getName());
 			setImage(iv_2, files1[1]);
-			iv_2.setOnClickListener(new View.OnClickListener() {
-
-				@Override
-				public void onClick(View v) {
-					context.startActivity(Utils.openFile(files1[1]));
-
-				}
-			});
-			tv_2.setOnClickListener(new View.OnClickListener() {
+		
+			tr_2.setOnClickListener(new View.OnClickListener() {
 
 				@Override
 				public void onClick(View v) {
@@ -713,15 +704,8 @@ public class MainActivity extends SlidingFragmentActivity
 		if (files1.length > 3 && files1[2] != null) {
 			tv_3.setText(files1[2].getName());
 			setImage(iv_3, files1[2]);
-			iv_3.setOnClickListener(new View.OnClickListener() {
-
-				@Override
-				public void onClick(View v) {
-					context.startActivity(Utils.openFile(files1[2]));
-
-				}
-			});
-			tv_3.setOnClickListener(new View.OnClickListener() {
+		
+			tr_3.setOnClickListener(new View.OnClickListener() {
 
 				@Override
 				public void onClick(View v) {
@@ -733,15 +717,8 @@ public class MainActivity extends SlidingFragmentActivity
 		if (files1.length > 4 && files1[3] != null) {
 			tv_4.setText(files1[3].getName());
 			setImage(iv_4, files1[3]);
-			iv_4.setOnClickListener(new View.OnClickListener() {
-
-				@Override
-				public void onClick(View v) {
-					context.startActivity(Utils.openFile(files1[3]));
-
-				}
-			});
-			tv_4.setOnClickListener(new View.OnClickListener() {
+		
+			tr_4.setOnClickListener(new View.OnClickListener() {
 
 				@Override
 				public void onClick(View v) {
