@@ -59,7 +59,6 @@ public class DownLoadService extends Service implements DownStatusInterface {
 
 	@Override
 	public void onDestroy() {
-		Log.e("onDestroy", "onDestroy");
 		ArrayList<DownData> alreadydownList;
 		try {
 			alreadydownList = Utils.getDownDataObject("alreadydownlist");
@@ -178,6 +177,30 @@ public class DownLoadService extends Service implements DownStatusInterface {
 			Toast.makeText(((MyApp) getApplication()).getContext(),
 					"下载成功,保存在" + download_Path + "/" + appname + "/download/ 目录下", Toast.LENGTH_SHORT).show();
 			showNotification();
+			synchronized (this) {
+
+				ArrayList<DownData> alreadydownList;
+				try {
+					alreadydownList = Utils.getDownDataObject("alreadydownlist");
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					alreadydownList = new ArrayList<DownData>();
+				}
+				ArrayList<String> del = new ArrayList<String>();
+				Iterator<String> it = downMap.keySet().iterator();
+				while (it.hasNext()) {
+					String key = it.next();
+					DownData tmp = downMap.get(key);
+					if (tmp.isDone()) {
+						alreadydownList.add(tmp);
+						del.add(key);
+					}
+				}
+				for (int i = 0; i < del.size(); i++) {
+					downMap.remove(del.get(i));
+				}
+				Utils.saveObject("alreadydownlist", alreadydownList);
+			}
 
 		}
 

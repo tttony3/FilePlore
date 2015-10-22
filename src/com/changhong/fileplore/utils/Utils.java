@@ -663,7 +663,7 @@ public class Utils {
 			for (int i = 0; i < wcfiles.size(); i++) {
 
 				file = new File(wcfiles.get(i).getPath() + "/video");
-				Log.e("filespath", file.getPath());
+				
 				files.addAll(new PloreData().lodaData(file));
 			}
 			for (int i = 0; i < files.size(); i++) {

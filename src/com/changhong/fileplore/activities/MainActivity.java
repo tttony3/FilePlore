@@ -1,6 +1,7 @@
 package com.changhong.fileplore.activities;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import com.chobit.corestorage.ConnectedService;
@@ -12,9 +13,13 @@ import com.jeremyfeinstein.slidingmenu.lib.app.SlidingFragmentActivity;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
+import com.tencent.connect.share.QQShare;
+import com.tencent.tauth.Tencent;
 import com.changhong.fileplore.R;
 import com.changhong.fileplore.adapter.MainViewPagerAdapter;
 import com.changhong.fileplore.application.MyApp;
+import com.changhong.fileplore.fragment.DetailDialogFragment;
+import com.changhong.fileplore.utils.BaseUiListener;
 import com.changhong.fileplore.utils.Utils;
 
 import android.os.Binder;
@@ -34,6 +39,7 @@ import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
+import android.text.format.Formatter;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -63,6 +69,10 @@ public class MainActivity extends SlidingFragmentActivity
 			.cacheInMemory(true).cacheOnDisk(true).bitmapConfig(Bitmap.Config.RGB_565)
 			.displayer(new RoundedBitmapDisplayer(10)) // 设置图片的解码类型
 			.build();
+	Tencent mTencent ;
+
+	View view0;
+	View view1;
 	ImageLoader imageLoader = ImageLoader.getInstance();
 	ImageView iv_apk;
 	ImageView iv_movie;
@@ -101,7 +111,7 @@ public class MainActivity extends SlidingFragmentActivity
 		ActionBar actionBar = getActionBar();
 		actionBar.setDisplayShowHomeEnabled(false);
 		super.onCreate(savedInstanceState);
-
+		mTencent = Tencent.createInstance("1104922716", this.getApplicationContext());
 		setContentView(R.layout.activity_main);
 		myapp = (MyApp) getApplication();
 		myapp.setContext(this);
@@ -111,7 +121,7 @@ public class MainActivity extends SlidingFragmentActivity
 		manager = new LocalActivityManager(this, true);
 		manager.dispatchCreate(savedInstanceState);
 
-		CoreApp app = (CoreApp) this.getApplicationContext();
+		MyApp app = (MyApp) this.getApplicationContext();
 		app.setConnectedService(new ConnectedService() {
 
 			@Override
@@ -194,7 +204,8 @@ public class MainActivity extends SlidingFragmentActivity
 		
 		Intent intent2 = new Intent(context, PloreActivity.class);
 		list.add(1, getView("B", intent2));
-		View view0 = list.get(0);
+		 view0 = list.get(0);
+		 view1 = list.get(1);
 		tl_brwloc = (TableLayout) view0.findViewById(R.id.browse_tab_2);
 		rl_brwnet = (RelativeLayout) view0.findViewById(R.id.browse_rl_net);
 		rl_showdown = (RelativeLayout) view0.findViewById(R.id.browse_rl_downlist);
@@ -298,6 +309,31 @@ public class MainActivity extends SlidingFragmentActivity
 			Intent intent = new Intent();
 			intent.setClass(MainActivity.this, ShowSharefileActivity.class);
 			startActivity(intent);
+		}
+		else if (id == R.id.action_share){
+			ArrayList<File> detailList = new ArrayList<File>();
+			if (!((PloreActivity)view1.getContext()).mFileAdpter.isShow_cb()) {
+				((PloreActivity)view1.getContext()).mFileAdpter.setShow_cb(true);
+				((PloreActivity)view1.getContext()).mFileAdpter.notifyDataSetChanged();
+			} else {
+				Boolean[] mlist = ((PloreActivity)view1.getContext()).mFileAdpter.getCheckBox_List();
+				for (int i = 0; i < mlist.length; i++) {
+					if (mlist[i]) {
+						File file = (File) ((PloreActivity)view1.getContext()).mFileAdpter.getItem(i);
+						if (!file.isDirectory()) {
+							detailList.add(file);
+						} else {
+							//Toast.makeText(PloreActivity.this, "文件夹暂不支持推送", Toast.LENGTH_SHORT).show();
+						}
+					}
+				}
+				if (detailList.size() == 1) {
+					File detailfile =detailList.get(0);					
+					onClickShare(detailfile);
+
+				}
+
+			}
 		}
 		return super.onOptionsItemSelected(item);
 
@@ -493,10 +529,12 @@ public class MainActivity extends SlidingFragmentActivity
 		super.onResume();
 	}
 
+
+
 	@Override
 	protected void onDestroy() {
-		stopService(new Intent("com.chobit.corestorage.CoreService"));
 		
+		stopService(new Intent("com.chobit.corestorage.CoreService"));	
 		stopService(new Intent("com.changhong.fileplore.service.DownLoadService"));
 		super.onDestroy();
 		System.exit(0);
@@ -782,5 +820,12 @@ public class MainActivity extends SlidingFragmentActivity
 		return UNKNOW;
 
 	}
-
+	private void onClickShare(File file) {
+	    Bundle params = new Bundle();
+	    params.putString(QQShare.SHARE_TO_QQ_IMAGE_LOCAL_URL,file.getPath());
+	  
+	    params.putInt(QQShare.SHARE_TO_QQ_KEY_TYPE, QQShare.SHARE_TO_QQ_TYPE_IMAGE);
+	    params.putInt(QQShare.SHARE_TO_QQ_EXT_INT, QQShare.SHARE_TO_QQ_FLAG_QZONE_AUTO_OPEN);
+	    mTencent.shareToQQ(MainActivity.this, params, new BaseUiListener());
+	}
 }

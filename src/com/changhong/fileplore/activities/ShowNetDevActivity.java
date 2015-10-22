@@ -62,9 +62,7 @@ public class ShowNetDevActivity extends Activity {
 		alertDialog = builder.create();
 		mProgressView = (CircleProgress) layout.findViewById(R.id.progress);
 		netList = (ListView) findViewById(R.id.lv_netactivity);
-		// dialog = new MyProgressDialog(ShowNetDevActivity.this).getDialog();
-
-		// ClientBusHandler.List_DeviceInfo.clear();
+	
 
 		if (CoreApp.mBinder != null) {
 			CoreApp.mBinder.setDeviceListener(deviceListener);

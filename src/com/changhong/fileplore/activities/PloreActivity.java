@@ -22,7 +22,9 @@ import com.chobit.corestorage.CoreService.CoreServiceBinder;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.listener.PauseOnScrollListener;
-
+import com.tencent.connect.common.Constants;
+import com.tencent.connect.share.QQShare;
+import com.tencent.tauth.Tencent;
 import com.changhong.fileplore.R;
 
 import android.app.AlertDialog;
@@ -82,6 +84,7 @@ public class PloreActivity extends BaseActivity implements RefreshListView.IOnRe
 	private Builder builder_qr;
 	private AlertDialog alertDialog_qr;
 	private ImageView iv_qr;
+	Tencent mTencent ;
 
 	@Override
 	public void onRestoreInstanceState(Bundle savedInstanceState) {
@@ -91,6 +94,7 @@ public class PloreActivity extends BaseActivity implements RefreshListView.IOnRe
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		mTencent = Tencent.createInstance("1104922716", this.getApplicationContext());
 		super.onCreate(savedInstanceState);
 		// imageLoader.init(ImageLoaderConfiguration.createDefault(this));
 		setContentView(R.layout.activity_plore);
@@ -659,6 +663,7 @@ public class PloreActivity extends BaseActivity implements RefreshListView.IOnRe
 				
 					DetailDialogFragment detailDialog = new DetailDialogFragment(name, path, time, space);  
 					detailDialog.show(getFragmentManager(), "detailDialog"); 
+				//	onClickShare(detailfile);
 
 				}
 
@@ -668,5 +673,14 @@ public class PloreActivity extends BaseActivity implements RefreshListView.IOnRe
 			break;
 		}
 
+	}
+	
+	private void onClickShare(File file) {
+	    Bundle params = new Bundle();
+	    params.putString(QQShare.SHARE_TO_QQ_IMAGE_LOCAL_URL,file.getPath());
+	  
+	    params.putInt(QQShare.SHARE_TO_QQ_KEY_TYPE, QQShare.SHARE_TO_QQ_TYPE_IMAGE);
+	    params.putInt(QQShare.SHARE_TO_QQ_EXT_INT, QQShare.SHARE_TO_QQ_FLAG_QZONE_AUTO_OPEN);
+	    mTencent.shareToQQ(PloreActivity.this, params, new BaseUiListener());
 	}
 }

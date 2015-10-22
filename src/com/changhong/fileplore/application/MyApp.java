@@ -13,6 +13,7 @@ import java.util.concurrent.Executors;
 
 import com.changhong.fileplore.utils.Utils;
 import com.chobit.corestorage.CoreApp;
+import com.chobit.corestorage.CoreService.CoreServiceBinder;
 import com.nostra13.universalimageloader.cache.disc.impl.UnlimitedDiskCache;
 import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
 import com.nostra13.universalimageloader.cache.memory.impl.UsingFreqLimitedMemoryCache;
@@ -25,9 +26,12 @@ import com.nostra13.universalimageloader.core.download.BaseImageDownloader;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 import com.nostra13.universalimageloader.core.process.BitmapProcessor;
 
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.ServiceConnection;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
+import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
 
@@ -130,6 +134,21 @@ public class MyApp extends CoreApp {
 			    .build();//开始构建  
 		ImageLoader.getInstance().init(config);
 	}
+public void unbindService(){
+	onTerminate();
+}
+	private ServiceConnection mConnection = new ServiceConnection() {
 
+		@Override
+		public void onServiceDisconnected(ComponentName arg0) {
+			// TODO Auto-generated method stub
 
+		}
+
+		@Override
+		public void onServiceConnected(ComponentName arg0, IBinder service) {
+			
+
+		}
+	};
 }

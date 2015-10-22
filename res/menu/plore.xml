@@ -28,4 +28,9 @@
           android:icon="@drawable/action_qr" 
         android:showAsAction="ifRoom"
         android:title="@string/scanner"/>
+ <item
+        android:id="@+id/action_share"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        android:title="分享"/>
 </menu>

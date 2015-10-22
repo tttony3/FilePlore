@@ -20,7 +20,8 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.SET_WALLPAPER" />
     <uses-permission android:name="android.permission.VIBRATE" />
-
+	<uses-permission android:name="android.permission.INTERNET" />
+	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-sdk
         android:minSdkVersion="17"
         android:targetSdkVersion="22" />
@@ -97,11 +98,27 @@
             android:name="com.changhong.fileplore.activities.ShowSharefileActivity"
             android:label="SharefileActivity" >
         </activity>
-         <activity
+        <activity
             android:name="com.changhong.fileplore.activities.QQListActivity"
             android:label="QQListActivity" >
         </activity>
+  <activity
+            android:name="com.tencent.tauth.AuthActivity"
+            android:launchMode="singleTask"
+            android:noHistory="true" >
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
 
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="tencent1104922716" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.tencent.connect.common.AssistActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
         <service
             android:name="com.chobit.corestorage.CoreService"
             android:permission="com.chobit.corestorage.CoreService" >
@@ -116,6 +133,9 @@
                 <action android:name="com.changhong.fileplore.service.DownLoadService" />
             </intent-filter>
         </service>
+    </application>
+    <application>
+      
     </application>
 
 </manifest>
