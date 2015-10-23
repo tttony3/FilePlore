@@ -102,12 +102,13 @@ public class ShowNetFileActivity extends Activity {
 		findView();
 
 		Intent intent = getIntent();
-		int position = intent.getFlags();
-		devInfo = CoreApp.mBinder.GetDeviceList().get(position);
+	
+		devInfo =((MyApp)getApplicationContext()).devinfo;
+	//	int position = intent.getFlags();
+	//	devInfo = CoreApp.mBinder.GetDeviceList().get(position);
 		CoreApp.mBinder.setShareFileListener(shareListener);
 		CoreApp.mBinder.ConnectDeivce(devInfo);
-		// CoreApp.mBinder.setDownloadCBInterface(new
-		// MyCoreDownloadProgressCB(handler, this));
+
 		netShareFileListAdapter = new NetShareFileListAdapter(shareFileList, shareFolderList, devInfo, this);
 		myOnItemClickListener = new MyOnItemClickListener();
 

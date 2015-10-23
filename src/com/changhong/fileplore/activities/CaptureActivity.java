@@ -312,6 +312,7 @@ public class CaptureActivity extends Activity implements SurfaceHolder.Callback 
 				}
 
 				else if (info.getSSID().equals("<unknown ssid>") || info.getSSID().equals("0x")) {
+					Toast.makeText(this, r[1],Toast.LENGTH_SHORT).show();;
 					if (r[1].equals("fileplore")) {
 						Log.e("<unknown ssid>", "<unknown ssid>");
 						WifiAutoConnectManager wificonnect = new WifiAutoConnectManager(wifiManager);

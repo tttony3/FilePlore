@@ -64,7 +64,17 @@ public class NetPushFileListAdapter extends BaseAdapter {
 			viewHolder.img.setBackgroundResource(R.drawable.file_icon_music);
 		} else if (type == "image") {
 			viewHolder.img.setBackgroundResource(R.drawable.file_icon_photo);
-		} else if (type == "*") {
+		} 
+		else if (type == "zip") {
+			viewHolder.img.setBackgroundResource(R.drawable.file_icon_zip);
+		}
+		else if (type == "apk") {
+			viewHolder.img.setBackgroundResource(R.drawable.file_icon_apk);
+		}
+		else if (type == "doc") {
+			viewHolder.img.setBackgroundResource(R.drawable.file_icon_txt);
+		}
+		else  {
 			viewHolder.img.setBackgroundResource(R.drawable.file_icon_unknown);
 		}
 

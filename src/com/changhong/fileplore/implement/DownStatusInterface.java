@@ -33,4 +33,6 @@ public interface DownStatusInterface {
 	 * 停止所有下载任务
 	 */
 	public void stopAllDownload();
+
+	public boolean cancelDownload(String uri);
 }

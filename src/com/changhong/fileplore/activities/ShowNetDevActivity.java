@@ -26,6 +26,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
@@ -46,6 +47,12 @@ public class ShowNetDevActivity extends Activity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		Intent intent = getIntent();
+		Bundle b = intent.getBundleExtra("pushList");
+		if (b != null) {
+			pushList = b.getStringArrayList("pushList");
+		}
+		
 		ActionBar actionBar = getActionBar();
 		actionBar.setDisplayShowHomeEnabled(false);
 		setContentView(R.layout.activity_net_dev);
@@ -53,17 +60,12 @@ public class ShowNetDevActivity extends Activity {
 		myapp.setContext(this);
 		LayoutInflater inflater = getLayoutInflater();
 		layout = inflater.inflate(R.layout.circle_progress, (ViewGroup) findViewById(R.id.rl_progress));
-		Intent intent = getIntent();
-		Bundle b = intent.getBundleExtra("pushList");
-		if (b != null) {
-			pushList = b.getStringArrayList("pushList");
-		}
+	
 		builder = new AlertDialog.Builder(this).setView(layout);
 		alertDialog = builder.create();
 		mProgressView = (CircleProgress) layout.findViewById(R.id.progress);
 		netList = (ListView) findViewById(R.id.lv_netactivity);
 	
-
 		if (CoreApp.mBinder != null) {
 			CoreApp.mBinder.setDeviceListener(deviceListener);
 			deviceListener.startWaiting();
@@ -76,69 +78,71 @@ public class ShowNetDevActivity extends Activity {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 				if(pushList!=null){
-
 					final DeviceInfo info = (DeviceInfo) parent.getItemAtPosition(position);
-					AlertDialog.Builder dialog = new AlertDialog.Builder(ShowNetDevActivity.this);
-					dialog.setTitle("");
-					String[] dataArray = new String[] { "推送到此设备" };
-					dialog.setItems(dataArray, new DialogInterface.OnClickListener() {
+					LayoutInflater inflater = getLayoutInflater();
+					final View layout = inflater.inflate(R.layout.fragment_pushdialog, null);
+					new AlertDialog.Builder(ShowNetDevActivity.this).setTitle("推送到此设备").setView(layout)
+							.setNegativeButton("确定", new DialogInterface.OnClickListener() {
 
-						@Override
-						public void onClick(DialogInterface dialog, int which) {
-							switch (which) {
-							case 0:
-								if (pushList != null && pushList.size() != 0) {
-									CoreApp.mBinder.PushResourceToDevice(info, pushList);
-								} else {
-									Toast.makeText(ShowNetDevActivity.this, "未选择推送文件", Toast.LENGTH_SHORT).show();
-								}
-								break;
-							default:
-								break;
-							}
+								@Override
+								public void onClick(DialogInterface dialog, int which) {
+									EditText message = (EditText) layout.findViewById(R.id.ev_message);
+									
+									if (pushList != null && pushList.size() != 0) {
+										if(pushList.get(0).startsWith("message:")){
+											pushList.remove(0);
+										}
+										pushList.add(0, "message:"+message.getText().toString());
+										CoreApp.mBinder.PushResourceToDevice(info, pushList);
+										
+									} else {
+										Toast.makeText(ShowNetDevActivity.this, "未选择推送文件", Toast.LENGTH_SHORT).show();
+									}
+									
 
-						}
-					}).create().show();
-				
-				
+									}
+
+								}).setPositiveButton("取消", null).show();
+			
 					
 				}else{
+					DeviceInfo info = (DeviceInfo) parent.getItemAtPosition(position);
 				Intent intent = new Intent();
 				intent.setClass(ShowNetDevActivity.this, ShowNetFileActivity.class);
-				intent.setFlags(position);
+				((MyApp)getApplicationContext()).devinfo=info;
 				startActivity(intent);}
 			}
 		});
-		netList.setOnItemLongClickListener(new OnItemLongClickListener() {
-
-			@Override
-			public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-				final DeviceInfo info = (DeviceInfo) parent.getItemAtPosition(position);
-				AlertDialog.Builder dialog = new AlertDialog.Builder(ShowNetDevActivity.this);
-				dialog.setTitle("");
-				String[] dataArray = new String[] { "推送到此设备" };
-				dialog.setItems(dataArray, new DialogInterface.OnClickListener() {
-
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						switch (which) {
-						case 0:
-							if (pushList != null && pushList.size() != 0) {
-								CoreApp.mBinder.PushResourceToDevice(info, pushList);
-							} else {
-								Toast.makeText(ShowNetDevActivity.this, "未选择推送文件", Toast.LENGTH_SHORT).show();
-							}
-							break;
-						default:
-							break;
-						}
-
-					}
-				}).create().show();
-				return true;
-			}
-
-		});
+//		netList.setOnItemLongClickListener(new OnItemLongClickListener() {
+//
+//			@Override
+//			public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+//				final DeviceInfo info = (DeviceInfo) parent.getItemAtPosition(position);
+//				AlertDialog.Builder dialog = new AlertDialog.Builder(ShowNetDevActivity.this);
+//				dialog.setTitle("");
+//				String[] dataArray = new String[] { "推送到此设备" };
+//				dialog.setItems(dataArray, new DialogInterface.OnClickListener() {
+//
+//					@Override
+//					public void onClick(DialogInterface dialog, int which) {
+//						switch (which) {
+//						case 0:
+//							if (pushList != null && pushList.size() != 0) {
+//								CoreApp.mBinder.PushResourceToDevice(info, pushList);
+//							} else {
+//								Toast.makeText(ShowNetDevActivity.this, "未选择推送文件", Toast.LENGTH_SHORT).show();
+//							}
+//							break;
+//						default:
+//							break;
+//						}
+//
+//					}
+//				}).create().show();
+//				return true;
+//			}
+//
+//		});
 	}
 
 	private void setUpdateList(List<DeviceInfo> list) {

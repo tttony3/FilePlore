@@ -11,6 +11,7 @@ import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import com.changhong.alljoyn.simpleclient.DeviceInfo;
 import com.changhong.fileplore.utils.Utils;
 import com.chobit.corestorage.CoreApp;
 import com.chobit.corestorage.CoreService.CoreServiceBinder;
@@ -40,7 +41,7 @@ public class MyApp extends CoreApp {
 	Context mainContext;
 	String ip;
 	int port;
-
+	public DeviceInfo devinfo;
 	public String getIp() {
 		return ip;
 	}

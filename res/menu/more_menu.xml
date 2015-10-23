@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item
+     android:id="@+id/it_meun_copy"  
+     android:title="复制"/>  
+ 
+    <item  
+        android:id="@+id/it_meun_delete"  
+        android:title="删除"/>  
+ <item
+     android:id="@+id/it_meun_share"  
+     android:title="共享"/>  
+      <item
+     android:id="@+id/it_meun_push"  
+     android:title="推送"/>  
+      <item
+     android:id="@+id/it_meun_qr"  
+     android:title="二维码"/>  
+      <item
+     android:id="@+id/it_meun_detail"  
+     android:title="属性"/>  
+</menu>

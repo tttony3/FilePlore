@@ -693,7 +693,7 @@ public class Utils {
 	 * 
 	 * @param name
 	 *            文件名
-	 * @return 文件类型 one of {"audio","video","image","*"}
+	 * @return 文件类型 one of {"audio","video","image","*","zip","doc","apk"}
 	 */
 	public static String getMIMEType(String name) {
 		String type;
@@ -705,7 +705,15 @@ public class Utils {
 		} else if (end.equals("jpg") || end.equals("png") || end.equals("jpeg") || end.equals("bmp")
 				|| end.equals("gif")) {
 			type = "image";
-		} else {
+		} else if (end.equals("doc") || end.equals("docx") || end.equals("pdf") || end.equals("txt")) {
+			type = "doc";
+		} 
+		else if (end.equals("apk") ) {
+			type = "apk";
+		}
+		else if (end.equals("zip") || end.equals("rar") || end.equals("7z") ) {
+			type = "zip";
+		}else {
 			type = "*";
 		}
 		return type;

@@ -312,6 +312,7 @@ public class MainActivity extends SlidingFragmentActivity
 		}
 		else if (id == R.id.action_share){
 			ArrayList<File> detailList = new ArrayList<File>();
+			pager.setCurrentItem(1);
 			if (!((PloreActivity)view1.getContext()).mFileAdpter.isShow_cb()) {
 				((PloreActivity)view1.getContext()).mFileAdpter.setShow_cb(true);
 				((PloreActivity)view1.getContext()).mFileAdpter.notifyDataSetChanged();
@@ -505,12 +506,13 @@ public class MainActivity extends SlidingFragmentActivity
 			final List<String> list = pushlist;
 			AlertDialog.Builder dialog = new AlertDialog.Builder(myapp.getContext());
 
-			AlertDialog alert = dialog.setTitle("有推送文件，是否接收").setNegativeButton("查看", new OnClickListener() {
+			AlertDialog alert = dialog.setTitle("有推送文件").setMessage(pushlist.remove(0).substring(8))
+					.setNegativeButton("查看", new OnClickListener() {
 
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
 					Intent intent = new Intent();
-					Log.e("a", myapp.getContext() + "");
+					
 					intent.setClass(myapp.getContext(), ShowPushFileActivity.class);
 					intent.putStringArrayListExtra("pushList", (ArrayList<String>) list);
 					startActivity(intent);
@@ -823,8 +825,15 @@ public class MainActivity extends SlidingFragmentActivity
 	private void onClickShare(File file) {
 	    Bundle params = new Bundle();
 	    params.putString(QQShare.SHARE_TO_QQ_IMAGE_LOCAL_URL,file.getPath());
-	  
-	    params.putInt(QQShare.SHARE_TO_QQ_KEY_TYPE, QQShare.SHARE_TO_QQ_TYPE_IMAGE);
+		switch (getMIMEType(file.getName())) {
+		case PHOTO:
+			params.putInt(QQShare.SHARE_TO_QQ_KEY_TYPE, QQShare.SHARE_TO_QQ_TYPE_IMAGE);
+			break;
+		default:
+			Toast.makeText(this, "只支持图片分享", Toast.LENGTH_SHORT).show();
+			return;
+		}
+	    
 	    params.putInt(QQShare.SHARE_TO_QQ_EXT_INT, QQShare.SHARE_TO_QQ_FLAG_QZONE_AUTO_OPEN);
 	    mTencent.shareToQQ(MainActivity.this, params, new BaseUiListener());
 	}

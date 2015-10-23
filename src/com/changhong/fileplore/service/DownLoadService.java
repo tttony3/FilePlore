@@ -174,7 +174,7 @@ public class DownLoadService extends Service implements DownStatusInterface {
 			downMap.get(fileuri).setDone(true);
 			String download_Path = Environment.getExternalStorageDirectory().getAbsolutePath();
 			String appname = FC_GetShareFile.getApplicationName(getApplicationContext());
-			Toast.makeText(((MyApp) getApplication()).getContext(),
+			Toast.makeText(MyApp.context,
 					"下载成功,保存在" + download_Path + "/" + appname + "/download/ 目录下", Toast.LENGTH_SHORT).show();
 			showNotification();
 			synchronized (this) {
@@ -227,6 +227,19 @@ public class DownLoadService extends Service implements DownStatusInterface {
 		CoreApp.mBinder.cancelDownload(uri);
 
 	}
+	@Override
+	public boolean cancelDownload(String uri) {
+		if(downMap.containsKey(uri)){
+		CoreApp.mBinder.cancelDownload(uri);
+		downMap.remove(uri);
+		return true;
+		}
+		else{
+			return false;
+		}
+
+	}
+
 
 	@Override
 	public void stopAllDownload() {
@@ -235,6 +248,7 @@ public class DownLoadService extends Service implements DownStatusInterface {
 			CoreApp.mBinder.cancelDownload(it.next());
 		}
 	}
+	
 
 	public void addDownloadFile(String uri) {
 		DownData tmp = new DownData();

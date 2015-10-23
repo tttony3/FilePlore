@@ -27,7 +27,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:text="@string/default_count"
-            android:textSize="18sp" />
+            android:textSize="@dimen/top_textsize" />
     </RelativeLayout>
 
     <LinearLayout

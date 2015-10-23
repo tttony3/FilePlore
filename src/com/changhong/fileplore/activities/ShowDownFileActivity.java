@@ -1,10 +1,12 @@
 package com.changhong.fileplore.activities;
 
+import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import com.changhong.alljoyn.simpleservice.FC_GetShareFile;
 import com.changhong.fileplore.R;
 import com.changhong.fileplore.adapter.DownFileListAdapter;
 import com.changhong.fileplore.application.MyApp;
@@ -14,20 +16,27 @@ import com.changhong.fileplore.service.DownLoadService;
 import com.changhong.fileplore.service.DownLoadService.DownLoadBinder;
 import com.changhong.fileplore.utils.Utils;
 
+import android.app.AlertDialog;
 import android.content.ComponentName;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.util.Log;
 import android.view.View;
-import android.view.View.OnClickListener;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class ShowDownFileActivity extends BaseActivity implements OnClickListener {
+public class ShowDownFileActivity extends BaseActivity implements OnItemLongClickListener, OnItemClickListener {
 	static final private int UPDATE_LIST = 1;
+	static final private int UPDATE_LIST_DELETE = 2;
 	private TextView tv_num;
 	static private ListView lv_downlist;
 	private DownLoadService downLoadService;
@@ -46,14 +55,17 @@ public class ShowDownFileActivity extends BaseActivity implements OnClickListene
 		try {
 			alreadydownList = Utils.getDownDataObject("alreadydownlist");
 		} catch (Exception e) {
-			//Log.e("ee", e.toString());
+			// Log.e("ee", e.toString());
 			alreadydownList = new ArrayList<DownData>();
 		}
-	//	Log.e("alreadydownList", alreadydownList.toString());
+		// Log.e("alreadydownList", alreadydownList.toString());
 		downList = new ArrayList<DownData>();
-		mAdapter = new DownFileListAdapter(downList,alreadydownList, this, downLoadService);
+		mAdapter = new DownFileListAdapter(downList, alreadydownList, this, downLoadService);
 		lv_downlist.setAdapter(mAdapter);
 		mHandler = new MyDownHandler(this);
+		
+		lv_downlist.setOnItemClickListener(this);
+		lv_downlist.setOnItemLongClickListener(this);
 	}
 
 	@Override
@@ -69,10 +81,7 @@ public class ShowDownFileActivity extends BaseActivity implements OnClickListene
 
 	@Override
 	protected void onStop() {
-		//downLoadService.getAllDownStatus()
 		unbindService(conn);
-//		alreadydownList.addAll(downList);
-//		Utils.saveObject("alreadydownlist", alreadydownList);
 		super.onStop();
 	}
 
@@ -80,12 +89,6 @@ public class ShowDownFileActivity extends BaseActivity implements OnClickListene
 	protected void findView() {
 		tv_num = findView(R.id.item_count);
 		lv_downlist = findView(R.id.lv_downlist);
-	}
-
-	@Override
-	public void onClick(View v) {
-		// TODO Auto-generated method stub
-
 	}
 
 	private ServiceConnection conn = new ServiceConnection() {
@@ -106,25 +109,23 @@ public class ShowDownFileActivity extends BaseActivity implements OnClickListene
 
 	class DownloadProcessRunnable implements Runnable {
 		public void run() {
-			boolean isContinue = true;
-			int i=0;
-			int j =0;
+			int i = 0;
+			int j = 0;
 			do {
 				downList.clear();
-				i=0;
-				j=0;
+				i = 0;
+				j = 0;
 				try {
 					HashMap<String, DownData> map = downLoadService.getAllDownStatus();
-					if (map != null) {						
+					if (map != null) {
 						Iterator<String> tmp = map.keySet().iterator();
 						while (tmp.hasNext()) {
 							j++;
 							String uri = tmp.next();
 							DownData data = map.get(uri);
-							if(data.isDone()){
+							if (data.isDone()) {
 								i++;
 							}
-							isContinue = isContinue&&data.isDone();
 							downList.add(data);
 						}
 
@@ -136,12 +137,11 @@ public class ShowDownFileActivity extends BaseActivity implements OnClickListene
 					mHandler.sendMessage(msg);
 					Thread.sleep(500);
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
+					
 					e.printStackTrace();
 				}
 
-			}while(i<j);
-		
+			} while (i < j);
 
 		}
 	}
@@ -161,11 +161,152 @@ public class ShowDownFileActivity extends BaseActivity implements OnClickListene
 				int key = msg.getData().getInt("key");
 				switch (key) {
 				case UPDATE_LIST:
-					mAdapter.update(downList,downLoadService);
-					tv_num.setText(alreadydownList.size()+downList.size() + "项");
+					mAdapter.update(downList, downLoadService);
+					tv_num.setText(alreadydownList.size() + downList.size() + "项");
+					break;
+				case UPDATE_LIST_DELETE:
+					mAdapter.updatedelete(downList,alreadydownList, downLoadService);
+					tv_num.setText(alreadydownList.size() + downList.size() + "项");
 					break;
 				}
+				
 			}
 		}
+	}
+
+	@Override
+	public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+		final DownData tmp = (DownData) parent.getItemAtPosition(position);
+		String[] data = { "打开", "删除" };
+		new AlertDialog.Builder(ShowDownFileActivity.this).setTitle("选择操作").setItems(data,
+				new DialogInterface.OnClickListener() {
+
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						switch (which) {
+						case 0:
+							
+							 String download_Path = Environment.getExternalStorageDirectory().getAbsolutePath();
+							 String appname = FC_GetShareFile.getApplicationName(ShowDownFileActivity.this);
+							startActivity(
+									Utils.openFile(new File(download_Path + "/" + appname + "/download/" + tmp.getName())));
+							break;
+						case 1:
+							if (downLoadService.cancelDownload(tmp.getUri())) {
+								break;
+							} else {
+								
+								try {
+									alreadydownList = Utils.getDownDataObject("alreadydownlist");
+								} catch (Exception e) {
+									
+									alreadydownList = new ArrayList<DownData>();
+								}
+								Iterator<DownData> it = alreadydownList.iterator();
+								while (it.hasNext()) {
+									DownData tmp1 = it.next();
+									if (tmp1.getUri().equals(tmp.getUri())) {
+										alreadydownList.remove(tmp1);
+									}
+								}
+								Utils.saveObject("alreadydownlist", alreadydownList);
+							}
+							try {
+								alreadydownList = Utils.getDownDataObject("alreadydownlist");
+							} catch (Exception e) {
+							
+								alreadydownList = new ArrayList<DownData>();
+							}
+							HashMap<String, DownData> map = downLoadService.getAllDownStatus();
+							if (map != null) {
+								Iterator<String> tmp = map.keySet().iterator();
+								while (tmp.hasNext()) {									
+									String uri = tmp.next();
+									DownData data = map.get(uri);
+									if (data.isDone()) {										
+									}
+									downList.add(data);
+								}
+
+							}
+							
+							Message msg = new Message();
+							Bundle bundle = new Bundle();
+							bundle.putInt("key", UPDATE_LIST);
+							msg.setData(bundle);
+							mHandler.sendMessage(msg);
+
+							break;
+						}
+					}
+				}).create().show();
+		return true;
+	}
+
+	@Override
+	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+		Log.e("click", "cilck");
+		final DownData tmp = (DownData) parent.getItemAtPosition(position);
+		String[] data = { "打开", "删除" };
+		new AlertDialog.Builder(ShowDownFileActivity.this).setTitle("选择操作").setItems(data,
+				new DialogInterface.OnClickListener() {
+
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						switch (which) {
+						case 0:
+							String download_Path = Environment.getExternalStorageDirectory().getAbsolutePath();
+							 String appname = FC_GetShareFile.getApplicationName(ShowDownFileActivity.this);
+							startActivity(
+									Utils.openFile(new File(download_Path + "/" + appname + "/download/" + tmp.getName())));
+							break;
+						case 1:
+							if (downLoadService.cancelDownload(tmp.getUri())) {
+								break;
+							} else {
+								
+								try {
+									alreadydownList = Utils.getDownDataObject("alreadydownlist");
+								} catch (Exception e) {
+									
+									alreadydownList = new ArrayList<DownData>();
+								}
+								for(int i =0;i<alreadydownList.size();i++){
+									if(alreadydownList.get(i).getUri().equals(tmp.getUri())){
+										alreadydownList.remove(i);
+									}
+								}
+								
+								Utils.saveObject("alreadydownlist", alreadydownList);
+							}
+							try {
+								alreadydownList = Utils.getDownDataObject("alreadydownlist");
+							} catch (Exception e) {
+								
+								alreadydownList = new ArrayList<DownData>();
+							}
+							HashMap<String, DownData> map = downLoadService.getAllDownStatus();
+							if (map != null) {
+								Iterator<String> tmp = map.keySet().iterator();
+								while (tmp.hasNext()) {									
+									String uri = tmp.next();
+									DownData data = map.get(uri);
+									if (data.isDone()) {										
+									}
+									downList.add(data);
+								}
+
+							}
+							
+							Message msg = new Message();
+							Bundle bundle = new Bundle();
+							bundle.putInt("key", UPDATE_LIST_DELETE);
+							msg.setData(bundle);
+							mHandler.sendMessage(msg);
+
+							break;
+						}
+					}
+				}).create().show();
 	}
 }

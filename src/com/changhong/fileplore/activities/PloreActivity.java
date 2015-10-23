@@ -45,6 +45,7 @@ import android.os.IBinder;
 import android.text.format.Formatter;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -53,13 +54,15 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.PopupMenu;
+import android.widget.PopupMenu.OnMenuItemClickListener;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.changhong.fileplore.utils.*;
 
 public class PloreActivity extends BaseActivity implements RefreshListView.IOnRefreshListener, View.OnClickListener,
-		PloreInterface, OnItemClickListener, OnItemLongClickListener, MoreDialogClickListener {
+		PloreInterface, OnItemClickListener, OnItemLongClickListener, OnMenuItemClickListener {
 	protected ImageLoader imageLoader = ImageLoader.getInstance();
 	protected static final String STATE_PAUSE_ON_SCROLL = "STATE_PAUSE_ON_SCROLL";
 	protected static final String STATE_PAUSE_ON_FLING = "STATE_PAUSE_ON_FLING";
@@ -250,10 +253,10 @@ public class PloreActivity extends BaseActivity implements RefreshListView.IOnRe
 			}
 			break;
 		case R.id.plore_btn_more:
-			
-			MoreDialogFragment moreDialog = new MoreDialogFragment();  
-			moreDialog.show(getFragmentManager(), "moreDialog"); 
-
+		     PopupMenu popup = new PopupMenu(PloreActivity.this, v);
+             popup.getMenuInflater().inflate(R.menu.more_menu, popup.getMenu());
+             popup.setOnMenuItemClickListener(this);
+             popup.show(); 
 			break;
 		case R.id.iv_back:
 			if (mFileAdpter.isShow_cb()) {
@@ -427,12 +430,13 @@ public class PloreActivity extends BaseActivity implements RefreshListView.IOnRe
 			final List<String> list = pushlist;
 			AlertDialog.Builder dialog = new AlertDialog.Builder(myapp.getContext());
 
-			AlertDialog alert = dialog.setTitle("有推送文件，是否接收").setNegativeButton("查看", new OnClickListener() {
+			AlertDialog alert = dialog.setTitle("有推送文件").setMessage(pushlist.remove(0))
+					.setNegativeButton("查看", new OnClickListener() {
 
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
 					Intent intent = new Intent();
-					Log.e("a", myapp.getContext() + "");
+					
 					intent.setClass(myapp.getContext(), ShowPushFileActivity.class);
 					intent.putStringArrayListExtra("pushList", (ArrayList<String>) list);
 					startActivity(intent);
@@ -443,10 +447,13 @@ public class PloreActivity extends BaseActivity implements RefreshListView.IOnRe
 		}
 	};
 
+	
+
 	@Override
-	public void onMoreDialogClick(View v) {
-		switch (v.getId()) {
-		case R.id.rl_moreoption_copy:
+	public boolean onMenuItemClick(MenuItem item) {
+
+		switch (item.getItemId()) {
+		case R.id.it_meun_copy:
 			if (!mFileAdpter.isShow_cb()) {
 				mFileAdpter.setShow_cb(true);
 				mFileAdpter.notifyDataSetChanged();
@@ -467,7 +474,7 @@ public class PloreActivity extends BaseActivity implements RefreshListView.IOnRe
 				Toast.makeText(PloreActivity.this, "复制成功", Toast.LENGTH_SHORT).show();
 			}
 			break;
-		case R.id.rl_moreoption_delete:
+		case R.id.it_meun_delete:
 			if (!mFileAdpter.isShow_cb()) {
 				mFileAdpter.setShow_cb(true);
 				mFileAdpter.notifyDataSetChanged();
@@ -490,7 +497,7 @@ public class PloreActivity extends BaseActivity implements RefreshListView.IOnRe
 			}
 			break;
 
-		case R.id.rl_moreoption_share:
+		case R.id.it_meun_share:
 
 			if (!mFileAdpter.isShow_cb()) {
 				mFileAdpter.setShow_cb(true);
@@ -511,7 +518,7 @@ public class PloreActivity extends BaseActivity implements RefreshListView.IOnRe
 			}
 
 			break;
-		case R.id.rl_moreoption_push:
+		case R.id.it_meun_push:
 			ArrayList<String> pushList = new ArrayList<String>();
 			if (!mFileAdpter.isShow_cb()) {
 				mFileAdpter.setShow_cb(true);
@@ -544,7 +551,7 @@ public class PloreActivity extends BaseActivity implements RefreshListView.IOnRe
 			}
 			break;
 
-		case R.id.rl_moreoption_qr:
+		case R.id.it_meun_qr:
 			String ssid = "~";
 			WifiManager wifiManager = (WifiManager) PloreActivity.this.getSystemService(Context.WIFI_SERVICE);
 			if (wifiManager.isWifiEnabled()) {
@@ -637,7 +644,7 @@ public class PloreActivity extends BaseActivity implements RefreshListView.IOnRe
 			alertDialog_qr.show();
 			alertDialog_qr.getWindow().setLayout((int) (210 * scale + 0.5f), (int) (200 * scale + 0.5f));
 			break;
-		case R.id.rl_moreoption_detail:
+		case R.id.it_meun_detail:
 			ArrayList<File> detailList = new ArrayList<File>();
 			if (!mFileAdpter.isShow_cb()) {
 				mFileAdpter.setShow_cb(true);
@@ -663,7 +670,7 @@ public class PloreActivity extends BaseActivity implements RefreshListView.IOnRe
 				
 					DetailDialogFragment detailDialog = new DetailDialogFragment(name, path, time, space);  
 					detailDialog.show(getFragmentManager(), "detailDialog"); 
-				//	onClickShare(detailfile);
+				
 
 				}
 
@@ -673,14 +680,9 @@ public class PloreActivity extends BaseActivity implements RefreshListView.IOnRe
 			break;
 		}
 
+	
+		return true;
 	}
 	
-	private void onClickShare(File file) {
-	    Bundle params = new Bundle();
-	    params.putString(QQShare.SHARE_TO_QQ_IMAGE_LOCAL_URL,file.getPath());
-	  
-	    params.putInt(QQShare.SHARE_TO_QQ_KEY_TYPE, QQShare.SHARE_TO_QQ_TYPE_IMAGE);
-	    params.putInt(QQShare.SHARE_TO_QQ_EXT_INT, QQShare.SHARE_TO_QQ_FLAG_QZONE_AUTO_OPEN);
-	    mTencent.shareToQQ(PloreActivity.this, params, new BaseUiListener());
-	}
+	
 }
