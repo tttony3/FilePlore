@@ -2,11 +2,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.example.fileplore.MainActivity" >
 
-    <item
-        android:id="@+id/action_local"
-        android:orderInCategory="100"
-        android:showAsAction="never"
-        android:title="@string/localfile"/>
 <item
         android:id="@+id/action_net"
         android:orderInCategory="100"
@@ -33,4 +28,10 @@
         android:orderInCategory="100"
         android:showAsAction="never"
         android:title="分享"/>
+ 
+    <item
+        android:id="@+id/action_set"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        android:title="@string/set"/>
 </menu>

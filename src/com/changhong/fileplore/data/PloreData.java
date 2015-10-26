@@ -29,15 +29,24 @@ public class PloreData {
 	 * 
 	 * @param folder
 	 *            父文件夹
+	 * @param hide 
 	 * @return 文件夹内的子文件夹和文件，按字母排序
 	 */
 	public List<File> lodaData(File folder) {
+		return lodaData(folder,true);
+	}
+	
+	public List<File> lodaData(File folder, boolean hide) {
 		files.clear();
 		nDirectory = 0;
 		nFile = 0;
 		String path = folder.getPath();
 		String[] names = folder.list();
 		for (int i = 0; i < names.length; i++) {
+			if(!hide){
+				if(names[i].startsWith("."))
+					continue;
+				}
 			files.add(new File("/" + path + "/" + names[i]));
 		}
 

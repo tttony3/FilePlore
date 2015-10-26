@@ -14,12 +14,14 @@
         android:layout_width="fill_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/tv_classify_dir"
-        android:layout_marginStart="7dp"
-        android:columnWidth="110dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginStart="10dp"
+        android:columnWidth="@dimen/griditem_img"
         android:gravity="center_horizontal"
-        android:horizontalSpacing="7dp"
-        android:numColumns="3"
+       
+        android:numColumns="2"
         android:stretchMode="columnWidth"
-        android:verticalSpacing="7dp" />
+        android:verticalSpacing="17dp" />
+    <!-- android:columnWidth="110dp" android:horizontalSpacing="7dp" -->
 
 </RelativeLayout>

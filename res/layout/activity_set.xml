@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/main_background" >
+
+    <RelativeLayout
+        android:id="@+id/rl_set_night"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:background="@drawable/corners_selector" >
+
+        <TextView
+            android:id="@+id/tv__set_night"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:paddingTop="10dp"
+            android:text="@string/night"
+            android:textSize="17sp" />
+
+        <ToggleButton
+            android:id="@+id/tb_setnight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="5dp"
+            android:textOff="已关闭"
+            android:textOn="已开启" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/rl_set_showhide"
+        android:layout_below="@+id/rl_set_night"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:background="@drawable/corners_selector" >
+
+        <TextView
+            android:id="@+id/tv_set_showhide"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:paddingTop="10dp"
+            android:text="@string/sethide"
+            android:textSize="17sp" />
+
+        <ToggleButton
+            android:id="@+id/tb_showhide"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="5dp"
+            android:textOff="已关闭"
+            android:textOn="已开启" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_below="@+id/rl_set_showhide"
+        android:id="@+id/rl_set_setshare"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:background="@drawable/corners_selector" >
+
+        <TextView
+            android:id="@+id/tv_set_setshare"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:paddingTop="10dp"
+            android:text="@string/setshare"
+            android:textSize="17sp" />
+
+        <ToggleButton
+            android:id="@+id/tb_setshare"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="5dp"
+            android:textOff="已关闭"
+            android:textOn="已开启" />
+    </RelativeLayout>
+
+</RelativeLayout>

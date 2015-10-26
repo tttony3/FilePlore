@@ -27,6 +27,7 @@ import com.tencent.connect.share.QQShare;
 import com.tencent.tauth.Tencent;
 import com.changhong.fileplore.R;
 
+import android.R.bool;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.content.ComponentName;
@@ -34,6 +35,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.content.DialogInterface.OnClickListener;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiInfo;
@@ -68,17 +70,16 @@ public class PloreActivity extends BaseActivity implements RefreshListView.IOnRe
 	protected static final String STATE_PAUSE_ON_FLING = "STATE_PAUSE_ON_FLING";
 	protected boolean pauseOnScroll = false;
 	protected boolean pauseOnFling = true;
-	ArrayList<File> fileList;
+	private ArrayList<File> fileList;
 	private RefreshDataAsynTask mRefreshAsynTask;
-	RefreshListView mListView;
-	TextView mPathView;
-	ImageView iv_back;
-	TextView mItemCount;
-	Button btn_4;
-	Button btn_1;
-	Button btn_2;
-	Button btn_3;
-	Button btn_more;
+	private RefreshListView mListView;
+	private TextView mPathView;
+	private ImageView iv_back;
+	private TextView mItemCount;
+	private Button btn_1;
+	private Button btn_2;
+	private Button btn_3;
+	private Button btn_more;
 	public PloreListAdapter mFileAdpter;
 	public LinearLayout ll_btn;
 	public AlertDialog.Builder builder;
@@ -87,7 +88,9 @@ public class PloreActivity extends BaseActivity implements RefreshListView.IOnRe
 	private Builder builder_qr;
 	private AlertDialog alertDialog_qr;
 	private ImageView iv_qr;
-	Tencent mTencent ;
+	private Tencent mTencent;
+	private SharedPreferences sharedPreferences;
+	public boolean hide;
 
 	@Override
 	public void onRestoreInstanceState(Bundle savedInstanceState) {
@@ -99,7 +102,6 @@ public class PloreActivity extends BaseActivity implements RefreshListView.IOnRe
 	protected void onCreate(Bundle savedInstanceState) {
 		mTencent = Tencent.createInstance("1104922716", this.getApplicationContext());
 		super.onCreate(savedInstanceState);
-		// imageLoader.init(ImageLoaderConfiguration.createDefault(this));
 		setContentView(R.layout.activity_plore);
 		MyApp myapp = (MyApp) getApplication();
 		myapp.setContext(myapp.getMainContext());
@@ -128,7 +130,8 @@ public class PloreActivity extends BaseActivity implements RefreshListView.IOnRe
 	}
 
 	private void initView() {
-
+		sharedPreferences = getSharedPreferences("set", Context.MODE_PRIVATE); // 私有数据
+		hide = sharedPreferences.getBoolean("hide", false);
 		mListView.setOnItemClickListener(this);
 		mListView.setOnItemLongClickListener(this);
 		mListView.setOnRefreshListener(this);
@@ -144,17 +147,22 @@ public class PloreActivity extends BaseActivity implements RefreshListView.IOnRe
 	}
 
 	@Override
+	protected void onStart() {
+		Log.e("hide", "hide");
+		hide = sharedPreferences.getBoolean("hide", false);
+		super.onStart();
+	}
+
+	@Override
 	public void loadData(File folder) {
 		ll_btn.setVisibility(View.GONE);
 		boolean isRoot = (folder.getParent() == null);
 		if (folder.canRead()) {
 			String path = folder.getPath();
-			String[] names = folder.list();
 			mPathView.setText(path);
-			mItemCount.setText(names.length + "项");
-
 			PloreData mPloreData = new PloreData();
-			List<File> files = mPloreData.lodaData(folder);
+			List<File> files = mPloreData.lodaData(folder, hide);
+			mItemCount.setText(files.size() + "项");
 			mFileAdpter = new PloreListAdapter(this, files, isRoot, imageLoader);
 			mListView.setAdapter(mFileAdpter);
 		}
@@ -253,10 +261,10 @@ public class PloreActivity extends BaseActivity implements RefreshListView.IOnRe
 			}
 			break;
 		case R.id.plore_btn_more:
-		     PopupMenu popup = new PopupMenu(PloreActivity.this, v);
-             popup.getMenuInflater().inflate(R.menu.more_menu, popup.getMenu());
-             popup.setOnMenuItemClickListener(this);
-             popup.show(); 
+			PopupMenu popup = new PopupMenu(PloreActivity.this, v);
+			popup.getMenuInflater().inflate(R.menu.more_menu, popup.getMenu());
+			popup.setOnMenuItemClickListener(this);
+			popup.show();
 			break;
 		case R.id.iv_back:
 			if (mFileAdpter.isShow_cb()) {
@@ -335,26 +343,7 @@ public class PloreActivity extends BaseActivity implements RefreshListView.IOnRe
 
 	}
 
-	class RefreshDataAsynTask extends AsyncTask<Void, Void, Void> {
-
-		@Override
-		protected Void doInBackground(Void... arg0) {
-
-			try {
-				Thread.sleep(700);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-			return null;
-		}
-
-		@Override
-		protected void onPostExecute(Void result) {
-			loadData(new File(mPathView.getText().toString()));
-			mListView.onRefreshComplete();
-		}
-
-	}
+	
 
 	@Override
 	public void OnRefresh() {
@@ -369,8 +358,11 @@ public class PloreActivity extends BaseActivity implements RefreshListView.IOnRe
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
 			if (mPathView.getText().toString().lastIndexOf("/") == 0) {
-
-				if (java.lang.System.currentTimeMillis() - curtime > 1000) {
+				if (mFileAdpter.isShow_cb()) {
+					mFileAdpter.setShow_cb(false);
+					ll_btn.setVisibility(View.GONE);
+					mFileAdpter.notifyDataSetChanged();
+				} else if (java.lang.System.currentTimeMillis() - curtime > 1000) {
 					Toast.makeText(PloreActivity.this, "再按一次退出", Toast.LENGTH_SHORT).show();
 					curtime = java.lang.System.currentTimeMillis();
 					return true;
@@ -394,58 +386,6 @@ public class PloreActivity extends BaseActivity implements RefreshListView.IOnRe
 		super.onResume();
 		applyScrollListener();
 	}
-
-	private CoreHttpServerCB httpServerCB = new CoreHttpServerCB() {
-
-		@Override
-		public void onTransportUpdata(String arg0, String arg1, long arg2, long arg3, long arg4) {
-			Log.e("onTransportUpdata",
-					"agr0 " + arg0 + " arg1 " + arg1 + " arg2 " + arg2 + " arg3 " + arg3 + " arg4  " + arg4);
-
-		}
-
-		@Override
-		public void onHttpServerStop() {
-
-		}
-
-		@Override
-		public void onHttpServerStart(String ip, int port) {
-			MyApp myapp = (MyApp) getApplication();
-			myapp.setIp(ip);
-			myapp.setPort(port);
-			// Log.i("tl", ip + "port" + port);
-
-		}
-
-		@Override
-		public String onGetRealFullPath(String arg0) {
-			Log.e("onGetRealFullPath", arg0);
-			return null;
-		}
-
-		@Override
-		public void recivePushResources(List<String> pushlist) {
-			final MyApp myapp = (MyApp) getApplication();
-			final List<String> list = pushlist;
-			AlertDialog.Builder dialog = new AlertDialog.Builder(myapp.getContext());
-
-			AlertDialog alert = dialog.setTitle("有推送文件").setMessage(pushlist.remove(0))
-					.setNegativeButton("查看", new OnClickListener() {
-
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					Intent intent = new Intent();
-					
-					intent.setClass(myapp.getContext(), ShowPushFileActivity.class);
-					intent.putStringArrayListExtra("pushList", (ArrayList<String>) list);
-					startActivity(intent);
-				}
-			}).setPositiveButton("取消", null).create();
-			alert.show();
-
-		}
-	};
 
 	
 
@@ -529,7 +469,7 @@ public class PloreActivity extends BaseActivity implements RefreshListView.IOnRe
 					if (mlist[i]) {
 						File file = (File) mFileAdpter.getItem(i);
 						if (!file.isDirectory()) {
-							
+
 							MyApp myapp = (MyApp) getApplication();
 							String ip = myapp.getIp();
 							int port = myapp.getPort();
@@ -572,13 +512,11 @@ public class PloreActivity extends BaseActivity implements RefreshListView.IOnRe
 
 							@Override
 							public void onServiceDisconnected(ComponentName name) {
-								
 
 							}
 
 							@Override
 							public void onServiceConnected(ComponentName name, IBinder service) {
-								
 
 							}
 						});
@@ -657,20 +595,20 @@ public class PloreActivity extends BaseActivity implements RefreshListView.IOnRe
 						if (!file.isDirectory()) {
 							detailList.add(file);
 						} else {
-							//Toast.makeText(PloreActivity.this, "文件夹暂不支持推送", Toast.LENGTH_SHORT).show();
+							// Toast.makeText(PloreActivity.this, "文件夹暂不支持推送",
+							// Toast.LENGTH_SHORT).show();
 						}
 					}
 				}
 				if (detailList.size() == 1) {
-					File detailfile =detailList.get(0);
-					String space =Formatter.formatFileSize(PloreActivity.this, detailfile.getTotalSpace());
-					String path =detailfile.getPath();
-					String time =new SimpleDateFormat("yyyy/MM/dd HH:mm").format(detailfile.lastModified());				
-					String name =detailfile.getName();
-				
-					DetailDialogFragment detailDialog = new DetailDialogFragment(name, path, time, space);  
-					detailDialog.show(getFragmentManager(), "detailDialog"); 
-				
+					File detailfile = detailList.get(0);
+					String space = Formatter.formatFileSize(PloreActivity.this, detailfile.getTotalSpace());
+					String path = detailfile.getPath();
+					String time = new SimpleDateFormat("yyyy/MM/dd HH:mm").format(detailfile.lastModified());
+					String name = detailfile.getName();
+
+					DetailDialogFragment detailDialog = new DetailDialogFragment(name, path, time, space);
+					detailDialog.show(getFragmentManager(), "detailDialog");
 
 				}
 
@@ -680,9 +618,77 @@ public class PloreActivity extends BaseActivity implements RefreshListView.IOnRe
 			break;
 		}
 
-	
 		return true;
 	}
-	
-	
+	class RefreshDataAsynTask extends AsyncTask<Void, Void, Void> {
+
+		@Override
+		protected Void doInBackground(Void... arg0) {
+
+			try {
+				Thread.sleep(700);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			return null;
+		}
+
+		@Override
+		protected void onPostExecute(Void result) {
+			loadData(new File(mPathView.getText().toString()));
+			mListView.onRefreshComplete();
+		}
+
+	}
+	private CoreHttpServerCB httpServerCB = new CoreHttpServerCB() {
+
+		@Override
+		public void onTransportUpdata(String arg0, String arg1, long arg2, long arg3, long arg4) {
+			Log.e("onTransportUpdata",
+					"agr0 " + arg0 + " arg1 " + arg1 + " arg2 " + arg2 + " arg3 " + arg3 + " arg4  " + arg4);
+
+		}
+
+		@Override
+		public void onHttpServerStop() {
+
+		}
+
+		@Override
+		public void onHttpServerStart(String ip, int port) {
+			MyApp myapp = (MyApp) getApplication();
+			myapp.setIp(ip);
+			myapp.setPort(port);
+			// Log.i("tl", ip + "port" + port);
+
+		}
+
+		@Override
+		public String onGetRealFullPath(String arg0) {
+			Log.e("onGetRealFullPath", arg0);
+			return null;
+		}
+
+		@Override
+		public void recivePushResources(List<String> pushlist) {
+			final MyApp myapp = (MyApp) getApplication();
+			final List<String> list = pushlist;
+			AlertDialog.Builder dialog = new AlertDialog.Builder(myapp.getContext());
+
+			AlertDialog alert = dialog.setTitle("有推送文件").setMessage(pushlist.remove(0))
+					.setNegativeButton("查看", new OnClickListener() {
+
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					Intent intent = new Intent();
+
+					intent.setClass(myapp.getContext(), ShowPushFileActivity.class);
+					intent.putStringArrayListExtra("pushList", (ArrayList<String>) list);
+					startActivity(intent);
+				}
+			}).setPositiveButton("取消", null).create();
+			alert.show();
+
+		}
+	};
 }

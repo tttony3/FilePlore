@@ -3,9 +3,12 @@
 
     <color name="griditem_text_color">#51D6ED</color>
     <color name="main_background">#f3f3f3</color>
+     <color name="main_background_">#e3e3e3</color>
+      <color name="timetext_color">#838383</color>
     <color name="white">#ffffff</color>
     <color name="green">#00aa00</color>
     <color name="black">#000000</color>
+     <color name="btnblack">#AA111111</color>
     <color name="gold">#b89766</color>
     <color name="contents_text">#ff000000</color>
     <color name="encode_view">#ffffffff</color>

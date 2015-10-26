@@ -26,11 +26,6 @@ public class NetShareFileListAdapter extends BaseAdapter {
 	private List<JavaFile> fileList;
 	private List<JavaFolder> folderList;
 	DeviceInfo devInfo;
-	DisplayImageOptions options = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.file_icon_photo)
-			.showImageForEmptyUri(R.drawable.file_icon_photo).showImageOnFail(R.drawable.file_icon_photo)
-			.cacheInMemory(true).cacheOnDisk(true).bitmapConfig(Bitmap.Config.RGB_565)
-			.displayer(new RoundedBitmapDisplayer(20)) // 设置图片的解码类型
-			.build();
 	private ImageLoader imageLoader= ImageLoader.getInstance();
 	public NetShareFileListAdapter(List<JavaFile> fileList, List<JavaFolder> folderList, DeviceInfo devInfo,
 			Context context) {
@@ -86,7 +81,7 @@ public class NetShareFileListAdapter extends BaseAdapter {
 				viewHolder.img.setImageResource(R.drawable.file_icon_music);
 			else if (JavaFile.FileType.IMAGE == fileList.get(position - folderList.size()).getFileType()) {
 				Log.e("url", fileList.get(position - folderList.size()).getLocation());
-				imageLoader.displayImage(devInfo.getM_httpserverurl()+fileList.get(position - folderList.size()).getLocation(), viewHolder.img, options);
+				imageLoader.displayImage(devInfo.getM_httpserverurl()+fileList.get(position - folderList.size()).getLocation(), viewHolder.img);
 			//	viewHolder.img.setBackgroundResource(R.drawable.file_icon_photo);
 
 			} else if (JavaFile.FileType.VIDEO == fileList.get(position - folderList.size()).getFileType())
@@ -120,14 +115,7 @@ public class NetShareFileListAdapter extends BaseAdapter {
 			fileList.addAll(list1);
 		if (list2 != null)
 			folderList.addAll(list2);
-		// if (null==list1)
-		// fileList = new ArrayList<JavaFile>();
-		// else
-		// fileList = list1;
-		// if (null==list2)
-		// folderList = new ArrayList<JavaFolder>();
-		// else
-		// folderList = list2;
+	
 		notifyDataSetChanged();
 
 	}

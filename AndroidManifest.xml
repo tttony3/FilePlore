@@ -102,6 +102,10 @@
             android:name="com.changhong.fileplore.activities.QQListActivity"
             android:label="QQListActivity" >
         </activity>
+         <activity
+            android:name="com.changhong.fileplore.activities.SetActivity"
+            android:label="设置" >
+        </activity>
   <activity
             android:name="com.tencent.tauth.AuthActivity"
             android:launchMode="singleTask"

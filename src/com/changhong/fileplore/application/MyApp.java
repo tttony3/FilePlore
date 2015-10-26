@@ -12,6 +12,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import com.changhong.alljoyn.simpleclient.DeviceInfo;
+import com.changhong.fileplore.R;
 import com.changhong.fileplore.utils.Utils;
 import com.chobit.corestorage.CoreApp;
 import com.chobit.corestorage.CoreService.CoreServiceBinder;
@@ -23,6 +24,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
+import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 import com.nostra13.universalimageloader.core.download.BaseImageDownloader;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 import com.nostra13.universalimageloader.core.process.BitmapProcessor;
@@ -42,6 +44,11 @@ public class MyApp extends CoreApp {
 	String ip;
 	int port;
 	public DeviceInfo devinfo;
+	DisplayImageOptions options = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.file_icon_photo)
+			.showImageForEmptyUri(R.drawable.file_icon_photo).showImageOnFail(R.drawable.file_icon_photo)
+			.cacheInMemory(true).cacheOnDisk(true).bitmapConfig(Bitmap.Config.RGB_565)
+			.displayer(new RoundedBitmapDisplayer(20)) // 设置图片的解码类型
+			.build();
 	public String getIp() {
 		return ip;
 	}
@@ -129,7 +136,7 @@ public class MyApp extends CoreApp {
 			    .tasksProcessingOrder(QueueProcessingType.LIFO)  
 			    .diskCacheFileCount(300) //缓存的文件数量  
 			    .diskCache(new UnlimitedDiskCache(folder))//自定义缓存路径  
-			    .defaultDisplayImageOptions(DisplayImageOptions.createSimple())  
+			    .defaultDisplayImageOptions(options)  
 			    .imageDownloader(new BaseImageDownloader(this, 5 * 1000, 30 * 1000)) // connectTimeout (5 s), readTimeout (30 s)超时时间  
 			    .writeDebugLogs() // Remove for release app  
 			    .build();//开始构建  

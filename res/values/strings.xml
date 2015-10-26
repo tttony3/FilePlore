@@ -23,9 +23,10 @@
     <string name="netshare">网络共享 : </string>
     <string name="reseach">刷新</string>
     <string name="localfile">本地文件</string>
+    <string name="set">设置</string>
     <string name="netfile">网络文件</string>
     <string name="sambafile">Samba文件</string>
-       <string name="sharefile">已共享文件</string>
+    <string name="sharefile">已共享文件</string>
     <string name="current_net">当前网络中的设备：</string>
     <string name="wait">请稍等</string>
     <string name="downlist">下载列表 : </string>
@@ -51,7 +52,16 @@
     <string name="username">用户名 ：</string>
     <string name="folder">文件夹 ：</string>
     <string name="wechat_vedio">微信小视频</string>
-     <string name="qq_file">QQ文件</string>
-      <string name="app">应用</string>
+    <string name="qq_file">QQ文件</string>
+    <string name="app">应用</string>
+    <string name="night">夜间模式</string>
+    <string name="setshare">开启共享功能</string>
+    <string name="sethide">显示隐藏文件</string>
+    <string name="copy">复制</string>
+    <string name="delete">删除</string>
+    <string name="share">共享</string>
+    <string name="push">推送</string>
+    <string name="qr">二维码</string>
+    <string name="detail">属性</string>
 
 </resources>

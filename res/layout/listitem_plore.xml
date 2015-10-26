@@ -8,6 +8,7 @@
     android:paddingTop="0dp" >
 
     <CheckBox
+        android:layout_marginTop="5dp"
         android:id="@+id/cb"
         android:layout_marginStart="5dp"
         android:layout_width="wrap_content"
@@ -31,10 +32,10 @@
         android:layout_marginStart="5dp"
         android:layout_toEndOf="@+id/fileimg"
         android:ellipsize="end"
-        android:ems="9"
+        android:ems="10"
         android:maxLines="2"
         android:paddingTop="3dp"
-        android:textSize="16sp" />
+        android:textSize="15sp" />
 
     <TextView
         android:id="@+id/lasttime"
@@ -42,9 +43,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
-        android:layout_marginStart="5dp"
+        android:layout_marginStart="3dp"
         android:layout_marginEnd="2dp"
         android:paddingTop="3dp"
-        android:textSize="12sp" />
+        android:textSize="11sp" 
+        android:gravity="center_horizontal"
+        android:textColor="@color/timetext_color"/>
 
 </RelativeLayout>

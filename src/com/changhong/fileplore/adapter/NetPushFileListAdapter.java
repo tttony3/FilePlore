@@ -5,6 +5,8 @@ import java.util.List;
 
 import com.changhong.fileplore.R;
 import com.changhong.fileplore.utils.Utils;
+import com.nostra13.universalimageloader.core.ImageLoader;
+
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,7 +18,7 @@ import android.widget.TextView;
 public class NetPushFileListAdapter extends BaseAdapter {
 	private LayoutInflater inflater;
 	private List<String> pushList;
-
+private ImageLoader imageLoader = ImageLoader.getInstance();
 	public NetPushFileListAdapter(List<String> pushList, Context context) {
 		if (null == pushList) {
 			this.pushList = new ArrayList<String>();
@@ -59,23 +61,25 @@ public class NetPushFileListAdapter extends BaseAdapter {
 		String loc = pushList.get(position);
 		String type = Utils.getMIMEType(loc);
 		if (type == "video") {
-			viewHolder.img.setBackgroundResource(R.drawable.file_icon_movie);
+			imageLoader.displayImage(loc, viewHolder.img);
+		//	viewHolder.img.setBackgroundResource(R.drawable.file_icon_movie);
 		} else if (type == "audio") {
-			viewHolder.img.setBackgroundResource(R.drawable.file_icon_music);
+			viewHolder.img.setImageResource(R.drawable.file_icon_music);
 		} else if (type == "image") {
-			viewHolder.img.setBackgroundResource(R.drawable.file_icon_photo);
+			imageLoader.displayImage(loc, viewHolder.img);
+		//	viewHolder.img.setBackgroundResource(R.drawable.file_icon_photo);
 		} 
 		else if (type == "zip") {
-			viewHolder.img.setBackgroundResource(R.drawable.file_icon_zip);
+			viewHolder.img.setImageResource(R.drawable.file_icon_zip);
 		}
 		else if (type == "apk") {
-			viewHolder.img.setBackgroundResource(R.drawable.file_icon_apk);
+			viewHolder.img.setImageResource(R.drawable.file_icon_apk);
 		}
 		else if (type == "doc") {
-			viewHolder.img.setBackgroundResource(R.drawable.file_icon_txt);
+			viewHolder.img.setImageResource(R.drawable.file_icon_txt);
 		}
 		else  {
-			viewHolder.img.setBackgroundResource(R.drawable.file_icon_unknown);
+			viewHolder.img.setImageResource(R.drawable.file_icon_unknown);
 		}
 
 		viewHolder.name.setText(loc.subSequence(loc.lastIndexOf("/") + 1, loc.length()));

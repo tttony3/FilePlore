@@ -32,10 +32,10 @@
 
     <ProgressBar
         android:id="@+id/download_bar"
-        style="@style/tallerBarStyle"
+        style="@style/downBarStyle"
         android:layout_width="185dp"
         android:layout_height="13dp"
-       
+      
         android:layout_below="@+id/tv_name"
         android:layout_alignStart="@+id/tv_name"
        

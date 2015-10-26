@@ -33,6 +33,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -70,7 +71,7 @@ public class MainActivity extends SlidingFragmentActivity
 			.displayer(new RoundedBitmapDisplayer(10)) // 设置图片的解码类型
 			.build();
 	Tencent mTencent ;
-
+	SharedPreferences sharedPreferences;
 	View view0;
 	View view1;
 	ImageLoader imageLoader = ImageLoader.getInstance();
@@ -116,11 +117,10 @@ public class MainActivity extends SlidingFragmentActivity
 		myapp = (MyApp) getApplication();
 		myapp.setContext(this);
 		myapp.setMainContext(this);
-		//
 		context = MainActivity.this;
 		manager = new LocalActivityManager(this, true);
 		manager.dispatchCreate(savedInstanceState);
-
+		sharedPreferences =getSharedPreferences("set", Context.MODE_PRIVATE);
 		MyApp app = (MyApp) this.getApplicationContext();
 		app.setConnectedService(new ConnectedService() {
 
@@ -267,8 +267,10 @@ public class MainActivity extends SlidingFragmentActivity
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		int id = item.getItemId();
-		if (id == R.id.action_local) {
-			pager.setCurrentItem(1);
+		if (id == R.id.action_set) {
+			Intent intent = new Intent();
+			intent.setClass(MainActivity.this, SetActivity.class);
+			startActivity(intent);
 		} else if (id == R.id.action_samba) {
 			LayoutInflater inflater = getLayoutInflater();
 			final View layout = inflater.inflate(R.layout.samba_option, (ViewGroup) findViewById(R.id.samba_op));
@@ -525,6 +527,7 @@ public class MainActivity extends SlidingFragmentActivity
 
 	@Override
 	protected void onResume() {
+		((PloreActivity)list.get(1).getContext()).hide = sharedPreferences.getBoolean("hide", false);
 		 myapp = (MyApp) getApplication();
 		myapp.setContext(this);
 		((BrowseActivity)list.get(0).getContext()).callupdate();
@@ -532,6 +535,16 @@ public class MainActivity extends SlidingFragmentActivity
 	}
 
 
+
+	@Override
+	protected void onStart() {
+		
+		((PloreActivity)list.get(1).getContext()).hide = sharedPreferences.getBoolean("hide", false);
+		 myapp = (MyApp) getApplication();
+			myapp.setContext(this);
+			((BrowseActivity)list.get(0).getContext()).callupdate();
+		super.onStart();
+	}
 
 	@Override
 	protected void onDestroy() {
