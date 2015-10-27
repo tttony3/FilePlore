@@ -1,7 +1,5 @@
 package com.changhong.fileplore.utils;
 
-import org.json.JSONObject;
-
 import com.tencent.tauth.IUiListener;
 import com.tencent.tauth.UiError;
 

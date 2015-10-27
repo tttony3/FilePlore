@@ -59,18 +59,18 @@ public class ClassifyListAdapter extends BaseAdapter {
 		viewHolder.title.setText(content.get(position).getTitle());
 		if (type == R.id.img_music)
 			viewHolder.singer.setText(content.get(position).getSinger());
-		if (type == R.id.img_txt)
+		else
 			viewHolder.singer.setText(content.get(position).getTime());
 		if (null != content.get(position).getImg())
 			viewHolder.image.setImageBitmap(content.get(position).getImg());
 		else if (type == R.id.img_music)
-			viewHolder.image.setBackgroundResource(R.drawable.file_icon_music);
+			viewHolder.image.setImageResource(R.drawable.file_icon_music);
 		else if (type == R.id.img_txt)
-			viewHolder.image.setBackgroundResource(R.drawable.file_icon_txt);
+			viewHolder.image.setImageResource(R.drawable.file_icon_txt);
 		else if (type == R.id.img_zip)
-			viewHolder.image.setBackgroundResource(R.drawable.file_icon_zip);
+			viewHolder.image.setImageResource(R.drawable.file_icon_zip);
 		else if (type == R.id.img_apk)
-			viewHolder.image.setBackgroundResource(R.drawable.file_icon_apk);
+			viewHolder.image.setImageResource(R.drawable.file_icon_apk);
 		return convertView;
 	}
 

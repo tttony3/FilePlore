@@ -7,11 +7,8 @@
     <dimen name="browse_pic_width">60dp</dimen>
     <dimen name="browse_pic_hight">60dp</dimen>
     <dimen name="griditem_item">110dp</dimen>
-    <dimen name="griditem_item_textsize">11sp</dimen>
     <dimen name="griditem_img">140dp</dimen>
     <dimen name="griditem_img_">145dp</dimen>
-    <dimen name="browse_txtcapacity_size">10sp</dimen>
-    <dimen name="top_textsize">10sp</dimen>
     <dimen name="slidingmenu_offset">180dp</dimen>
     <dimen name="list_padding">10dp</dimen>
     <dimen name="shadow_width">15dp</dimen>
@@ -22,7 +19,15 @@
     <dimen name="media_button_size">30dp</dimen>
     <dimen name="default_circle_view_size">80dp</dimen>
     <dimen name="filepreview_img_size">40dp</dimen>
- <dimen name="textsize_option">17sp</dimen>
+    <dimen name="browse_rl_paddingtop">5dp</dimen>
+    <dimen name="browse_rl_paddingbot">5dp</dimen>
+    <dimen name="textsize_option">16sp</dimen>
+    <dimen name="title_textsize">15sp</dimen>
+    <dimen name="top_textsize">11sp</dimen>
+    <dimen name="browse_txtcapacity_size">10sp</dimen>
+    <dimen name="griditem_item_textsize">11sp</dimen>
+    <dimen name="browse_pic_textsize">12sp</dimen>
+ 	<dimen name="browse_table_textsize">15sp</dimen>
     <integer name="num_cols">1</integer>
 
     <declare-styleable name="CircleProgress">

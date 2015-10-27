@@ -6,13 +6,10 @@ import java.util.List;
 import com.changhong.alljoyn.simpleclient.DeviceInfo;
 import com.changhong.fileplore.R;
 import com.changhong.synergystorage.javadata.JavaFile;
+import com.changhong.synergystorage.javadata.JavaFile.FileType;
 import com.changhong.synergystorage.javadata.JavaFolder;
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
-
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -77,16 +74,15 @@ public class NetShareFileListAdapter extends BaseAdapter {
 			viewHolder = (ViewHolder) convertView.getTag();
 		}
 		if (position >= folderList.size()) {
-			if (JavaFile.FileType.AUDIO == fileList.get(position - folderList.size()).getFileType())
+			FileType flietype =fileList.get(position - folderList.size()).getFileType();
+			if (JavaFile.FileType.AUDIO == flietype)
 				viewHolder.img.setImageResource(R.drawable.file_icon_music);
-			else if (JavaFile.FileType.IMAGE == fileList.get(position - folderList.size()).getFileType()) {
-				Log.e("url", fileList.get(position - folderList.size()).getLocation());
-				imageLoader.displayImage(devInfo.getM_httpserverurl()+fileList.get(position - folderList.size()).getLocation(), viewHolder.img);
-			//	viewHolder.img.setBackgroundResource(R.drawable.file_icon_photo);
-
-			} else if (JavaFile.FileType.VIDEO == fileList.get(position - folderList.size()).getFileType())
+			else if (JavaFile.FileType.IMAGE == flietype) {
+				imageLoader.displayImage(devInfo.getM_httpserverurl()+fileList.get(position - folderList.size()).getLocation(), viewHolder.img);	
+			} 
+			else if (JavaFile.FileType.VIDEO == flietype)
 				viewHolder.img.setImageResource(R.drawable.file_icon_movie);
-			else if (JavaFile.FileType.OTHER == fileList.get(position - folderList.size()).getFileType())
+			else if (JavaFile.FileType.OTHER == flietype)
 				viewHolder.img.setImageResource(R.drawable.file_icon_unknown);
 
 			viewHolder.name.setText(fileList.get(position - folderList.size()).getFullName());

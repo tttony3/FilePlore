@@ -6,16 +6,12 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.changhong.fileplore.R;
-import com.changhong.fileplore.activities.ClassifyListActivity.GetRunnable;
-import com.changhong.fileplore.activities.ClassifyListActivity.RefreshDataAsynTask;
 import com.changhong.fileplore.adapter.AppListAdapter;
-import com.changhong.fileplore.adapter.ClassifyListAdapter;
 import com.changhong.fileplore.adapter.PloreListAdapter;
 import com.changhong.fileplore.application.MyApp;
 import com.changhong.fileplore.base.BaseActivity;
 import com.changhong.fileplore.data.AppInfo;
 import com.changhong.fileplore.data.PloreData;
-import com.changhong.fileplore.utils.Content;
 import com.changhong.fileplore.utils.Utils;
 import com.changhong.fileplore.view.CircleProgress;
 import com.changhong.fileplore.view.RefreshListView;
@@ -29,12 +25,11 @@ import android.content.Intent;
 import android.content.DialogInterface.OnClickListener;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
-import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -63,8 +58,7 @@ public class QQListActivity extends BaseActivity implements OnItemClickListener,
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		ActionBar actionBar = getActionBar();
-		actionBar.setDisplayShowHomeEnabled(false);
+		
 		setContentView(R.layout.activity_classify_list);
 		inflater = LayoutInflater.from(this);
 		findView();
@@ -74,7 +68,7 @@ public class QQListActivity extends BaseActivity implements OnItemClickListener,
 
 	private void initView() {
 		flag = getIntent().getIntExtra("key", 0);
-		PloreData mPloreData = new PloreData();
+		
 		File file;
 		File sdfile;
 		if (flag == R.id.img_app) {
@@ -116,8 +110,8 @@ public class QQListActivity extends BaseActivity implements OnItemClickListener,
 				for (int i = 0; i < wcfiles.size(); i++) {
 
 					file = new File(wcfiles.get(i).getPath() + "/video");
-
-					files.addAll(mPloreData.lodaData(file));
+					PloreData mPloreData = new PloreData(file,true);
+					files.addAll(mPloreData.getfiles());
 				}
 				for (int i = 0; i < files.size(); i++) {
 					if (files.get(i).getName().startsWith(".") || !Utils.getMIMEType(files.get(i)).equals("video/*")) {
@@ -131,13 +125,15 @@ public class QQListActivity extends BaseActivity implements OnItemClickListener,
 				tv_dir.setText("QQ接收文件");
 				file = new File("/storage/sdcard0/tencent/QQfile_recv");
 				sdfile = new File("/storage/sdcard1/tencent/QQfile_recv");
-				mPloreData = new PloreData();
+				
 
 				if (file.exists() && file.isDirectory()) {
-					files.addAll(mPloreData.lodaData(file));
+					PloreData mPloreData = new PloreData(file,true);
+					files.addAll(mPloreData.getfiles());
 				}
 				if (sdfile.exists() && sdfile.isDirectory()) {
-					files.addAll(mPloreData.lodaData(sdfile));
+					PloreData mPloreData = new PloreData(file,true);
+					files.addAll(mPloreData.getfiles());
 				}
 				for (int i = 0; i < files.size(); i++) {
 					if (files.get(i).getName().startsWith(".")) {
@@ -171,9 +167,9 @@ public class QQListActivity extends BaseActivity implements OnItemClickListener,
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 		File file = (File) parent.getItemAtPosition(position);
 		if (file.isDirectory()) {
-			PloreData mPloreData = new PloreData();
+			PloreData mPloreData = new PloreData(file,true);
 			files.clear();
-			files.addAll(mPloreData.lodaData(file));
+			files.addAll(mPloreData.getfiles());
 			for (int i = 0; i < files.size(); i++) {
 				if (files.get(i).getName().startsWith(".")) {
 					files.remove(i);
@@ -193,9 +189,9 @@ public class QQListActivity extends BaseActivity implements OnItemClickListener,
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
 			File file = father.pollLast();
 			if (file != null) {
-				PloreData mPloreData = new PloreData();
+				PloreData mPloreData = new PloreData(file,true);
 				files.clear();
-				files.addAll(mPloreData.lodaData(file));
+				files.addAll(mPloreData.getfiles());
 				for (int i = 0; i < files.size(); i++) {
 					if (files.get(i).getName().startsWith(".")) {
 						files.remove(i);
@@ -210,43 +206,7 @@ public class QQListActivity extends BaseActivity implements OnItemClickListener,
 		return super.onKeyDown(keyCode, event);
 	}
 
-	class RefreshDataAsynTask extends AsyncTask<Void, Void, Void> {
 
-		@Override
-		protected Void doInBackground(Void... arg0) {
-
-			List<PackageInfo> packages = getPackageManager().getInstalledPackages(0);
-
-			for (int i = 0; i < packages.size(); i++) {
-				PackageInfo packageInfo = packages.get(i);
-				AppInfo tmpInfo = new AppInfo();
-				tmpInfo.appName = packageInfo.applicationInfo.loadLabel(getPackageManager()).toString();
-				tmpInfo.packageName = packageInfo.packageName;
-				tmpInfo.versionName = packageInfo.versionName;
-				tmpInfo.versionCode = packageInfo.versionCode;
-				tmpInfo.appIcon = packageInfo.applicationInfo.loadIcon(getPackageManager());
-				// Only display the non-system app info
-				if ((packageInfo.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) == 0) {
-					appList.add(tmpInfo);// 如果非系统应用，则添加至appList
-				}
-
-			}
-			return null;
-
-		}
-
-		@Override
-		protected void onPostExecute(Void result) {
-			if (alertDialog.isShowing()) {
-				mProgressView.stopAnim();
-				alertDialog.dismiss();
-			}
-			appAdapter = new AppListAdapter(QQListActivity.this, appList);
-			tv_count.setText(appList.size() + "项");
-			lv_classify.setAdapter(appAdapter);
-		}
-
-	}
 
 	@Override
 	public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
@@ -261,9 +221,9 @@ public class QQListActivity extends BaseActivity implements OnItemClickListener,
 					switch (which) {
 					case 0:
 						if (file.isDirectory()) {
-							PloreData mPloreData = new PloreData();
+							PloreData mPloreData = new PloreData(file,true);
 							files.clear();
-							files.addAll(mPloreData.lodaData(file));
+							files.addAll(mPloreData.getfiles());
 							for (int i = 0; i < files.size(); i++) {
 								if (files.get(i).getName().startsWith(".")) {
 									files.remove(i);
@@ -326,5 +286,53 @@ public class QQListActivity extends BaseActivity implements OnItemClickListener,
 			}).create().show();
 		}
 		return true;
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case android.R.id.home:
+			this.finish();
+		default:
+			return super.onOptionsItemSelected(item);
+		}
+	}
+
+	class RefreshDataAsynTask extends AsyncTask<Void, Void, Void> {
+
+		@Override
+		protected Void doInBackground(Void... arg0) {
+
+			List<PackageInfo> packages = getPackageManager().getInstalledPackages(0);
+
+			for (int i = 0; i < packages.size(); i++) {
+				PackageInfo packageInfo = packages.get(i);
+				AppInfo tmpInfo = new AppInfo();
+				tmpInfo.appName = packageInfo.applicationInfo.loadLabel(getPackageManager()).toString();
+				tmpInfo.packageName = packageInfo.packageName;
+				tmpInfo.versionName = packageInfo.versionName;
+				tmpInfo.versionCode = packageInfo.versionCode;
+				tmpInfo.appIcon = packageInfo.applicationInfo.loadIcon(getPackageManager());
+				// Only display the non-system app info
+				if ((packageInfo.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) == 0) {
+					appList.add(tmpInfo);// 如果非系统应用，则添加至appList
+				}
+
+			}
+			return null;
+
+		}
+
+		@Override
+		protected void onPostExecute(Void result) {
+			if (alertDialog.isShowing()) {
+				mProgressView.stopAnim();
+				alertDialog.dismiss();
+			}
+			appAdapter = new AppListAdapter(QQListActivity.this, appList);
+			tv_count.setText(appList.size() + "项");
+			lv_classify.setAdapter(appAdapter);
+		}
+
 	}
 }

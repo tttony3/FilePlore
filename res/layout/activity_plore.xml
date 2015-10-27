@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="@color/white"
+    android:background="@color/main_background"
     android:orientation="vertical"
     tools:context="com.changhong.fileplore.activities.PloreActivity" >
 
@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="1dp"
-        android:layout_marginTop="1dp"
+        android:layout_marginTop="4dp"
         android:background="@color/main_background" >
 
         <ImageView
@@ -29,14 +29,15 @@
             android:id="@+id/path"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="2dp"
+            android:paddingBottom="2dp"
+              android:paddingTop="2dp"
             android:layout_marginStart="7dp"
             android:layout_marginTop="2dp"
             android:layout_toEndOf="@+id/iv_back"
             android:background="@drawable/corners_bg"
             android:maxEms="20"
-            android:paddingEnd="2dp"
-            android:paddingStart="2dp"
+            android:paddingEnd="3dp"
+            android:paddingStart="3dp"
             android:text="@string/default_path"
             android:textSize="@dimen/top_textsize" />
 
@@ -53,9 +54,10 @@
         android:id="@+id/ll_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/ll_btn"
+       
         android:layout_below="@+id/top"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="2dp"
+         android:paddingBottom="2dp"
         android:background="@color/main_background"
         android:orientation="vertical"
         android:paddingEnd="5dp"
@@ -65,7 +67,7 @@
             android:id="@+id/file_list"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_above="@+id/ll_btn"
+             
             android:cacheColorHint="@android:color/transparent"
             android:divider="@color/main_background"
             android:dividerHeight="4dp"
@@ -73,50 +75,99 @@
     </LinearLayout>
 
     <LinearLayout
+       
         android:id="@+id/ll_btn"
         style="?android:attr/buttonBarStyle"
         android:layout_width="fill_parent"
         android:layout_height="40dp"
         android:layout_alignParentBottom="true"
+        
         android:orientation="horizontal"
         android:background="@color/btnblack"
         android:visibility="gone" >
 
         <Button
-            android:id="@+id/plore_btn_1"
+            android:id="@+id/plore_btn_selectall"
             style="?android:attr/buttonBarButtonStyle"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="40dp"
             android:layout_weight="1"
             android:textColor="@color/main_background"
-            android:text="新建" />
+            android:text="@string/selectall" />
 
         <Button
-            android:id="@+id/plore_btn_2"
+            android:id="@+id/plore_btn_cut"
             style="?android:attr/buttonBarButtonStyle"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="40dp"
             android:layout_weight="1"
              android:textColor="@color/main_background"
-            android:text="剪切" />
+            android:text="@string/cut" />
 
         <Button
-            android:id="@+id/plore_btn_3"
+            android:id="@+id/plore_btn_copy"
             style="?android:attr/buttonBarButtonStyle"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="40dp"
             android:layout_weight="1"
              android:textColor="@color/main_background"
-            android:text="粘贴" />
+            android:text="@string/copy" />
 
         <Button
             android:id="@+id/plore_btn_more"
             style="?android:attr/buttonBarButtonStyle"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="40dp"
             android:layout_weight="1"
              android:textColor="@color/main_background"
-            android:text="更多" />
+            android:text="@string/more" />
     </LinearLayout>
+ <LinearLayout
+      
+        android:id="@+id/ll_btn_default"
+        style="?android:attr/buttonBarStyle"
+        android:layout_width="fill_parent"
+        android:layout_height="40dp"
+        android:layout_alignParentBottom="true"
+       
+        android:orientation="horizontal"
+        android:background="@color/btnblack"
+        android:visibility="visible" >
 
+        <Button
+            android:id="@+id/plore_btn_newfile"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:textColor="@color/main_background"
+            android:text="@string/newfile" />
+
+        <Button
+            android:id="@+id/plore_btn_paste"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+             android:textColor="@color/main_background"
+            android:text="@string/paste" />
+
+        <Button
+            android:id="@+id/plore_btn_sort"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+             android:textColor="@color/main_background"
+            android:text="@string/sort" />
+
+        <Button
+            android:id="@+id/plore_btn_seach"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+             android:textColor="@color/main_background"
+            android:text="@string/seach" />
+    </LinearLayout>
 </RelativeLayout>

@@ -13,6 +13,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -31,8 +32,6 @@ public class ShowSharefileActivity extends BaseActivity {
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-		ActionBar actionBar = getActionBar();
-		actionBar.setDisplayShowHomeEnabled(false);
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_share_file);
 		findView();
@@ -80,6 +79,16 @@ public class ShowSharefileActivity extends BaseActivity {
 		lv_sharelist = findView(R.id.lv_sharefile);
 		tv_listnum = findView(R.id.tv_sharefilenum);
 
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case android.R.id.home:
+			this.finish();
+		default:
+			return super.onOptionsItemSelected(item);
+		}
 	}
 
 	class SharefileAdapter extends BaseAdapter {
@@ -130,13 +139,22 @@ public class ShowSharefileActivity extends BaseActivity {
 				} else {
 					String type = Utils.getMIMEType(loc);
 					if (type == "video") {
-						viewHolder.iv.setBackgroundResource(R.drawable.file_icon_movie);
+						viewHolder.iv.setImageResource(R.drawable.file_icon_movie);
 					} else if (type == "audio") {
-						viewHolder.iv.setBackgroundResource(R.drawable.file_icon_music);
+						viewHolder.iv.setImageResource(R.drawable.file_icon_music);
 					} else if (type == "image") {
-						viewHolder.iv.setBackgroundResource(R.drawable.file_icon_photo);
-					} else if (type == "*") {
-						viewHolder.iv.setBackgroundResource(R.drawable.file_icon_unknown);
+						viewHolder.iv.setImageResource(R.drawable.file_icon_photo);
+					} 
+					else if (type == "zip") {
+						viewHolder.iv.setImageResource(R.drawable.file_icon_zip);
+					}
+					else if (type == "doc") {
+						viewHolder.iv.setImageResource(R.drawable.file_icon_txt);
+					}
+					else if (type == "apk") {
+						viewHolder.iv.setImageResource(R.drawable.file_icon_apk);
+					}else if (type == "*") {
+						viewHolder.iv.setImageResource(R.drawable.file_icon_unknown);
 					}
 				}
 			}

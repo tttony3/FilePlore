@@ -5,7 +5,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import com.changhong.fileplore.R;
-import com.changhong.fileplore.application.MyApp;
 import com.changhong.fileplore.utils.Utils;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -14,6 +13,7 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.opengl.Visibility;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,16 +22,16 @@ import android.view.View.OnLongClickListener;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TableRow;
 import android.widget.TextView;
 
 public class PloreListAdapter extends BaseAdapter {
+	
+	public interface ImgOnClick{
+		void onClick(View v,File file);
+	}
 
-	DisplayImageOptions options = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.file_icon_photo)
-			.showImageForEmptyUri(R.drawable.file_icon_photo).showImageOnFail(R.drawable.file_icon_photo)
-			.cacheInMemory(true).cacheOnDisk(true).bitmapConfig(Bitmap.Config.RGB_565)
-			.displayer(new RoundedBitmapDisplayer(20)) // 设置图片的解码类型
-			.build();
 	ImageLoader imageLoader;
 	static final private int DOC = 1;
 	static final private int MUSIC = 2;
@@ -55,6 +55,7 @@ public class PloreListAdapter extends BaseAdapter {
 	private LayoutInflater mInflater;
 	private boolean show_cb = false;
 	private Context context;
+	private boolean isAllSelect = false;
 
 	public PloreListAdapter(Context context, List<File> files, boolean isRoot, ImageLoader imageLoader) {
 
@@ -76,11 +77,13 @@ public class PloreListAdapter extends BaseAdapter {
 
 	@Override
 	public Object getItem(int position) {
+		
 		return files.get(position);
 	}
 
 	@Override
 	public long getItemId(int position) {
+		
 		return position;
 	}
 
@@ -99,7 +102,7 @@ public class PloreListAdapter extends BaseAdapter {
 		} else {
 			viewHolder = (ViewHolder) convertView.getTag();
 		}
-
+		
 		final File file = (File) getItem(position);
 		String fileName = ((File) file).getName();
 		if (fileName.toLowerCase().equals("sdcard0"))
@@ -135,7 +138,7 @@ public class PloreListAdapter extends BaseAdapter {
 				
 				@Override
 				public void onClick(View v) {
-					v.performLongClick();
+					((ImgOnClick)context).onClick(v, file);;
 					
 				}
 			});
@@ -146,6 +149,8 @@ public class PloreListAdapter extends BaseAdapter {
 					if(!file.exists()||!file.canRead())
 						return false;
 					File[] files = file.listFiles();
+					if(files.length ==0)
+						return false;
 					final File[] resultfiles = getMaxSort(files);
 
 					LayoutInflater inflater = LayoutInflater.from(context);
@@ -162,8 +167,27 @@ public class PloreListAdapter extends BaseAdapter {
 					ImageView iv_2 = (ImageView) layout.findViewById(R.id.iv_filepreview_2);
 					ImageView iv_3 = (ImageView) layout.findViewById(R.id.iv_filepreview_3);
 					ImageView iv_4 = (ImageView) layout.findViewById(R.id.iv_filepreview_4);
+					
 					AlertDialog.Builder builder = new AlertDialog.Builder(context).setView(layout);
-					if (resultfiles.length > 1 && resultfiles[0] != null) {
+					switch(resultfiles.length){
+					case 0:
+						return false;
+					case 1:
+						tr_2.setVisibility(View.GONE);
+						tr_3.setVisibility(View.GONE);
+						tr_4.setVisibility(View.GONE);
+						break;
+					case 2:
+						tr_3.setVisibility(View.GONE);
+						tr_4.setVisibility(View.GONE);
+						break;
+					case 3:
+						tr_4.setVisibility(View.GONE);
+						break;
+						}
+						
+						
+					if (resultfiles.length >= 1 && resultfiles[0] != null) {
 						tv_1.setText(resultfiles[0].getName());
 						setImage(iv_1, resultfiles[0]);
 						tr_1.setOnClickListener(new OnClickListener() {
@@ -176,7 +200,7 @@ public class PloreListAdapter extends BaseAdapter {
 						});
 						
 					}
-					if (resultfiles.length > 2 && resultfiles[1] != null) {
+					if (resultfiles.length >= 2 && resultfiles[1] != null) {
 						tv_2.setText(resultfiles[1].getName());
 						setImage(iv_2, resultfiles[1]);
 					
@@ -189,7 +213,7 @@ public class PloreListAdapter extends BaseAdapter {
 							}
 						});
 					}
-					if (resultfiles.length > 3 && resultfiles[2] != null) {
+					if (resultfiles.length >= 3 && resultfiles[2] != null) {
 						tv_3.setText(resultfiles[2].getName());
 						setImage(iv_3, resultfiles[2]);
 						
@@ -202,7 +226,7 @@ public class PloreListAdapter extends BaseAdapter {
 							}
 						});
 					}
-					if (resultfiles.length > 4 && resultfiles[3] != null) {
+					if (resultfiles.length >= 4 && resultfiles[3] != null) {
 						tv_4.setText(resultfiles[3].getName());
 						setImage(iv_4, resultfiles[3]);
 						
@@ -241,7 +265,7 @@ public class PloreListAdapter extends BaseAdapter {
 			case MOVIE:
 				final String path1 = file.getPath();
 		//		final String name1 = file.getName();
-				imageLoader.displayImage("file://" + path1, viewHolder.img, options);
+				imageLoader.displayImage("file://" + path1, viewHolder.img);
 				// viewHolder.img.setImageResource(R.drawable.file_icon_movie);
 				break;
 			case MUSIC:
@@ -249,8 +273,7 @@ public class PloreListAdapter extends BaseAdapter {
 				break;
 			case PHOTO:
 				final String path = file.getPath();
-				final String name = file.getName();
-				imageLoader.displayImage("file://" + path, viewHolder.img, options);
+				imageLoader.displayImage("file://" + path, viewHolder.img);
 
 				
 				break;
@@ -316,7 +339,7 @@ public class PloreListAdapter extends BaseAdapter {
 		case MOVIE:
 			final String path1 = file.getPath();
 		//	final String name1 = file.getName();
-			imageLoader.displayImage("file://" + path1, iv_1, options);
+			imageLoader.displayImage("file://" + path1, iv_1);
 			// viewHolder.img.setImageResource(R.drawable.file_icon_movie);
 			break;
 		case MUSIC:
@@ -324,8 +347,7 @@ public class PloreListAdapter extends BaseAdapter {
 			break;
 		case PHOTO:
 			final String path = file.getPath();
-			final String name = file.getName();
-			imageLoader.displayImage("file://" + path, iv_1, options);
+			imageLoader.displayImage("file://" + path, iv_1);
 
 			
 
@@ -375,5 +397,26 @@ public class PloreListAdapter extends BaseAdapter {
 			checkbox_list[i] = false;
 		}
 		notifyDataSetChanged();
+	}
+
+	public void setAllSelect() {
+		if(!isAllSelect){
+			for (int i = 0; i < checkbox_list.length; i++) {
+				checkbox_list[i] = true;
+			}
+			isAllSelect = true;
+		}else{
+			for (int i = 0; i < checkbox_list.length; i++) {
+				checkbox_list[i] = false;
+			}
+			isAllSelect = false;
+		}
+		
+	}
+	public void setNoneSelect() {
+		for (int i = 0; i < checkbox_list.length; i++) {
+			checkbox_list[i] = false;
+		}
+		
 	}
 }

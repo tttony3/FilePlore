@@ -12,6 +12,7 @@ import com.tencent.open.utils.HttpUtils.HttpStatusException;
 import com.tencent.open.utils.HttpUtils.NetworkUnavailableException;
 import com.tencent.tauth.IRequestListener;
 
+@SuppressWarnings("deprecation")
 public class BaseApiListener implements IRequestListener {
 	
 	//////////////////////////////////////

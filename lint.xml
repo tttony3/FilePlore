@@ -6,6 +6,7 @@
     <issue id="InflateParams" severity="ignore" />
     <issue id="NewApi" severity="ignore" />
     <issue id="SimpleDateFormat">
+        <ignore path="src/com/changhong/fileplore/activities/PloreActivity.java" />
         <ignore path="src/com/changhong/fileplore/utils/Utils.java" />
     </issue>
 </lint>

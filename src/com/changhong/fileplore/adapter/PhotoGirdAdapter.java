@@ -3,9 +3,7 @@ package com.changhong.fileplore.adapter;
 import java.util.ArrayList;
 
 import com.changhong.fileplore.R;
-import com.changhong.fileplore.application.MyApp;
 import com.changhong.fileplore.utils.Content;
-import com.changhong.fileplore.utils.Utils;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
@@ -71,12 +69,9 @@ public class PhotoGirdAdapter extends BaseAdapter {
 		// imageLoader.displayImage("file://" + results.get(position).getDir(),
 		// viewHolder.image, options);
 		final String path = results.get(position).getDir();
-		final String name = results.get(position).getTitle();
-		
-		
-			imageLoader.displayImage("file://" + path, viewHolder.image, options);
 
-		
+		imageLoader.displayImage("file://" + path, viewHolder.image, options);
+
 		return convertView;
 	}
 }

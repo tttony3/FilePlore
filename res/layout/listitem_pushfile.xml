@@ -8,6 +8,7 @@
     android:paddingTop="0dp" >
 
     <ImageView
+         android:scaleType="centerInside"
         android:id="@+id/im_pushfile"
         android:layout_width="50dp"
         android:layout_height="50dp"

@@ -1,42 +1,22 @@
 package com.changhong.fileplore.application;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
 import com.changhong.alljoyn.simpleclient.DeviceInfo;
 import com.changhong.fileplore.R;
 import com.changhong.fileplore.utils.Utils;
 import com.chobit.corestorage.CoreApp;
-import com.chobit.corestorage.CoreService.CoreServiceBinder;
 import com.nostra13.universalimageloader.cache.disc.impl.UnlimitedDiskCache;
 import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
 import com.nostra13.universalimageloader.cache.memory.impl.UsingFreqLimitedMemoryCache;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
-import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
 import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 import com.nostra13.universalimageloader.core.download.BaseImageDownloader;
-import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
-import com.nostra13.universalimageloader.core.process.BitmapProcessor;
-
-import android.content.ComponentName;
 import android.content.Context;
-import android.content.ServiceConnection;
 import android.graphics.Bitmap;
-import android.graphics.Bitmap.CompressFormat;
-import android.os.IBinder;
-import android.util.Log;
-import android.view.View;
 
 public class MyApp extends CoreApp {	
 	static public Context context;
@@ -124,10 +104,10 @@ public class MyApp extends CoreApp {
 			folder.mkdir();
 		ImageLoaderConfiguration config = new ImageLoaderConfiguration  
 			    .Builder(this)  
-			    .memoryCacheExtraOptions(100, 100) // max width, max height，即保存的每个缓存文件的最大长宽  
-			    .diskCacheExtraOptions(100, 100, null) // Can slow ImageLoader, use it carefully (Better don't use it)/设置缓存的详细信息，最好不要设置这个  
+			    .memoryCacheExtraOptions(200, 200) // max width, max height，即保存的每个缓存文件的最大长宽  
+			    .diskCacheExtraOptions(200, 200, null) // Can slow ImageLoader, use it carefully (Better don't use it)/设置缓存的详细信息，最好不要设置这个  
 			    .threadPoolSize(3)//线程池内加载的数量  
-			    .threadPriority(Thread.NORM_PRIORITY - 2)  
+			    .threadPriority(Thread.NORM_PRIORITY - 3)  
 			    .denyCacheImageMultipleSizesInMemory()  
 			    .memoryCache(new UsingFreqLimitedMemoryCache(2 * 1024 * 1024)) // You can pass your own memory cache implementation/你可以通过自己的内存缓存实现  
 			    .memoryCacheSize(2 * 1024 * 1024)    
@@ -145,18 +125,4 @@ public class MyApp extends CoreApp {
 public void unbindService(){
 	onTerminate();
 }
-	private ServiceConnection mConnection = new ServiceConnection() {
-
-		@Override
-		public void onServiceDisconnected(ComponentName arg0) {
-			// TODO Auto-generated method stub
-
-		}
-
-		@Override
-		public void onServiceConnected(ComponentName arg0, IBinder service) {
-			
-
-		}
-	};
 }

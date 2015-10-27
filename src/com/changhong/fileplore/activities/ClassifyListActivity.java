@@ -103,6 +103,7 @@ public class ClassifyListActivity extends Activity implements RefreshListView.IO
 		super.onCreate(savedInstanceState);
 		ActionBar actionBar = getActionBar();
 		actionBar.setDisplayShowHomeEnabled(false);
+		actionBar.setDisplayHomeAsUpEnabled(true);
 		setContentView(R.layout.activity_classify_list);
 		flg = getIntent().getIntExtra("key", 0);
 		MyApp myapp = (MyApp) getApplication();
@@ -264,6 +265,8 @@ public class ClassifyListActivity extends Activity implements RefreshListView.IO
 		}
 		return super.onKeyDown(keyCode, event);
 	}
+	
+
 
 	class GetRunnable implements Runnable {
 		int type;
@@ -341,6 +344,7 @@ public class ClassifyListActivity extends Activity implements RefreshListView.IO
 				new Thread(new GetRunnable(APK, true)).start();
 
 				break;
+				
 			default:
 				break;
 			}
@@ -358,6 +362,9 @@ public class ClassifyListActivity extends Activity implements RefreshListView.IO
 
 			});
 
+		}
+		else if(id ==android.R.id.home){
+			this.finish();
 		}
 		return super.onOptionsItemSelected(item);
 

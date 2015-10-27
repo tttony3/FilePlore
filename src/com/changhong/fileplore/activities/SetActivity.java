@@ -9,7 +9,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
-import android.util.Log;
+import android.view.MenuItem;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ToggleButton;
@@ -22,8 +22,7 @@ public class SetActivity extends BaseActivity implements OnCheckedChangeListener
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		ActionBar actionBar = getActionBar();
-		actionBar.setDisplayShowHomeEnabled(false);
+		
 		setContentView(R.layout.activity_set);
 		MyApp myapp = (MyApp) getApplication();
 		myapp.setContext(this);
@@ -78,5 +77,14 @@ public class SetActivity extends BaseActivity implements OnCheckedChangeListener
 		}
 		buttonView.setChecked(isChecked);
 	}
-
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case android.R.id.home:
+			this.finish();
+		default:
+			return super.onOptionsItemSelected(item);
+		}
+	}
 }

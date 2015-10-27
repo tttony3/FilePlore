@@ -23,6 +23,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -49,6 +50,7 @@ public class ClassifyGridActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		ActionBar actionBar = getActionBar();
 		actionBar.setDisplayShowHomeEnabled(false);
+		actionBar.setDisplayHomeAsUpEnabled(true);
 		setContentView(R.layout.activity_classify_grid);
 		MyApp myapp = (MyApp) getApplication();
 		myapp.setContext(this);
@@ -75,9 +77,6 @@ public class ClassifyGridActivity extends Activity {
 
 		case R.id.img_movie:
 			new Thread(new GridRunnable(R.id.img_movie)).start();
-//			ArrayList<Content> videos = Utils.getVideo(this);
-//			gridAdapter = new ClassifyGridAdapter(videos, this, R.id.img_movie);
-//			gv_classify.setAdapter(gridAdapter);
 			gv_classify.setOnItemClickListener(new OnItemClickListener() {
 
 				@Override
@@ -179,6 +178,15 @@ public class ClassifyGridActivity extends Activity {
 
 		}
 		return super.onKeyDown(keyCode, event);
+	}
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case android.R.id.home:
+			this.finish();
+		default:
+			return super.onOptionsItemSelected(item);
+		}
 	}
 
 	class OnPhotoItemClickListener implements OnItemClickListener {

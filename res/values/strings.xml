@@ -31,6 +31,7 @@
     <string name="wait">请稍等</string>
     <string name="downlist">下载列表 : </string>
     <string name="scanner">扫一扫</string>
+    <string name="shareto">分享</string>
     <string name="scan_qrcode">将二维码放入框内，即可自动扫描</string>
     <string name="scan_onecode">将条形码放入框内，即可自动扫描</string>
     <string name="scan_qr">二维码</string>
@@ -63,5 +64,15 @@
     <string name="push">推送</string>
     <string name="qr">二维码</string>
     <string name="detail">属性</string>
-
+    <string name="cancel">取消</string>
+    <string name="paste">粘贴</string>
+    <string name="cut">剪切</string>
+    <string name="newfile">新建</string>
+    <string name="more">更多</string>
+    <string name="sort">排序</string>
+    <string name="seach">搜索</string>
+     <string name="selectall">全选</string>
+    <string name="percent">0%</string>
+ <string name="sort_time">按时间排序</string>
+  <string name="sort_name">按名称排序</string>
 </resources>

@@ -2,16 +2,19 @@ package com.changhong.fileplore.activities;
 
 import com.changhong.fileplore.R;
 import com.changhong.fileplore.application.MyApp;
+import com.changhong.fileplore.base.BaseActivity;
+
 import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.MediaController;
 import android.widget.VideoView;
 
-public class VideoActivity extends Activity  {  
+public class VideoActivity extends BaseActivity  {  
     String uri;
     /** Called when the activity is first created. */  
 //    @Override  
@@ -85,16 +88,12 @@ public class VideoActivity extends Activity  {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		ActionBar actionBar = getActionBar();
-		actionBar.setDisplayShowHomeEnabled(false);
 		MyApp myapp = (MyApp) getApplication();
 		myapp.setContext(this);
 		Intent intent = getIntent();
 		String uri =intent.getStringExtra("uri");
 		setContentView(R.layout.activity_video);
-		video1 = (VideoView) findViewById(R.id.video1);
-		
-		mediaco = new MediaController(this);
+		findView();
 		// File file = new File("/mnt/sdcard/通话录音/1.mp4");
 
 		// VideoView与MediaController进行关联
@@ -106,6 +105,22 @@ public class VideoActivity extends Activity  {
 		video1.requestFocus();		
 		video1.start();
 
+	}
+	@Override
+	protected void findView() {
+		video1 = (VideoView) findViewById(R.id.video1);
+		mediaco = new MediaController(this);
+		
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case android.R.id.home:
+			this.finish();
+		default:
+			return super.onOptionsItemSelected(item);
+		}
 	}
 
 //	@Override

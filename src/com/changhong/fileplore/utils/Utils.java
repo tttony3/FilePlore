@@ -38,7 +38,6 @@ import android.os.StatFs;
 import android.provider.MediaStore;
 import android.provider.MediaStore.Images;
 import android.text.format.Formatter;
-import android.util.Log;
 
 public class Utils {
 	static ArrayList<Content> results = new ArrayList<Content>();
@@ -624,13 +623,15 @@ public class Utils {
 		} else if (type.equals("result_qq")) {
 			File file = new File("/storage/sdcard0/tencent/QQfile_recv");
 			File sdfile = new File("/storage/sdcard1/tencent/QQfile_recv");
-			PloreData mPloreData = new PloreData();
+			
 
 			if (file.exists() && file.isDirectory()) {
-				files.addAll(mPloreData.lodaData(file));
+				PloreData mPloreData = new PloreData(file,true);
+				files.addAll(mPloreData.getfiles());
 			}
 			if (sdfile.exists() && sdfile.isDirectory()) {
-				files.addAll(mPloreData.lodaData(sdfile));
+				PloreData mPloreData = new PloreData(sdfile,true);
+				files.addAll(mPloreData.getfiles());
 			}
 			for (int i = 0; i < files.size(); i++) {
 				if (files.get(i).getName().startsWith(".")) {
@@ -664,7 +665,7 @@ public class Utils {
 
 				file = new File(wcfiles.get(i).getPath() + "/video");
 				
-				files.addAll(new PloreData().lodaData(file));
+				files.addAll(new PloreData(file,true).getfiles());
 			}
 			for (int i = 0; i < files.size(); i++) {
 				if (files.get(i).getName().startsWith(".") || !Utils.getMIMEType(files.get(i)).equals("video/*")) {
@@ -731,6 +732,7 @@ public class Utils {
 	 *            二维码的高度
 	 * @return 二维码的bitmap
 	 */
+	@SuppressWarnings("unused")
 	static public Bitmap createImage(String text, int width, int height) {
 		Bitmap bitmap = null;
 		try {
@@ -781,5 +783,10 @@ public class Utils {
 		}
 		return cachePath + "/" + name + "/";
 
+	}
+	
+	static public int dpTopx(int dp,Context context){
+		float scale = context.getResources().getDisplayMetrics().density;
+		return (int) (dp * scale + 0.5f);
 	}
 }

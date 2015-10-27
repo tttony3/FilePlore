@@ -24,6 +24,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
@@ -48,6 +49,7 @@ public class PhotoGridActivity extends AbsListViewBaseActivity {
 		super.onCreate(savedInstanceState);
 		ActionBar actionBar = getActionBar();
 		actionBar.setDisplayShowHomeEnabled(false);
+		actionBar.setDisplayHomeAsUpEnabled(true);
 		imageLoader.init(ImageLoaderConfiguration.createDefault(this));
 		MyApp myapp = (MyApp) getApplication();
 		myapp.setContext(this);
@@ -206,5 +208,15 @@ public class PhotoGridActivity extends AbsListViewBaseActivity {
 		dialog.show();
 		
 	}
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case android.R.id.home:
+			this.finish();
+		default:
+			return super.onOptionsItemSelected(item);
+		}
+	}
+
 
 }

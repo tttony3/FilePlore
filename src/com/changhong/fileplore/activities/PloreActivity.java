@@ -7,12 +7,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.changhong.fileplore.adapter.PloreListAdapter;
+import com.changhong.fileplore.adapter.PloreListAdapter.ImgOnClick;
 import com.changhong.fileplore.application.MyApp;
 import com.changhong.fileplore.base.BaseActivity;
 import com.changhong.fileplore.data.PloreData;
 import com.changhong.fileplore.fragment.DetailDialogFragment;
-import com.changhong.fileplore.fragment.MoreDialogFragment;
-import com.changhong.fileplore.fragment.MoreDialogFragment.MoreDialogClickListener;
 import com.changhong.fileplore.implement.PloreInterface;
 import com.changhong.fileplore.view.RefreshListView;
 import com.chobit.corestorage.ConnectedService;
@@ -20,14 +19,10 @@ import com.chobit.corestorage.CoreApp;
 import com.chobit.corestorage.CoreHttpServerCB;
 import com.chobit.corestorage.CoreService.CoreServiceBinder;
 import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.listener.PauseOnScrollListener;
-import com.tencent.connect.common.Constants;
-import com.tencent.connect.share.QQShare;
 import com.tencent.tauth.Tencent;
 import com.changhong.fileplore.R;
 
-import android.R.bool;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.content.ComponentName;
@@ -49,6 +44,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AbsListView.LayoutParams;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
@@ -64,7 +60,7 @@ import android.widget.Toast;
 import com.changhong.fileplore.utils.*;
 
 public class PloreActivity extends BaseActivity implements RefreshListView.IOnRefreshListener, View.OnClickListener,
-		PloreInterface, OnItemClickListener, OnItemLongClickListener, OnMenuItemClickListener {
+		PloreInterface, OnItemClickListener, OnItemLongClickListener, OnMenuItemClickListener ,ImgOnClick{
 	protected ImageLoader imageLoader = ImageLoader.getInstance();
 	protected static final String STATE_PAUSE_ON_SCROLL = "STATE_PAUSE_ON_SCROLL";
 	protected static final String STATE_PAUSE_ON_FLING = "STATE_PAUSE_ON_FLING";
@@ -76,21 +72,26 @@ public class PloreActivity extends BaseActivity implements RefreshListView.IOnRe
 	private TextView mPathView;
 	private ImageView iv_back;
 	private TextView mItemCount;
-	private Button btn_1;
-	private Button btn_2;
-	private Button btn_3;
+	private Button btn_newfile;
+	private Button btn_paste;
+	private Button btn_sort;
+	private Button btn_seach;
+	private Button btn_selectall;
+	private Button btn_copy;
+	private Button btn_cut;
 	private Button btn_more;
 	public PloreListAdapter mFileAdpter;
-	public LinearLayout ll_btn;
+	private LinearLayout ll_btn;
+	private LinearLayout ll_btn_default;
 	public AlertDialog.Builder builder;
 	boolean isCopy = false;
 	private View layout_qr;
 	private Builder builder_qr;
 	private AlertDialog alertDialog_qr;
 	private ImageView iv_qr;
-	private Tencent mTencent;
 	private SharedPreferences sharedPreferences;
 	public boolean hide;
+	private int sorttype = PloreData.NAME;
 
 	@Override
 	public void onRestoreInstanceState(Bundle savedInstanceState) {
@@ -100,7 +101,7 @@ public class PloreActivity extends BaseActivity implements RefreshListView.IOnRe
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		mTencent = Tencent.createInstance("1104922716", this.getApplicationContext());
+		Tencent.createInstance("1104922716", this.getApplicationContext());
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_plore);
 		MyApp myapp = (MyApp) getApplication();
@@ -117,12 +118,16 @@ public class PloreActivity extends BaseActivity implements RefreshListView.IOnRe
 		mPathView = findView(R.id.path);
 		mItemCount = findView(R.id.item_count);
 		iv_back = findView(R.id.iv_back);
-		btn_1 = findView(R.id.plore_btn_1);
-		btn_2 = findView(R.id.plore_btn_2);
-		btn_3 = findView(R.id.plore_btn_3);
+		btn_selectall = findView(R.id.plore_btn_selectall);
+		btn_copy = findView(R.id.plore_btn_cut);
+		btn_cut = findView(R.id.plore_btn_copy);
 		btn_more = findView(R.id.plore_btn_more);
+		btn_newfile = findView(R.id.plore_btn_newfile);
+		btn_paste = findView(R.id.plore_btn_paste);
+		btn_sort = findView(R.id.plore_btn_sort);
+		btn_seach = findView(R.id.plore_btn_seach);
 		ll_btn = findView(R.id.ll_btn);
-
+		ll_btn_default = findView(R.id.ll_btn_default);
 		layout_qr = this.getLayoutInflater().inflate(R.layout.dialog_qr, null);
 		builder_qr = new AlertDialog.Builder(this).setView(layout_qr);
 		alertDialog_qr = builder_qr.create();
@@ -135,15 +140,22 @@ public class PloreActivity extends BaseActivity implements RefreshListView.IOnRe
 		mListView.setOnItemClickListener(this);
 		mListView.setOnItemLongClickListener(this);
 		mListView.setOnRefreshListener(this);
-		btn_1.setOnClickListener(this);
-		btn_2.setOnClickListener(this);
-		btn_3.setOnClickListener(this);
+		btn_newfile.setOnClickListener(this);
+		btn_paste.setOnClickListener(this);
+		btn_sort.setOnClickListener(this);
+		btn_seach.setOnClickListener(this);
+		btn_selectall.setOnClickListener(this);
+		btn_copy.setOnClickListener(this);
+		btn_cut.setOnClickListener(this);
 		btn_more.setOnClickListener(this);
 		iv_back.setOnClickListener(this);
 		mPathView.setOnClickListener(this);
-
+		
+		ImageView img =new ImageView(this);
+		img.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, Utils.dpTopx(40, this)));
+		mListView.addFooterView(img);
 		File folder = new File("/storage");
-		loadData(folder);
+		loadData(folder,sorttype);
 	}
 
 	@Override
@@ -154,14 +166,15 @@ public class PloreActivity extends BaseActivity implements RefreshListView.IOnRe
 	}
 
 	@Override
-	public void loadData(File folder) {
+	public void loadData(File folder,int sorttype) {
 		ll_btn.setVisibility(View.GONE);
+		ll_btn_default.setVisibility(View.VISIBLE);
 		boolean isRoot = (folder.getParent() == null);
 		if (folder.canRead()) {
 			String path = folder.getPath();
 			mPathView.setText(path);
-			PloreData mPloreData = new PloreData();
-			List<File> files = mPloreData.lodaData(folder, hide);
+			PloreData mPloreData = new PloreData(folder, hide,sorttype);
+			List<File> files = mPloreData.getfiles();
 			mItemCount.setText(files.size() + "项");
 			mFileAdpter = new PloreListAdapter(this, files, isRoot, imageLoader);
 			mListView.setAdapter(mFileAdpter);
@@ -177,11 +190,13 @@ public class PloreActivity extends BaseActivity implements RefreshListView.IOnRe
 
 		switch (v.getId()) {
 
-		case R.id.plore_btn_1:
+		case R.id.plore_btn_newfile:
 			fileList.clear();
 			final EditText ed = new EditText(PloreActivity.this);
 			builder = new AlertDialog.Builder(PloreActivity.this);
 			builder.setTitle("输入文件夹名称").setView(ed).setNegativeButton("确定", new DialogInterface.OnClickListener() {
+
+				
 
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
@@ -195,14 +210,14 @@ public class PloreActivity extends BaseActivity implements RefreshListView.IOnRe
 
 						}
 						File folder = new File(mPathView.getText().toString());
-						loadData(folder);
+						loadData(folder,sorttype);
 					}
 				}
 			}).setPositiveButton("取消", null).create().show();
 
 			break;
 
-		case R.id.plore_btn_2:
+		case R.id.plore_btn_cut:
 			if (!mFileAdpter.isShow_cb()) {
 				mFileAdpter.setShow_cb(true);
 				mFileAdpter.notifyDataSetChanged();
@@ -220,11 +235,13 @@ public class PloreActivity extends BaseActivity implements RefreshListView.IOnRe
 				mFileAdpter.setShow_cb(false);
 				mFileAdpter.notifyDataSetChanged();
 				isCopy = false;
+				ll_btn.setVisibility(View.GONE);
+				ll_btn_default.setVisibility(View.VISIBLE);
 				Toast.makeText(PloreActivity.this, "剪切成功", Toast.LENGTH_SHORT).show();
 			}
 			break;
 
-		case R.id.plore_btn_3:
+		case R.id.plore_btn_paste:
 			if (fileList.isEmpty())
 				Toast.makeText(PloreActivity.this, "没有选择文件", Toast.LENGTH_SHORT).show();
 			else {
@@ -236,7 +253,7 @@ public class PloreActivity extends BaseActivity implements RefreshListView.IOnRe
 					}
 					fileList.clear();
 					File folder = new File(mPathView.getText().toString());
-					loadData(folder);
+					loadData(folder,sorttype);
 				} else {
 					for (int i = 0; i < fileList.size(); i++) {
 						File file = fileList.get(i);
@@ -256,28 +273,64 @@ public class PloreActivity extends BaseActivity implements RefreshListView.IOnRe
 					}
 					fileList.clear();
 					File folder = new File(mPathView.getText().toString());
-					loadData(folder);
+					loadData(folder,sorttype);
 				}
+			}
+			break;
+		case R.id.plore_btn_sort:
+			PopupMenu popupsort = new PopupMenu(PloreActivity.this, v);
+			popupsort.getMenuInflater().inflate(R.menu.sort_menu, popupsort.getMenu());
+			popupsort.setOnMenuItemClickListener(this);		
+			popupsort.show();
+			break;
+		case R.id.plore_btn_selectall:
+			mFileAdpter.setShow_cb(true);
+			mFileAdpter.setAllSelect();
+			mFileAdpter.notifyDataSetChanged();
+			break;
+		case R.id.plore_btn_copy:
+			if (!mFileAdpter.isShow_cb()) {
+				mFileAdpter.setShow_cb(true);
+				mFileAdpter.notifyDataSetChanged();
+			} else {
+				Boolean[] mlist = mFileAdpter.getCheckBox_List();
+				fileList.clear();
+				if (mFileAdpter.isShow_cb()) {
+					for (int i = 0; i < mlist.length; i++) {
+						if (mlist[i]) {
+							File file = (File) mFileAdpter.getItem(i);
+							fileList.add(file);
+						}
+					}
+				}
+				mFileAdpter.setShow_cb(false);
+				mFileAdpter.notifyDataSetChanged();
+				isCopy = true;
+				ll_btn.setVisibility(View.GONE);
+				ll_btn_default.setVisibility(View.VISIBLE);
+				Toast.makeText(PloreActivity.this, "复制成功", Toast.LENGTH_SHORT).show();
 			}
 			break;
 		case R.id.plore_btn_more:
 			PopupMenu popup = new PopupMenu(PloreActivity.this, v);
 			popup.getMenuInflater().inflate(R.menu.more_menu, popup.getMenu());
 			popup.setOnMenuItemClickListener(this);
+			
 			popup.show();
 			break;
 		case R.id.iv_back:
 			if (mFileAdpter.isShow_cb()) {
 				mFileAdpter.setShow_cb(false);
 				ll_btn.setVisibility(View.GONE);
+				ll_btn_default.setVisibility(View.VISIBLE);
 				mFileAdpter.notifyDataSetChanged();
 			} else {
 				String str = (String) mPathView.getText();
 				if (str.lastIndexOf("/") == 0) {
 
-					loadData(new File("/storage"));
+					loadData(new File("/storage"),sorttype);
 				} else {
-					loadData(new File((String) str.subSequence(0, str.lastIndexOf("/"))));
+					loadData(new File((String) str.subSequence(0, str.lastIndexOf("/"))),sorttype);
 				}
 			}
 			break;
@@ -286,14 +339,15 @@ public class PloreActivity extends BaseActivity implements RefreshListView.IOnRe
 			if (mFileAdpter.isShow_cb()) {
 				mFileAdpter.setShow_cb(false);
 				ll_btn.setVisibility(View.GONE);
+				ll_btn_default.setVisibility(View.VISIBLE);
 				mFileAdpter.notifyDataSetChanged();
 			} else {
 				String str = (String) mPathView.getText();
 				if (str.lastIndexOf("/") == 0) {
 
-					loadData(new File("/storage"));
+					loadData(new File("/storage"),sorttype);
 				} else {
-					loadData(new File((String) str.subSequence(0, str.lastIndexOf("/"))));
+					loadData(new File((String) str.subSequence(0, str.lastIndexOf("/"))),sorttype);
 				}
 			}
 			break;
@@ -311,6 +365,7 @@ public class PloreActivity extends BaseActivity implements RefreshListView.IOnRe
 			if (!(view instanceof ImageView))
 				if (!mFileAdpter.isShow_cb()) {
 					mFileAdpter.setShow_cb(true);
+					ll_btn_default.setVisibility(View.GONE);
 					ll_btn.setVisibility(View.VISIBLE);
 					mFileAdpter.notifyDataSetChanged();
 				} else {
@@ -331,7 +386,7 @@ public class PloreActivity extends BaseActivity implements RefreshListView.IOnRe
 			if (!file.canRead()) {
 				Toast.makeText(parent.getContext(), "打不开", Toast.LENGTH_SHORT).show();
 			} else if (file.isDirectory()) {
-				loadData(file);
+				loadData(file,sorttype);
 			} else {
 				startActivity(Utils.openFile(file));
 			}
@@ -361,6 +416,7 @@ public class PloreActivity extends BaseActivity implements RefreshListView.IOnRe
 				if (mFileAdpter.isShow_cb()) {
 					mFileAdpter.setShow_cb(false);
 					ll_btn.setVisibility(View.GONE);
+					ll_btn_default.setVisibility(View.VISIBLE);
 					mFileAdpter.notifyDataSetChanged();
 				} else if (java.lang.System.currentTimeMillis() - curtime > 1000) {
 					Toast.makeText(PloreActivity.this, "再按一次退出", Toast.LENGTH_SHORT).show();
@@ -389,31 +445,11 @@ public class PloreActivity extends BaseActivity implements RefreshListView.IOnRe
 
 	
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public boolean onMenuItemClick(MenuItem item) {
 
 		switch (item.getItemId()) {
-		case R.id.it_meun_copy:
-			if (!mFileAdpter.isShow_cb()) {
-				mFileAdpter.setShow_cb(true);
-				mFileAdpter.notifyDataSetChanged();
-			} else {
-				Boolean[] mlist = mFileAdpter.getCheckBox_List();
-				fileList.clear();
-				if (mFileAdpter.isShow_cb()) {
-					for (int i = 0; i < mlist.length; i++) {
-						if (mlist[i]) {
-							File file = (File) mFileAdpter.getItem(i);
-							fileList.add(file);
-						}
-					}
-				}
-				mFileAdpter.setShow_cb(false);
-				mFileAdpter.notifyDataSetChanged();
-				isCopy = true;
-				Toast.makeText(PloreActivity.this, "复制成功", Toast.LENGTH_SHORT).show();
-			}
-			break;
 		case R.id.it_meun_delete:
 			if (!mFileAdpter.isShow_cb()) {
 				mFileAdpter.setShow_cb(true);
@@ -433,7 +469,7 @@ public class PloreActivity extends BaseActivity implements RefreshListView.IOnRe
 					}
 				}
 				File folder = new File(mPathView.getText().toString());
-				loadData(folder);
+				loadData(folder,sorttype);
 			}
 			break;
 
@@ -453,7 +489,7 @@ public class PloreActivity extends BaseActivity implements RefreshListView.IOnRe
 					}
 				}
 				File folder = new File(mPathView.getText().toString());
-				loadData(folder);
+				loadData(folder,sorttype);
 
 			}
 
@@ -545,9 +581,8 @@ public class PloreActivity extends BaseActivity implements RefreshListView.IOnRe
 					WifiConfiguration wificonf = hpc.setupWifiAp("fileplore", "12345678");
 					ssid = wificonf.SSID;
 					Thread.sleep(500);
-					final CoreApp app = (CoreApp) getApplicationContext();
-					app.mBinder.deinit();
-					app.mBinder.init();
+					CoreApp.mBinder.deinit();
+					CoreApp.mBinder.init();
 
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -614,6 +649,14 @@ public class PloreActivity extends BaseActivity implements RefreshListView.IOnRe
 
 			}
 			break;
+		case R.id.it_meun_sorttime:
+			sorttype = PloreData.TIME;
+			loadData(new File(mPathView.getText().toString()), sorttype);
+			break;
+		case R.id.it_meun_sortname:
+			sorttype = PloreData.NAME;
+			loadData(new File(mPathView.getText().toString()), sorttype);
+			break;
 		default:
 			break;
 		}
@@ -635,7 +678,7 @@ public class PloreActivity extends BaseActivity implements RefreshListView.IOnRe
 
 		@Override
 		protected void onPostExecute(Void result) {
-			loadData(new File(mPathView.getText().toString()));
+			loadData(new File(mPathView.getText().toString()),sorttype);
 			mListView.onRefreshComplete();
 		}
 
@@ -691,4 +734,16 @@ public class PloreActivity extends BaseActivity implements RefreshListView.IOnRe
 
 		}
 	};
+
+	@Override
+	public void onClick(View v, File file) {
+		if (!file.canRead()) {
+			Toast.makeText(this, "打不开", Toast.LENGTH_SHORT).show();
+		} else if (file.isDirectory()) {
+			loadData(file,sorttype);
+		} else {
+			startActivity(Utils.openFile(file));
+		}
+		
+	}
 }

@@ -22,7 +22,6 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Binder;
 import android.os.Environment;
@@ -257,7 +256,6 @@ public class DownLoadService extends Service implements DownStatusInterface {
 		pool.execute(new DownRunnAble(uri));
 	}
 
-	@SuppressWarnings("deprecation")
 	private void showNotification() {
 		// 创建一个NotificationManager的引用
 		NotificationManager notificationManager = (NotificationManager) this

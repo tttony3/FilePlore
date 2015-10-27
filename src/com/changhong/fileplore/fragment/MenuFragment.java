@@ -1,6 +1,10 @@
-package com.changhong.fileplore.activities;
+package com.changhong.fileplore.fragment;
 
 import com.changhong.fileplore.R;
+import com.changhong.fileplore.activities.ClassifyGridActivity;
+import com.changhong.fileplore.activities.ClassifyListActivity;
+import com.changhong.fileplore.activities.SambaActivity;
+import com.changhong.fileplore.activities.ShowNetDevActivity;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;

@@ -22,7 +22,7 @@
                 android:gravity="center"
                 android:text="@string/titlename_1"
                 android:textColor="@color/black"
-                android:textSize="18.0dip" />
+                android:textSize="@dimen/title_textsize" />
 
             <TextView
                 android:id="@+id/text2"
@@ -32,7 +32,7 @@
                 android:gravity="center"
                 android:text="@string/titlename_2"
                 android:textColor="@color/black"
-                android:textSize="18.0dip" />
+                android:textSize="@dimen/title_textsize" />
         </TableRow>
 
         <TableRow>
@@ -40,7 +40,7 @@
             <ImageView
                 android:id="@+id/cursor_1"
                 android:layout_width="wrap_content"
-                android:layout_height="2dp"
+                android:layout_height="1dp"
                 android:layout_weight="1"
                 android:contentDescription="@string/img_description"
                 android:scaleType="fitXY"
@@ -50,7 +50,7 @@
             <ImageView
                 android:id="@+id/cursor_2"
                 android:layout_width="wrap_content"
-                android:layout_height="2dp"
+                android:layout_height="1dp"
                 android:layout_weight="1"
                 android:contentDescription="@string/img_description"
                 android:scaleType="fitXY"

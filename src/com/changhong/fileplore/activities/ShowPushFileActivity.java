@@ -26,6 +26,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
@@ -52,11 +53,9 @@ public class ShowPushFileActivity extends BaseActivity implements OnItemClickLis
 	private NetPushFileListAdapter netPushFileListAdapter;
 	private Handler handler;
 	private View layout_download;
-	private AlertDialog alertDialog_download;
 	private AlertDialog.Builder builder_download;
 	
-	private ProgressBar pb_download;
-	private TextView tv_download;
+	
 	private LayoutInflater inflater;
 	private View layout_progress;
 	private Builder builder_progress;
@@ -78,8 +77,7 @@ public class ShowPushFileActivity extends BaseActivity implements OnItemClickLis
 		super.onCreate(savedInstanceState);
 		MyApp myapp = (MyApp) getApplication();
 		myapp.setContext(this);
-		ActionBar actionBar = getActionBar();
-		actionBar.setDisplayShowHomeEnabled(false);
+	
 		setContentView(R.layout.activity_push_file);
 		findView();
 		Intent intent = getIntent();
@@ -170,7 +168,17 @@ public class ShowPushFileActivity extends BaseActivity implements OnItemClickLis
 		handler.sendMessage(msg);
 
 	}
-
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case android.R.id.home:
+			this.finish();
+		default:
+			return super.onOptionsItemSelected(item);
+		}
+	}
+	
 	class MyPushHandler extends Handler {
 		private WeakReference<ShowPushFileActivity> mActivity;
 
@@ -323,10 +331,10 @@ public class ShowPushFileActivity extends BaseActivity implements OnItemClickLis
 
 		layout_download = inflater.inflate(R.layout.dialog_download, null);
 		builder_download = new AlertDialog.Builder(this).setView(layout_download);
-		alertDialog_download = builder_download.create();
+		builder_download.create();
 		
-		pb_download = (ProgressBar) layout_download.findViewById(R.id.download_bar);
-		tv_download = (TextView) layout_download.findViewById(R.id.tv_process);
+		
+		
 
 	}
 }

@@ -5,8 +5,10 @@
     android:layout_height="500dp" >
 
     <ImageView
+        android:contentDescription="@string/img_description"
         android:layout_centerInParent="true"
         android:id="@+id/iv_preview"
+          android:scaleType="centerInside"
         android:layout_width="500dp"
         android:layout_height="500dp" />
 

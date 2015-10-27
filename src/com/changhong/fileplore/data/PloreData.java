@@ -2,19 +2,46 @@ package com.changhong.fileplore.data;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.List;
 
 public class PloreData {
+	public static int NAME =1;
+	public static int TIME = 2;
 	int nDirectory;
 	int nFile;
-	List<File> files = new ArrayList<File>();
+	List<File> files ;
+	List<File> nfolders ;
+	List<File> nfiles ;
+
+	public PloreData(File folder, boolean hide) {
+		this(folder,hide,NAME);
+	}
+	
+
+	public PloreData(File folder, boolean hide,int type) {
+		files = new ArrayList<File>();
+		nfolders = new ArrayList<File>();
+		nfiles = new ArrayList<File>();
+		lodaData(folder, hide,type);
+	}
+
+	/**
+	 * 
+	 * @return 子文件列表
+	 */
+	public List<File> getfiles() {
+		return files;
+	}
 
 	/**
 	 * 
 	 * @return 子文件夹个数
 	 */
 	public int getnDirectory() {
-		return nDirectory;
+		return nfolders.size();
 	}
 
 	/**
@@ -22,60 +49,67 @@ public class PloreData {
 	 * @return 子文件个数
 	 */
 	public int getnFile() {
-		return nFile;
+		return nfiles.size();
 	}
 
 	/**
 	 * 
 	 * @param folder
 	 *            父文件夹
-	 * @param hide 
+	 * @param hide
+	 *            是否显示隐藏文件
 	 * @return 文件夹内的子文件夹和文件，按字母排序
 	 */
-	public List<File> lodaData(File folder) {
-		return lodaData(folder,true);
+	private void lodaData(File folder, boolean hide,int type) {
+		File[] names = folder.listFiles();
+
+		for (int i = 0; i < names.length; i++) {
+			if (!hide) {
+				if (names[i].getName().startsWith("."))
+					continue;
+			}
+			if (names[i].isDirectory()) {
+				nfolders.add(names[i]);
+			} else
+				nfiles.add(names[i]);
+		}
+		
+		if(type ==NAME){
+			SortByName sortByName =new SortByName();
+			Collections.sort(nfolders, sortByName);
+			Collections.sort(nfiles, sortByName);
+		}
+		else if(type ==TIME){
+			SortByTime sortByTime =new SortByTime();
+			Collections.sort(nfolders, sortByTime);
+			Collections.sort(nfiles, sortByTime);
+		}
+		
+		files.addAll(nfolders);
+		files.addAll(nfiles);
+
+	}
+
+
+	class SortByName implements Comparator<File> {
+		@Override
+		public int compare(File file1, File file2) {
+			if (file1.getName().charAt(0) > file2.getName().charAt(0)) {
+				return 1;
+			}		
+			else return -1;
+		}		
 	}
 	
-	public List<File> lodaData(File folder, boolean hide) {
-		files.clear();
-		nDirectory = 0;
-		nFile = 0;
-		String path = folder.getPath();
-		String[] names = folder.list();
-		for (int i = 0; i < names.length; i++) {
-			if(!hide){
-				if(names[i].startsWith("."))
-					continue;
-				}
-			files.add(new File("/" + path + "/" + names[i]));
+	
+	class SortByTime implements Comparator<File> {
+		@Override
+		public int compare(File file1, File file2) {
+			if (file1.lastModified() > file2.lastModified()) {
+				return -1;
+			}		
+			else return 1;
 		}
-
-		for (int i = 0, j = 0; j < files.size(); j++, i++) {
-			if (!files.get(i).isDirectory()) {
-				files.add(files.remove(i));
-				i--;
-				continue;
-			}
-			nDirectory++;
-		}
-
-		for (int i = 0; i < nDirectory - 1; i++)
-			for (int j = i + 1; j < nDirectory; j++) {
-				if (files.get(i).getName().charAt(0) > files.get(j).getName().charAt(0)) {
-					File tmp = files.remove(i);
-					files.add(i, files.remove(j - 1));
-					files.add(j, tmp);
-				}
-			}
-		for (int i = nDirectory; i < files.size() - 1; i++)
-			for (int j = i + 1; j < files.size(); j++) {
-				if (files.get(i).getName().charAt(0) > files.get(j).getName().charAt(0)) {
-					File tmp = files.remove(i);
-					files.add(i, files.remove(j - 1));
-					files.add(j, tmp);
-				}
-			}
-		nFile = files.size() - nDirectory;
-		return files;
+		
 	}
 }

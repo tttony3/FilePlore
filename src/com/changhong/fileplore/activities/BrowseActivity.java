@@ -23,6 +23,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+@SuppressWarnings("unused")
 public class BrowseActivity extends Activity {
 	TextView tv_phoneTotal;
 	TextView tv_phoneNotUse;

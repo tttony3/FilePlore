@@ -1,11 +1,9 @@
 package com.changhong.fileplore.activities;
 
 import java.io.File;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import com.chobit.corestorage.ConnectedService;
-import com.chobit.corestorage.CoreApp;
 import com.chobit.corestorage.CoreHttpServerCB;
 import com.chobit.corestorage.CoreService.CoreServiceBinder;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
@@ -18,7 +16,7 @@ import com.tencent.tauth.Tencent;
 import com.changhong.fileplore.R;
 import com.changhong.fileplore.adapter.MainViewPagerAdapter;
 import com.changhong.fileplore.application.MyApp;
-import com.changhong.fileplore.fragment.DetailDialogFragment;
+import com.changhong.fileplore.fragment.MenuFragment;
 import com.changhong.fileplore.utils.BaseUiListener;
 import com.changhong.fileplore.utils.Utils;
 
@@ -40,7 +38,6 @@ import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
-import android.text.format.Formatter;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -65,11 +62,7 @@ import android.widget.Toast;
 @SuppressWarnings("deprecation")
 public class MainActivity extends SlidingFragmentActivity
 		implements android.view.View.OnClickListener, OnLongClickListener {
-	DisplayImageOptions options = new DisplayImageOptions.Builder().showImageOnLoading(R.drawable.file_icon_photo)
-			.showImageForEmptyUri(R.drawable.file_icon_photo).showImageOnFail(R.drawable.file_icon_photo)
-			.cacheInMemory(true).cacheOnDisk(true).bitmapConfig(Bitmap.Config.RGB_565)
-			.displayer(new RoundedBitmapDisplayer(10)) // 设置图片的解码类型
-			.build();
+
 	Tencent mTencent ;
 	SharedPreferences sharedPreferences;
 	View view0;
@@ -792,15 +785,14 @@ public class MainActivity extends SlidingFragmentActivity
 		switch (getMIMEType(file.getName())) {
 		case MOVIE:
 			final String path1 = file.getPath();
-			imageLoader.displayImage("file://" + path1, iv_1, options);
+			imageLoader.displayImage("file://" + path1, iv_1);
 			break;
 		case MUSIC:
 			iv_1.setImageResource(R.drawable.file_icon_music);
 			break;
 		case PHOTO:
 			final String path = file.getPath();
-			final String name = file.getName();
-			imageLoader.displayImage("file://" + path, iv_1, options);
+			imageLoader.displayImage("file://" + path, iv_1);
 			break;
 		case DOC:
 			iv_1.setImageResource(R.drawable.file_icon_txt);

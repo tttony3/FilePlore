@@ -11,6 +11,7 @@ import com.changhong.fileplore.R;
 
 import com.changhong.fileplore.adapter.NetShareFileListAdapter;
 import com.changhong.fileplore.application.MyApp;
+import com.changhong.fileplore.base.BaseActivity;
 import com.changhong.fileplore.service.DownLoadService;
 import com.changhong.fileplore.service.DownLoadService.DownLoadBinder;
 import com.changhong.fileplore.thread.SetMediaProgressBarThread;
@@ -35,13 +36,14 @@ import android.os.Message;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.*;
 import android.widget.AdapterView.OnItemClickListener;
 
-public class ShowNetFileActivity extends Activity {
+public class ShowNetFileActivity extends BaseActivity {
 
 	static private final int UPDATE_LIST = 1;
 	static private final int SHOW_DIALOG = 2;
@@ -101,11 +103,10 @@ public class ShowNetFileActivity extends Activity {
 		myapp.setContext(this);
 		findView();
 
-		Intent intent = getIntent();
+	
 	
 		devInfo =((MyApp)getApplicationContext()).devinfo;
-	//	int position = intent.getFlags();
-	//	devInfo = CoreApp.mBinder.GetDeviceList().get(position);
+
 		CoreApp.mBinder.setShareFileListener(shareListener);
 		CoreApp.mBinder.ConnectDeivce(devInfo);
 
@@ -115,15 +116,13 @@ public class ShowNetFileActivity extends Activity {
 		lv_sharepath.setAdapter(netShareFileListAdapter);
 		lv_sharepath.setOnItemClickListener(myOnItemClickListener);
 	}
-
-	private void findView() {
+	
+	@Override
+	protected void findView() {
 		handler = new MyNetHandler(this);
 		tv_path = (TextView) findViewById(R.id.path);
 		filenum = (TextView) findViewById(R.id.netfile_num);
-		lv_sharepath = (ListView) findViewById(R.id.lv_netsharepath);
-		// dialog = new MyProgressDialog(ShowNetFileActivity.this).getDialog();
-		// path = "文件路径 : ";
-		// tv_path.setText(path);
+		lv_sharepath = (ListView) findViewById(R.id.lv_netsharepath);	
 		findAlertDialog();
 
 	}
@@ -364,6 +363,16 @@ public class ShowNetFileActivity extends Activity {
 		bundle.putInt("key", DISMISS_DIALOG);
 		msg.setData(bundle);
 		handler.sendMessage(msg);
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case android.R.id.home:
+			this.finish();
+		default:
+			return super.onOptionsItemSelected(item);
+		}
 	}
 
 	class MediaButtonListener implements OnClickListener {
